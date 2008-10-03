@@ -1,0 +1,29 @@
+#
+# Usage: codetagger -f example-defaults.tags file1 file2 ... fileN
+#
+
+@INFO_START@
+
+Pi starts with 3.14159
+
+@INFO_END@
+
+@HEADER_START@
+hello
+hello
+bonjour
+hallo
+ciao
+hola
+@HEADER_END@
+
+
+@TAILER_START@
+tot ziens
+bye
+bye
+arrivederci
+Tschuis
+adios
+@TAILER_END@
+

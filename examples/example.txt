@@ -1,0 +1,15 @@
+#
+#  Blah blah blah
+#
+#  @INFO_START@
+#  @INFO_END@
+@
+
+How to say hello:
+   @HEADER_START@
+   @HEADER_END@
+
+
+How to Say Good bye:
+   @TAILER_START@
+   @TAILER_END@

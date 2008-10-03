@@ -1,0 +1,134 @@
+.\"
+.\" $Id: $
+.\"
+.\" Syzdek Coding Tools
+.\" Copyright (C) 2008 David M. Syzdek <david@syzdek.net>
+.\"
+.\" @SYZDEK_COPYRIGHT_HEADER_START@
+.\" 
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.2
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\" 
+.\" @SYZDEK_COPYRIGHT_HEADER_END@
+.\"
+.\" doc/codetagger.1.in - man page for codetagger
+.\"
+.TH "CODETAGGER" "1" "@RELEASE_MONTH@" "@PACKAGE_TARNAME@ @PACKAGE_VERSION@" "User Commands"
+.SH NAME
+codetagger \- replaces the text between tags with text from tag file
+.SH SYNOPSIS
+\fBcodetagger\fR \fB-f\fR \fItagfile\fR [\fB-l\fR \fIleftmarker\fR] [\fB-r\fR \fIrightmarker\fR] [\fB--test\fR | \fB-t\fR] [\fB--verbose\fR | \fB-v\fR] [\fIFILE\fR...]
+.sp
+\fBcodetagger\fR [\fB--help\fR | \fB-h\fR] [\fB--version\fR | \fB-V\fR]
+.SH DESCRIPTION
+\fBCodetagger\fR is used to perform bulk text replacement in source files that
+have been marked with tag pairs defined by the tag definition file. A
+tag is as a alpha-numeric string that is enclosed by the \fIleftmarker\fR
+string and the \fIrightmarker\fR string.  The alpha-numeric string conists of
+a concatenation of the pair name followed by the tag state.  The pair name is
+a user defined string which is unique to the tag pair. The tag state must be
+either the string \fIstart\fR or the string \fIend\fR.  A tag pair must have
+one \fIstart\fR tag and a matching \fIend\fR tag and the \fIstart\fR tag must
+precede the \fIend\fR tag in both the definition file and the source files. All
+tags are case insensitive.
+
+\fBCodetagger\fR processes a file one line at a time.  If characters exist
+between the start tag and beginning of the line, these characters will be
+inserted at the beginning of every line replaced by the tag pair.  This allows
+\fBcodetagger\fR to honor the comment characters and text layout of mulitple
+file format.
+
+Tag pairs to be replaced in source files are defined in the tag definition
+file.  This file may contain multiple tag pair definitions.  A tag pair is
+defined by placing a start tag on the beginning of a line.  The start tag
+is followed by the tag body (the text to be inserted into the source files).
+The tag body may contain multiple lines of text.  The tag pair definition is
+ended by placing the end tag on the beginning of a line following the tag body.
+If an end tag is missing, \fBcodetagger\fR will exit with an error. Nested tag
+pairs will be ignored by \fBcodetagger\fR.
+
+.SH OPTIONS
+.TP
+\fB\-f\fR \fItagfile\fR
+\fItagfile\fR is file to be used as the tag definition file.
+.TP
+\fB\-h\fR, \fB--help\fR
+displays usage information and exits.
+.TP
+\fB-l\fR \fIleftmarker\fR
+sets \fIleftmarker\fR of the tags. The default value is \fI@\fR.
+.TP
+\fB-r\fR \fIrightmarker\fR
+sets \fIrightmarker\fR of the tags. The default value is \fI@\fR.
+.TP
+\fB\-t\fR, \fB--test\fR
+shows what would be done, but does not modify any files.
+.TP
+\fB\-v\fR, \fB--verbose\fR
+increase verbosity of program's output.  Multiple uses causes increased verbosity.
+.TP
+\fB\-V\fR, \fB--version\fR
+displays version number and exits.
+.SH EXAMPLE TAG FILE
+# Example tag definition file.  This file can be used with the
+.br
+# following command line argument:
+.br
+#     codetagger -l '<@' -r '@>' -f data.tags  file.txt
+.sp
+<@HeaderStart@>
+.br
+This is my amusing text header. That only
+.br
+has two lines of data.
+.br
+<@HeaderEnd@>
+.sp
+<@FooterStart@>
+.br
+This is my really short footer.
+.br
+<@FooterEnd@>
+
+.SH EXAMPLE SOURCE FILE
+#!/bin/sh
+.br
+#  My Awesome script
+.br
+#  Uses example tag file
+.br
+#  <@HeaderStart@>
+.br
+#  <@HeaderEnd@>
+.sp
+echo "Hello World."
+.br
+exit 0
+.sp
+/*
+.br
+ *  C style comments
+.br
+ *  <@FooterStart@>
+.br
+ *  <@FooterEnd@>
+.br
+ */
+
+.SH AUTHOR
+Written by David M. Syzdek.
+.SH "REPORTING BUGS"
+Report bugs to <@PACKAGE_BUGREPORT@>.
+.SH COPYRIGHT
+@PACKAGE_COPYRIGHT@
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+.BR sed (1),
+.BR COPYING.tags
+.\" end of man page

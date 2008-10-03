@@ -1,0 +1,21 @@
+<!--
+   Usage: codetagger -l '<!--' -r '-->' -f example-html.tags file1 file2 ... fileN
+-->
+
+
+<!--HEADER_START-->
+<html>
+  <head>
+    <title>My Fancy Title</title>
+  </head>
+  <body>
+    <!-- my awesome formatting skills -->
+    Hello World
+<!--HEADER_END-->
+
+
+<!--TAILER_START-->
+  </body>
+</html>
+<!--TAILER_END-->
+

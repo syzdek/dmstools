@@ -1,0 +1,50 @@
+
+$Id: $
+
+Syzdek Coding Tools
+Copyright (C) 2008 David M. Syzdek <david@syzdek.net>
+
+0.0.4	2008/06/29
+	- added the Xcode wrapper Makefile-xcode to the distribution (syzdek)
+	- replaced calls to mkstemps() with mkstemp() due to the former not
+	  being available on Linux systems with GNU libc. (syzdek)
+	- added [:blank:] as valid characters to the tag name (syzdek)
+	- the end tag now retains the same character case after the
+	  the expansion as before. (syzdek)
+
+0.0.3	2008/06/22
+	- updated codetagger to show usage information if no parameters were
+	  given. [requested by Royce Williams] (syzdek)
+	- updated codetagger to warn if tag definitions were not found in
+	  the tag file. [requested by Royce Williams] (syzdek)
+	- updated codetagger to warn if no tags were found in the processed
+	  file. (syzdek)
+	- updated codetagger to not replace original file if no tags were
+	  found. [requested by Royce Williams] (syzdek)
+	- re-numbered the verbose levels (syzdek)
+	- added warnings for unknown tags. (syzdek)
+	- expanded man page for codetagger (syzdek)
+
+0.0.2	2008/06/22
+	- finished documenting the remaining command line options in the man
+	  page. (syzdek)
+	- added ability code codetagger to set file ownerships of generated
+	  files if the utility is run as root. (syzdek)
+	- added comment syntax for doxygen parsing. (syzdek)
+	- reviewed and improved source code comments. (syzdek)
+	- removed dependency of common.h so that utilities can be compiled
+	  outside of the package environment. (syzdek)
+	- added Xcode over lay for project. (syzdek)
+	- added examples for codetagger (syzdek)
+	- added ability to specify different strings/characters for the
+	  left and right tag markers in codetagger. (syzdek)
+	- make misc code clean-ups. (syzdek)
+	- included source for vaportar, an utility which creates random
+	  tar files that contain multiple files with the same file
+	  name.  I know, useless. (syzdek)
+	- added utility that test POSIX regular expressions on strings
+	  passed as arguments. (syzdek)
+
+0.0.1   2008/06/16
+        - initial release of package (syzdek)
+

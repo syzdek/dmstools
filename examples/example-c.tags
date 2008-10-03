@@ -1,0 +1,28 @@
+/*
+ * Usage: codetagger -l '//' -r '' -f example-c.tags file1 file2 ... fileN
+ */
+
+
+//info_start
+
+Blah Blah Blah
+
+//info_end
+
+
+//header_start
+#include <stdio.h>
+
+int main(void);
+//header_end
+
+
+//TAILER_START
+
+int main(void)
+{
+   printf("hello tagged world\n");
+   return(0);
+}
+//TAILER_END
+
