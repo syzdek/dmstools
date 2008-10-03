@@ -1,0 +1,209 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXFileReference section */
+		A004228B0E0E3C4200B0ED60 /* codetagger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = codetagger.c; sourceTree = "<group>"; };
+		A004228C0E0E3C4200B0ED60 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		A004228D0E0E3C4200B0ED60 /* posixregex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = posixregex.c; sourceTree = "<group>"; };
+		A004228E0E0E3C4200B0ED60 /* vaportar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vaportar.c; sourceTree = "<group>"; };
+		A02133F00E0E4C9C00336FDD /* acinclude.m4 */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = acinclude.m4; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133F10E0E4CCE00336FDD /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133F20E0E4CCE00336FDD /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133F30E0E4CCE00336FDD /* configure.ac */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = configure.ac; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133F40E0E4CCE00336FDD /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133F50E0E4CCE00336FDD /* COPYING.DOC */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = COPYING.DOC; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133F60E0E4CCE00336FDD /* INSTALL */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133F70E0E4CCE00336FDD /* Makefile-xcode */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = "Makefile-xcode"; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133F80E0E4CCE00336FDD /* NEWS */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = NEWS; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133F90E0E4CCE00336FDD /* README */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = README; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133FA0E0E4CCE00336FDD /* syzdek-coding.tags */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = "syzdek-coding.tags"; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02133FB0E0E4CCE00336FDD /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02134D30E0E719000336FDD /* codetagger.1.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = codetagger.1.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02135010E0E7C6200336FDD /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
+		A03242690E0E453700D5D5CA /* Makefile.am */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = Makefile.am; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A04419700E0E442800D47FEA /* compile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = compile; sourceTree = "<group>"; };
+		A04419710E0E442800D47FEA /* config.guess */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config.guess; sourceTree = "<group>"; };
+		A04419720E0E442800D47FEA /* config.sub */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config.sub; sourceTree = "<group>"; };
+		A04419730E0E442800D47FEA /* depcomp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = depcomp; sourceTree = "<group>"; };
+		A04419740E0E442800D47FEA /* environment.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = environment.sh; sourceTree = "<group>"; };
+		A04419750E0E442800D47FEA /* install-sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "install-sh"; sourceTree = "<group>"; };
+		A04419760E0E442800D47FEA /* ltmain.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = ltmain.sh; sourceTree = "<group>"; };
+		A04419770E0E442800D47FEA /* missing */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = missing; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* Syzdek Coding Tools */ = {
+			isa = PBXGroup;
+			children = (
+				A02133F00E0E4C9C00336FDD /* acinclude.m4 */,
+				A02133F10E0E4CCE00336FDD /* AUTHORS */,
+				A004229F0E0E3CC300B0ED60 /* build-aux */,
+				A02133F20E0E4CCE00336FDD /* ChangeLog */,
+				A02133F30E0E4CCE00336FDD /* configure.ac */,
+				A02133F40E0E4CCE00336FDD /* COPYING */,
+				A02133F50E0E4CCE00336FDD /* COPYING.DOC */,
+				A00422720E0E396B00B0ED60 /* doc */,
+				A02133F60E0E4CCE00336FDD /* INSTALL */,
+				A03242690E0E453700D5D5CA /* Makefile.am */,
+				A02133F70E0E4CCE00336FDD /* Makefile-xcode */,
+				A02133F80E0E4CCE00336FDD /* NEWS */,
+				A02133F90E0E4CCE00336FDD /* README */,
+				A00422710E0E396200B0ED60 /* src */,
+				A02133FA0E0E4CCE00336FDD /* syzdek-coding.tags */,
+				A02133FB0E0E4CCE00336FDD /* TODO */,
+			);
+			name = "Syzdek Coding Tools";
+			sourceTree = "<group>";
+		};
+		A00422710E0E396200B0ED60 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				A004228B0E0E3C4200B0ED60 /* codetagger.c */,
+				A004228C0E0E3C4200B0ED60 /* common.h */,
+				A004228D0E0E3C4200B0ED60 /* posixregex.c */,
+				A004228E0E0E3C4200B0ED60 /* vaportar.c */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		A00422720E0E396B00B0ED60 /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				A02135010E0E7C6200336FDD /* Doxyfile */,
+				A02134D30E0E719000336FDD /* codetagger.1.in */,
+			);
+			path = doc;
+			sourceTree = "<group>";
+		};
+		A004229F0E0E3CC300B0ED60 /* build-aux */ = {
+			isa = PBXGroup;
+			children = (
+				A04419700E0E442800D47FEA /* compile */,
+				A04419710E0E442800D47FEA /* config.guess */,
+				A04419720E0E442800D47FEA /* config.sub */,
+				A04419730E0E442800D47FEA /* depcomp */,
+				A04419740E0E442800D47FEA /* environment.sh */,
+				A04419750E0E442800D47FEA /* install-sh */,
+				A04419760E0E442800D47FEA /* ltmain.sh */,
+				A04419770E0E442800D47FEA /* missing */,
+			);
+			path = "build-aux";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		A02133B70E0E478400336FDD /* Makefile */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "-f $(MAKEFILE) $(ACTION)";
+			buildConfigurationList = A02133C20E0E47A700336FDD /* Build configuration list for PBXLegacyTarget "Makefile" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = Makefile;
+			passBuildSettingsInEnvironment = 1;
+			productName = Makefile;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "SyzdekCodingTools" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* Syzdek Coding Tools */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A02133B70E0E478400336FDD /* Makefile */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB919408733D9F0010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Debug;
+		};
+		1DEB919508733D9F0010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Release;
+		};
+		A02133B80E0E478400336FDD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURE_FLAGS = "";
+				COPY_PHASE_STRIP = NO;
+				DISTCLEAN = NO;
+				DISTFILES = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MAKEFILE = "Makefile-xcode";
+				PRODUCT_NAME = Makefile;
+			};
+			name = Debug;
+		};
+		A02133B90E0E478400336FDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURE_FLAGS = "";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DISTCLEAN = YES;
+				DISTFILES = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				MAKEFILE = "Makefile-xcode";
+				PRODUCT_NAME = Makefile;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "SyzdekCodingTools" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB919408733D9F0010E9CD /* Debug */,
+				1DEB919508733D9F0010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A02133C20E0E47A700336FDD /* Build configuration list for PBXLegacyTarget "Makefile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A02133B80E0E478400336FDD /* Debug */,
+				A02133B90E0E478400336FDD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
