@@ -29,6 +29,12 @@
 #define MY_OPT_LINKS       0x20
 #define MY_OPT_QUIET       0x40
 
+//typedef struct recurse_data Recurse;
+//struct recurse_data
+//{
+//   char ** 
+//};
+
 
 int main(int argc, char * argv[]);
 void my_version(void);
@@ -186,31 +192,37 @@ void my_version(void)
 
 int recurse_directory(int * lenp, char *** listp, int opts)
 {
-   int   size;
-   DIR * d;
-   void * ptr;
+   int             err;
+   DIR           * d;
+   void          * ptr;
+   char          * dir;
+   char          * file;
+   size_t          dir_len;
+   size_t          file_len;
+   struct stat     sb;
    struct dirent * dp;
-   char    * dir;
-   char    * file;
 
+   // points to directory name
    if (!(dir = (*listp)[(*lenp)-1]))
       return(0);
-   (*listp)[(*lenp)-1] = NULL;
-
+   //(*listp)[(*lenp)-1] = NULL;
+   //(*lenp)--;
+   
+   // opens directory for reading
    if (!(d = opendir(dir)))
    {
-      if (!( (opts & MY_OPT_QUIET) && (opts & MY_OPT_CONTINUE) ))
+      if (opts & MY_OPT_QUIET)
          fprintf(stderr, "%s: %s, %s\n", PROGRAM_NAME, dir, strerror(errno) );
       free(dir);
       (*listp)[(*lenp)-1] = NULL;
       if (!(opts & MY_OPT_CONTINUE))
-         return(1);
-      else
          return(0);
    };
 
+   // loops through directory
    for(dp = readdir(d); dp; dp = readdir(d))
    {
+      // skips hidden files, current directory, and parent
       if (dp->d_name[0] == '.')
       {
          if (dp->d_name[1] == '\0')
@@ -220,83 +232,88 @@ int recurse_directory(int * lenp, char *** listp, int opts)
          if (!(opts & MY_OPT_HIDDEN))
             continue;
       };
-      if (!(ptr = realloc(*listp, sizeof(char *) * ((*lenp)+1))))
+
+      // builds file name
+      dir_len  = strlen(dir);
+      file_len = strlen(dp->d_name);
+      if (!(file = malloc(sizeof(char) * (dir_len + file_len + 2))))
       {
          fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
          free(dir);
          return(1);
       };
-     *listp = ptr;
-     size = sizeof(char) * (strlen(dir) + strlen(dp->d_name) + 2);
-     if (!(file = malloc(size)))
-     {
-         fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
-         free(dir);
-         return(1);
-     };
-     snprintf(file, size, "%s/%s", dir, dp->d_name);
-     (*listp)[(*lenp)] = file;
-     (*lenp)++;
+      strcpy(&file[0],         dir);
+      strcpy(&file[dir_len],   "/");
+      strcpy(&file[dir_len+1], dp->d_name);
+      file[dir_len+file_len+1] = '\0';
+
+      // retrieves file information
+      if ((opts & MY_OPT_LINKS))
+         err = stat(file, &sb);
+      else
+         err = lstat(file, &sb);
+      if (err == -1)
+         if (opts & MY_OPT_QUIET)
+            fprintf(stderr, "%s: %s, %s\n", PROGRAM_NAME, file, strerror(errno) );
+
+      // checks file type
+      switch(sb.st_mode & (S_IFDIR|S_IFREG|S_IFLNK))
+      {
+         case S_IFDIR:
+            if (!(ptr = realloc(*listp, sizeof(char *) * ((*lenp)+1))))
+            {
+               fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+               free(dir);
+               free(file);
+               closedir(d);
+               return(1);
+            };
+            *listp = ptr;
+            (*listp)[(*lenp)] = file;
+            (*lenp)++;
+            printf("%s\n", file);
+            break;
+         case S_IFREG:
+            //if (!(opts & MY_OPT_QUIET))
+               printf("%s\n", file);
+            free(file);
+            break;
+         //case S_IFLNK:
+         //   free(file);
+         //   break;
+         default:
+            //if (!( (opts & MY_OPT_QUIET) && (opts & MY_OPT_CONTINUE) ))
+            //   fprintf(stderr, "%s: %s: invalid file type\n", PROGRAM_NAME, file);
+            free(file);
+            //if (!(opts & MY_OPT_CONTINUE))
+            //{
+            //   closedir(d);
+            //   return(1);
+            //};
+            break;
+      };
    };
 
    closedir(d);
 
    free(dir);
 
-   return(recurse_list(lenp, listp, opts));
+   return(0);
 }
 
 
 int recurse_list(int * lenp, char *** listp, int opts)
 {
-   int          err;
-   const char * file;
-   struct stat  sb;
-
    while((*lenp) > 0)
    {
-      if (!(file = (*listp)[(*lenp)-1]))
-         return(0);
-
-      if ((opts & MY_OPT_LINKS))
-         err = stat(file, &sb);
-      else
-         err = lstat(file, &sb);
-      if (err == -1)
-      {
-         if (!( (opts & MY_OPT_QUIET) && (opts & MY_OPT_CONTINUE) ))
-            fprintf(stderr, "%s: %s, %s\n", PROGRAM_NAME, file, strerror(errno) );
-         if (!(opts & MY_OPT_CONTINUE))
-            return(1);
-      };
-
-      switch(sb.st_mode & (S_IFDIR|S_IFREG|S_IFLNK))
-      {
-         case S_IFDIR:
-            printf("%s\n", file);
-            if ((recurse_directory(lenp, listp, opts)))
-               return(1);
-            break;
-         case S_IFREG:
-            if (!(opts & MY_OPT_QUIET))
-               printf("%s\n", file);
-            break;
-         case S_IFLNK:
-            break;
-         default:
-            if (!( (opts & MY_OPT_QUIET) && (opts & MY_OPT_CONTINUE) ))
-               fprintf(stderr, "%s: %s: invalid file type\n", PROGRAM_NAME, file);
-            if (!(opts & MY_OPT_CONTINUE))
-               return(1);
-            break;
-      };
-
+      printf("%s\n", (*listp)[(*lenp)-1]);
+      if ((recurse_directory(lenp, listp, opts)))
+         return(1);
       if ((*listp)[(*lenp)-1])
          free((*listp)[(*lenp)-1]);
       (*listp)[(*lenp)-1] = NULL;
       (*lenp)--;
    };
-
    return(0);
 }
 
