@@ -188,17 +188,21 @@ int main(int argc, char * argv[])
    var2 = my_strtouint(argv[optind+1]);
 
    my_opts = MY_OPT_BIN;
-   printf("             %35s      %35s\n",     "First Value", "Second Value");
-   printf("Binary:      %35s      %s\n",     my_uint2str(buff1, var1), my_uint2str(buff2, var2));
+   printf("             %12s      %12s\n",     "First Value", "Second Value");
    snprintf(buff1, STR_LEN, "0%o", var1);
    snprintf(buff2, STR_LEN, "0%o", var2);
-   printf("Octal:       %35s      %35s\n",   buff1, buff2);
+   printf("Octal:       %12s      %12s\n",   buff1, buff2);
    snprintf(buff1, STR_LEN, "%u", var1);
    snprintf(buff2, STR_LEN, "%u", var2);
-   printf("Decimal:     %35s      %35s\n",   buff1, buff2);
+   printf("Decimal:     %12s      %12s\n",   buff1, buff2);
    snprintf(buff1, STR_LEN, "0x%08X", var1);
    snprintf(buff2, STR_LEN, "0x%08X", var2);
-   printf("Hexadecimal: %35s      %35s\n",   buff1, buff2);
+   printf("Hexadecimal: %12s      %12s\n",   buff1, buff2);
+
+   printf("\n");
+
+   printf("Binary:      %s First Value\n", my_uint2str(buff1, var1));
+   printf("             %s Second Value\n", my_uint2str(buff2, var2));   snprintf(buff1, STR_LEN, "0%o", var1);
 
    printf("\n");
 
