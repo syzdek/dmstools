@@ -39,9 +39,16 @@ AM_CPPFLAGS				= -O2 -W -Wall -Werror -DHAVE_COMMON_H=1
 
 
 # automake targets
-bin_PROGRAMS				= src/codetagger src/posixregex 
+bin_PROGRAMS				= src/bitops src/codetagger src/posixregex 
 noinst_HEADERS				= src/common.h
 man_MANS				= doc/codetagger.1
+
+
+# macros for src/bitops
+src_bitops_DEPENDENCIES			= $(lib_LTLIBRARIES) Makefile
+src_bitops_CPPFLAGS			= -DPROGRAM_NAME="\"bitops\"" $(AM_CPPFLAGS)
+src_bitops_SOURCES			= $(noinst_HEADERS) \
+					  src/bitops.c
 
 
 # macros for src/codetagger

@@ -11,6 +11,7 @@
 		A004228C0E0E3C4200B0ED60 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		A004228D0E0E3C4200B0ED60 /* posixregex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = posixregex.c; sourceTree = "<group>"; };
 		A004228E0E0E3C4200B0ED60 /* vaportar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vaportar.c; sourceTree = "<group>"; };
+		A007E66F0EB09C51008A1261 /* recurse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recurse.c; sourceTree = "<group>"; };
 		A02133F00E0E4C9C00336FDD /* acinclude.m4 */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = acinclude.m4; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A02133F10E0E4CCE00336FDD /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A02133F20E0E4CCE00336FDD /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
@@ -34,6 +35,7 @@
 		A04419750E0E442800D47FEA /* install-sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "install-sh"; sourceTree = "<group>"; };
 		A04419760E0E442800D47FEA /* ltmain.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = ltmain.sh; sourceTree = "<group>"; };
 		A04419770E0E442800D47FEA /* missing */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = missing; sourceTree = "<group>"; };
+		A07BC6F10F0210CF00219629 /* bitops.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitops.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -63,9 +65,11 @@
 		A00422710E0E396200B0ED60 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				A07BC6F10F0210CF00219629 /* bitops.c */,
 				A004228B0E0E3C4200B0ED60 /* codetagger.c */,
 				A004228C0E0E3C4200B0ED60 /* common.h */,
 				A004228D0E0E3C4200B0ED60 /* posixregex.c */,
+				A007E66F0EB09C51008A1261 /* recurse.c */,
 				A004228E0E0E3C4200B0ED60 /* vaportar.c */,
 			);
 			path = src;
