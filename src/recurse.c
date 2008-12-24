@@ -40,7 +40,7 @@ int main(int argc, char * argv[]);
 void my_version(void);
 void my_usage(void);
 int recurse_directory(int * lenp, char *** listp, int opts);
-int recurse_list(int * lenp, char *** listp, int opts);
+int recurse_list(const char * src, int opts);
 
 
 
@@ -124,6 +124,7 @@ int main(int argc, char * argv[])
 
    for(i = optind; i < argc; i++)
    {
+/*
       len++;
       if (!(ptr = realloc(list, (sizeof(char *)*len))))
       {
@@ -142,6 +143,9 @@ int main(int argc, char * argv[])
          free(list);
          return(1);
       };
+*/
+      if ((recurse_list(argv[i], opts)))
+         return(1);
    };
 
    err = recurse_list(&len, &list, opts);
@@ -302,17 +306,23 @@ int recurse_directory(int * lenp, char *** listp, int opts)
 }
 
 
-int recurse_list(int * lenp, char *** listp, int opts)
+int recurse_list(const char * src, int opts)
 {
-   while((*lenp) > 0)
+   int     len;
+   char ** list;
+   
+   len  = 0;
+   list = NULL;
+   
+   while(len > 0)
    {
-      printf("%s\n", (*listp)[(*lenp)-1]);
-      if ((recurse_directory(lenp, listp, opts)))
-         return(1);
-      if ((*listp)[(*lenp)-1])
-         free((*listp)[(*lenp)-1]);
-      (*listp)[(*lenp)-1] = NULL;
-      (*lenp)--;
+      printf("%s\n", list[len-1]);
+      //if ((recurse_directory(lenp, listp, opts)))
+      //   return(1);
+      len--;
+      if (list[len])
+         free(list[len]);
+      list[len] = NULL;
    };
    return(0);
 }
