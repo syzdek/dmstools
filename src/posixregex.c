@@ -114,8 +114,10 @@ void my_version PARAMS((void));
 //             //
 /////////////////
 
-/* main statement */
-int main(int argc, char *argv[])
+/// main statement
+/// @param[in] argc   number of arguments
+/// @param[in] argv   array of arguments
+int main(int argc, char * argv[])
 {
    /* declare local vars */
    int        c;
@@ -230,7 +232,7 @@ int main(int argc, char *argv[])
 }
 
 
-/* displays usage */
+/// displays usage
 void my_usage(void)
 {
    printf("Usage: %s [OPTIONS] string\n", PROGRAM_NAME);
@@ -246,7 +248,7 @@ void my_usage(void)
 }
 
 
-/* displays version */
+/// displays version
 void my_version(void)
 {
 #if defined(PACKAGE_NAME) && defined(PACKAGE_VERSION) && defined(PACKAGE_COPYRIGHT)
