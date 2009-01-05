@@ -251,7 +251,7 @@ void my_posixregex(void)
    printf("[:space:]    [ \\t\\r\\n\\v\\f]   Whitespace characters\n");
    printf("[:upper:]    [A-Z]           Uppercase letters\n");
    printf("[:xdigit:]   [A-Fa-f0-9]     Hexadecimal digits\n");
-   printf("[:punct:]    [-!\"#$%&'()*+,./:;<=>?@[\\]_`{|}~]   Punctuation characters\n");
+   printf("%s", "[:punct:]    [-!\"#$%&'()*+,./:;<=>?@[\\]_`{|}~]   Punctuation characters\n");
    printf("\n");
    printf("Example Uses:\n");
    printf("    posixregex '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string\n");
