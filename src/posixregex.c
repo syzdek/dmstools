@@ -139,7 +139,9 @@ int main(int argc, char * argv[])
    int        x;
    int        y;
    int        err;
+   int        code;
    int        strlen;
+   int        quiet;
    int        verbosity;
    int        opt_index;
    char       arg[BUFFER_SIZE];
@@ -150,18 +152,22 @@ int main(int argc, char * argv[])
    regmatch_t matches[MAX_MATCHES];
 
    /* getopt options */
-   static char   short_opt[] = "hr:pvV";
+   static char   short_opt[] = "hpqr:vV";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
       {"posixregex",    no_argument, 0, 'p'},
+      {"quiet",         no_argument, 0, 'q'},
+      {"silent",        no_argument, 0, 'q'},
       {"verbose",       no_argument, 0, 'v'},
       {"version",       no_argument, 0, 'V'},
       {NULL,            0,           0, 0  }
    };
 
    /* initialize variables */
+   code      = 0;
    restr     = ".*";
+   quiet     = 0;
    verbosity = 0;
    opt_index = 0;
 
@@ -179,6 +185,10 @@ int main(int argc, char * argv[])
          case 'p':
             my_posixregex();
             return(0);
+         case 'q':
+            quiet = 1;
+            verbosity = 0;
+            break;
          case 'r':
            restr = optarg;
            break;
@@ -186,6 +196,7 @@ int main(int argc, char * argv[])
             my_version();
             return(0);
          case 'v':
+            quiet = 0;
             verbosity++;
             break;
          case '?':
@@ -199,7 +210,8 @@ int main(int argc, char * argv[])
    };
 
    /* compile regulare expression for later use */
-   printf("regex: %s\n",restr);
+   if (!(quiet))
+      printf("regex: %s\n",restr);
    if ((err = regcomp(&regex, restr, REG_EXTENDED|REG_ICASE)))
    {
       regerror(err, &regex, msg, BUFFER_SIZE-1);
@@ -215,31 +227,36 @@ int main(int argc, char * argv[])
    {
       /* copies string into buffer and prints to screen */
       strncpy(arg, argv[x], BUFFER_SIZE-1);
-      printf("%3i: %s  ==> ", x, arg);
+      if (!(quiet))
+         printf("%3i: %s  ==> ", x-optind+1, arg);
 
       /* tests the buffer against the regular expression */
       if ((err = regexec(&regex, arg, MAX_MATCHES, matches, 0)))
       {
-         printf("not found\n");
+         if (!(quiet))
+            printf("not found\n");
+         code = 1;
       } else {
-         printf(" found\n");
+         if (!(quiet))
+            printf(" found\n");
          strlen = 1;
 
          /* copies sub matches in buffer string */
-         for(y = 0; ((y < MAX_MATCHES) && (matches[y].rm_eo > -1)); y++)
+         if (verbosity)
          {
-            memset(str, 0, BUFFER_SIZE);
-            if ((strlen = matches[y].rm_eo - matches[y].rm_so))
+            for(y = 0; ((y < MAX_MATCHES) && (matches[y].rm_eo > -1)); y++)
             {
-               strncpy(str, &arg[matches[y].rm_so], strlen);
-               printf("   submatch %i: %s\n", y, str);
-            } else if (matches[y].rm_eo > 0) {
-               printf("   submatch %i:\n", y);
+               memset(str, 0, BUFFER_SIZE);
+               if ((strlen = matches[y].rm_eo - matches[y].rm_so))
+               {
+                  strncpy(str, &arg[matches[y].rm_so], strlen);
+                  printf("     submatch %i: %s\n", y, str);
+               } else if (matches[y].rm_eo > 0) {
+                  printf("   submatch %i:\n", y);
+               };
             };
+            printf("\n");
          };
-
-         /* makes the output a little neater */
-         printf("\n");
       };
    };
 
@@ -247,7 +264,7 @@ int main(int argc, char * argv[])
    regfree(&regex);
 
    /* end function */
-   return(0);
+   return(code);
 }
 
 
@@ -269,8 +286,8 @@ void my_posixregex(void)
    printf("%s", "[:punct:]    [-!\"#$%&'()*+,./:;<=>?@[\\]_`{|}~]   Punctuation characters\n");
    printf("\n");
    printf("Example Uses:\n");
-   printf("    posixregex '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string\n");
-   printf("    posixregex '\\$([[:digit:]]+)\\.([[:digit:]]{2,2})' 'Your change is $7.45.'\n");
+   printf("    posixregex -r '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string\n");
+   printf("    posixregex -r '\\$([[:digit:]]+)\\.([[:digit:]]{2,2})' 'Your change is $7.45.'\n");
    return;
 }
 
