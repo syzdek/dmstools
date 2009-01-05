@@ -22,6 +22,21 @@
 /**
  *  @file src/posixregex.c simple POSIX regex testing utility/example
  */
+/*
+ *  Simple Build:
+ *     gcc -W -Wall -O2 -c posixregex.c
+ *     gcc -W -Wall -O2 -o posixregex   posixregex.o
+ *
+ *  GNU Libtool Build:
+ *     libtool --mode=compile gcc -W -Wall -g -O2 -c posixregex.c
+ *     libtool --mode=link    gcc -W -Wall -g -O2 -o posixregex posixregex.lo
+ *
+ *  GNU Libtool Install:
+ *     libtool --mode=install install -c posixregex /usr/local/bin/posixregex
+ *
+ *  GNU Libtool Clean:
+ *     libtool --mode=clean rm -f posixregex.lo posixregex
+ */
 #define _SCT_SRC_POSIXREGEX_C 1
 
 /////////////
