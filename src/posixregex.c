@@ -81,6 +81,7 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <string.h>
+#include <stdlib.h>
 
 
 ///////////////////
@@ -135,21 +136,21 @@ void my_version PARAMS((void));
 int main(int argc, char * argv[])
 {
    /* declare local vars */
-   int        c;
-   int        x;
-   int        y;
-   int        err;
-   int        code;
-   int        strlen;
-   int        quiet;
-   int        verbosity;
-   int        opt_index;
-   char       arg[BUFFER_SIZE];
-   char       msg[BUFFER_SIZE];
-   char       str[BUFFER_SIZE];
-   char     * restr;
-   regex_t    regex;
-   regmatch_t matches[MAX_MATCHES];
+   int          c;
+   int          x;
+   int          y;
+   int          err;
+   int          code;
+   int          strlen;
+   int          quiet;
+   int          verbosity;
+   int          opt_index;
+   char         arg[BUFFER_SIZE];
+   char         msg[BUFFER_SIZE];
+   char         str[BUFFER_SIZE];
+   regex_t      regex;
+   regmatch_t   matches[MAX_MATCHES];
+   const char * restr;
 
    /* getopt options */
    static char   short_opt[] = "hpqr:vV";
@@ -166,7 +167,7 @@ int main(int argc, char * argv[])
 
    /* initialize variables */
    code      = 0;
-   restr     = ".*";
+   restr     = NULL;
    quiet     = 0;
    verbosity = 0;
    opt_index = 0;
@@ -209,7 +210,16 @@ int main(int argc, char * argv[])
       };
    };
 
-   /* compile regulare expression for later use */
+   if (!(restr))
+      restr = getenv("POSIXREGEX");
+   if (!(restr))
+   {
+      fprintf(stderr, "%s: missing required argument `-- r'\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+      return(1);
+   };
+
+   /* compile regular expression for later use */
    if (!(quiet))
       printf("regex: %s\n",restr);
    if ((err = regcomp(&regex, restr, REG_EXTENDED|REG_ICASE)))
@@ -302,6 +312,8 @@ void my_usage(void)
    printf("  -r regex                  regular expression to use for testing strings\n");
    printf("  -v, --verbose             print verbose messages\n");
    printf("  -V, --version             print version number and exit\n");
+   printf("Variables:\n");
+   printf("  POSIXREGEX                default regular expression to use for testing strings\n");
    printf("\n");
 #ifdef PACKAGE_BUGREPORT
    printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
