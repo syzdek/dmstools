@@ -100,6 +100,18 @@
 #define PROGRAM_NAME "posixregex"
 #endif
 
+#ifndef PACKAGE_NAME
+#define PACKAGE_NAME ""
+#endif
+
+#ifndef PACKAGE_VERSION
+#define PACKAGE_VERSION ""
+#endif
+
+#ifndef PACKAGE_BUGREPORT
+#define PACKAGE_BUGREPORT "david@syzdek.net"
+#endif
+
 #ifndef PARAMS
 #define PARAMS(protos) protos
 #endif
@@ -325,14 +337,14 @@ void my_usage(void)
 /// displays version
 void my_version(void)
 {
-#if defined(PACKAGE_NAME) && defined(PACKAGE_VERSION) && defined(PACKAGE_COPYRIGHT)
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
    printf("\n");
+#ifdef PACKAGE_COPYRIGHT
    printf("%s\n", PACKAGE_COPYRIGHT);
+#endif
    printf("This is free software; see the source for copying conditions.  There is NO\n");
    printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
-#endif
    return;
 }
 
