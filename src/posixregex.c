@@ -101,6 +101,9 @@
 /* main statement */
 int main PARAMS((int, char **));
 
+/* displays POSIX regular expressions */
+void my_posixregex PARAMS((void));
+
 /* displays usage */
 void my_usage PARAMS((void));
 
@@ -135,10 +138,11 @@ int main(int argc, char * argv[])
    regmatch_t matches[MAX_MATCHES];
 
    /* getopt options */
-   static char   short_opt[] = "hr:vV";
+   static char   short_opt[] = "hr:pvV";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
+      {"posixregex",    no_argument, 0, 'p'},
       {"verbose",       no_argument, 0, 'v'},
       {"version",       no_argument, 0, 'V'},
       {NULL,            0,           0, 0  }
@@ -159,6 +163,9 @@ int main(int argc, char * argv[])
             break;
          case 'h':
             my_usage();
+            return(0);
+         case 'p':
+            my_posixregex();
             return(0);
          case 'r':
            restr = optarg;
@@ -232,11 +239,36 @@ int main(int argc, char * argv[])
 }
 
 
+/// displays POSIX regular expressions
+void my_posixregex(void)
+{
+   printf("POSIX        ASCII           Description\n");
+   printf("[:alnum:]    [A-Za-z0-9]     Alphanumeric characters\n");
+   printf("[:alpha:]    [A-Za-z]        Alphabetic characters\n");
+   printf("[:blank:]    [ \\t]           Space and tab\n");
+   printf("[:cntrl:]    [\\x00-\\x1F\\x7F] Control characters\n");
+   printf("[:digit:]    [0-9]           Digits\n");
+   printf("[:graph:]    [\\x21-\\x7E]     Visible characters\n");
+   printf("[:lower:]    [a-z]           Lowercase letters\n");
+   printf("[:print:]    [\\x20-\\x7E]     Visible characters and spaces\n");
+   printf("[:space:]    [ \\t\\r\\n\\v\\f]   Whitespace characters\n");
+   printf("[:upper:]    [A-Z]           Uppercase letters\n");
+   printf("[:xdigit:]   [A-Fa-f0-9]     Hexadecimal digits\n");
+   printf("[:punct:]    [-!\"#$%&'()*+,./:;<=>?@[\\]_`{|}~]   Punctuation characters\n");
+   printf("\n");
+   printf("Example Uses:\n");
+   printf("    posixregex '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string\n");
+   printf("    posixregex '\\$([[:digit:]]+)\\.([[:digit:]]{2,2})' 'Your change is $7.45.'\n");
+   return;
+}
+
+
 /// displays usage
 void my_usage(void)
 {
    printf("Usage: %s [OPTIONS] string\n", PROGRAM_NAME);
    printf("  -h, --help                print this help and exit\n");
+   printf("  -p, --posixregex          print regular expression patterns\n");
    printf("  -r regex                  regular expression to test\n");
    printf("  -v, --verbose             print verbose messages\n");
    printf("  -V, --version             print version number and exit\n");
