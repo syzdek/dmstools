@@ -1,9 +1,6 @@
 /*
- *  $Id: $
- */
-/*
  *  Syzdek Coding Tools
- *  Copyright (c) 2008 David M. Syzdek <david@syzdek.net>.
+ *  Copyright (c) 2008, 2009 David M. Syzdek <david@syzdek.net>.
  *
  *  @SYZDEK_LICENSE_HEADER_START@
  *  
