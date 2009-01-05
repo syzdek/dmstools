@@ -295,10 +295,11 @@ void my_posixregex(void)
 /// displays usage
 void my_usage(void)
 {
-   printf("Usage: %s [OPTIONS] string\n", PROGRAM_NAME);
+   printf("Usage: %s [OPTIONS] string1 string2 ... stringN\n", PROGRAM_NAME);
    printf("  -h, --help                print this help and exit\n");
    printf("  -p, --posixregex          print regular expression patterns\n");
-   printf("  -r regex                  regular expression to test\n");
+   printf("  -q, --quiet, --silent     do not print messages\n");
+   printf("  -r regex                  regular expression to use for testing strings\n");
    printf("  -v, --verbose             print verbose messages\n");
    printf("  -V, --version             print version number and exit\n");
    printf("\n");
