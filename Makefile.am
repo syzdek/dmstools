@@ -108,6 +108,7 @@ do_subst = sed \
 	-e 's,[@]PACKAGE_BUGREPORT[@],@PACKAGE_BUGREPORT@,g' \
 	-e 's|[@]PACKAGE_COPYRIGHT[@]|@PACKAGE_COPYRIGHT@|g' \
 	-e 's,[@]RELEASE_MONTH[@],@RELEASE_MONTH@,g'
+	-e 's,[@]GIT_PACKAGE_VERSION[@],@GIT_PACKAGE_VERSION@,g'
 do_subst_fn = \
 		echo "do_subst < ${@}.in > ${@}"; \
 		mkdir -p `dirname ${@}` || exit 1; \
