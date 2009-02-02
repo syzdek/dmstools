@@ -39,7 +39,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		08FB7794FE84155DC02AAC07 /* Syzdek Coding Tools */ = {
+		08FB7794FE84155DC02AAC07 /* DMS Tools and Utilities */ = {
 			isa = PBXGroup;
 			children = (
 				A02133F00E0E4C9C00336FDD /* acinclude.m4 */,
@@ -59,7 +59,7 @@
 				A02133FA0E0E4CCE00336FDD /* syzdek-coding.tags */,
 				A02133FB0E0E4CCE00336FDD /* TODO */,
 			);
-			name = "Syzdek Coding Tools";
+			name = "DMS Tools and Utilities";
 			sourceTree = "<group>";
 		};
 		A00422710E0E396200B0ED60 /* src */ = {
@@ -121,10 +121,10 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "SyzdekCodingTools" */;
+			buildConfigurationList = 1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "dmstools" */;
 			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
-			mainGroup = 08FB7794FE84155DC02AAC07 /* Syzdek Coding Tools */;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* DMS Tools and Utilities */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -189,7 +189,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "SyzdekCodingTools" */ = {
+		1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "dmstools" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB919408733D9F0010E9CD /* Debug */,

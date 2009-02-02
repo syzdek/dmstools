@@ -1,7 +1,5 @@
 /*
- *  $Id: $
- *
- *  Syzdek Coding Tools
+ *  DMS Tools and Utilities
  *  Copyright (C) 2008 David M. Syzdek <david@syzdek.net>.
  *
  *  @SYZDEK_LICENSE_HEADER_START@

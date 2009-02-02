@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = "Syzdek Coding Tools"
+PROJECT_NAME           = "DMS Tools and Utilities"
 PROJECT_NUMBER         = 0.0.2
 OUTPUT_DIRECTORY       = /Users/syzdek/development/syzdek-coding/doc
 CREATE_SUBDIRS         = YES
