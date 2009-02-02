@@ -73,7 +73,7 @@ src_posixregex_SOURCES			= $(noinst_HEADERS) \
 # lists
 TESTS					=
 XFAIL_TESTS				=
-EXTRA_DIST				= $(srcdir)/syzdek-coding.tags \
+EXTRA_DIST				= $(srcdir)/dmstools.tags \
 					  $(srcdir)/doc/Doxyfile \
 					  $(srcdir)/doc/codetagger.1.in \
 					  $(srcdir)/examples/Makefile \
@@ -117,19 +117,19 @@ do_subst_fn = \
 doc/codetagger.1: Makefile $(srcdir)/doc/codetagger.1.in
 	@$(do_subst_fn)
 
-license-tags: $(srcdir)/syzdek-coding.tags $(builddir)/src/codetagger
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/AUTHORS
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/acinclude.m4
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/configure.ac
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/ChangeLog
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/doc/codetagger.1.in
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/Makefile.am
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/NEWS
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/README
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/src/codetagger.c
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/src/common.h
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/syzdek-coding.tags
-	$(builddir)/src/codetagger -f $(srcdir)/syzdek-coding.tags $(srcdir)/TODO
+license-tags: $(srcdir)/dmstools.tags $(builddir)/src/codetagger
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/AUTHORS
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/acinclude.m4
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/configure.ac
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/ChangeLog
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/doc/codetagger.1.in
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/Makefile.am
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/NEWS
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/README
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/src/codetagger.c
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/src/common.h
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/dmstools.tags
+	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/TODO
 
 # local targets
 install-exec-local:
