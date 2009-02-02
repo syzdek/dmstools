@@ -2,6 +2,10 @@
 DMS Tools and Utilities
 Copyright (C) 2008 David M. Syzdek <david@syzdek.net>
 
+0.0.5
+	- re-branded package as dmstools. (syzdek)
+	- migrated from CVS to Git. (syzdek)
+
 0.0.4	2008/06/29
 	- added the Xcode wrapper Makefile-xcode to the distribution (syzdek)
 	- replaced calls to mkstemps() with mkstemp() due to the former not
