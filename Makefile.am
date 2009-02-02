@@ -85,9 +85,7 @@ EXTRA_DIST				= $(srcdir)/dmstools.tags \
 					  $(srcdir)/examples/example.txt \
 					  $(srcdir)/src/vaportar.c \
 					  $(srcdir)/Makefile-xcode \
-					  $(srcdir)/SyzdekCodingTools.xcodeproj/project.pbxproj \
-					  $(srcdir)/SyzdekCodingTools.xcodeproj/syzdek.mode1v3 \
-					  $(srcdir)/SyzdekCodingTools.xcodeproj/syzdek.pbxuser
+					  $(srcdir)/dmstools.xcodeproj/project.pbxproj
 CLEANFILES				= \
 					  $(builddir)/a.out   $(srcdir)/a.out \
 					  $(builddir)/*/a.out $(srcdir)/*/a.out \
