@@ -73,7 +73,8 @@ src_posixregex_SOURCES			= $(noinst_HEADERS) \
 # lists
 TESTS					=
 XFAIL_TESTS				=
-EXTRA_DIST				= $(srcdir)/dmstools.tags \
+EXTRA_DIST				= build-aux/git-package-version \
+					  $(srcdir)/dmstools.tags \
 					  $(srcdir)/doc/Doxyfile \
 					  $(srcdir)/doc/codetagger.1.in \
 					  $(srcdir)/examples/Makefile \
@@ -112,6 +113,10 @@ do_subst_fn = \
 
 
 # custom targets
+build-aux/git-package-version:
+	mkdir -p build-aux
+	echo $(PACKAGE_VERSION) > $(srcdir)/build-aux/git-package-version
+
 doc/codetagger.1: Makefile $(srcdir)/doc/codetagger.1.in
 	@$(do_subst_fn)
 

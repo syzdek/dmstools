@@ -25,21 +25,42 @@
 # AC_SYZDEK_GIT_PACKAGE_VERSION()
 # -----------------------------------
 AC_DEFUN([AC_SYZDEK_GIT_PACKAGE_VERSION],[dnl
+
    if test -d ${srcdir}/.git -o -f ${srcdir}/.git;then
       GPV=$(git describe --abbrev=4 HEAD 2>/dev/null)
-      GPV=$(echo "$GPV" | sed -e 's/-/./g');
-      GPV=$(echo "$GPV" | sed -e 's/^v//g');
-      if test "x${GPV}" = "x";then
-         AC_MSG_WARN([unable to determine package version from Git tags])
-      else
-         GIT_PACKAGE_VERSION=${GPV}
-         AC_SUBST([GIT_PACKAGE_VERSION], [${GPV}])
-         AC_SUBST([PACKAGE_VERSION], [${GPV}])
-         AC_SUBST([VERSION], [${GPV}])
-         AC_DEFINE_UNQUOTED([GIT_PACKAGE_VERSION], ["${GIT_PACKAGE_VERSION}"], [package version determined from git repository])
-         AC_DEFINE_UNQUOTED([PACKAGE_VERSION], ["${GIT_PACKAGE_VERSION}"], [package version determined from git repository])
-         AC_DEFINE_UNQUOTED([VERSION], ["${GIT_PACKAGE_VERSION}"], [package version determined from git repository])
+      GPV=$(echo "$GPV" | sed -e 's/-/./g')
+      GPV=$(echo "$GPV" | sed -e 's/^v//g')
+      if test "x${GPV}" != "x";then
+         AC_MSG_NOTICE([using git package version ${GPV}])
+         if test -d ${ac_aux_dir};then 
+            echo ${GPV} > ${ac_aux_dir}/git-package-version
+         fi
       fi
+   elif test -f ${ac_aux_dir}/git-package-version;then
+      GPV=$(cat ${ac_aux_dir}/git-package-version)
+      if test -d ${ac_aux_dir};then
+         AC_MSG_NOTICE([using cached git package version ${GPV}])
+      fi
+   fi
+
+   if test "x${GPV}" = "x";then
+      AC_MSG_WARN([unable to determine package version from Git tags])
+   else
+      #
+      # set internal variables
+      GIT_PACKAGE_VERSION=${GPV}
+      PACKAGE_VERSION=${GPV}
+      VERSION=${GPV}
+      #
+      # set substitution variables
+      AC_SUBST([GIT_PACKAGE_VERSION], [${GPV}])
+      AC_SUBST([PACKAGE_VERSION], [${GPV}])
+      AC_SUBST([VERSION], [${GPV}])
+      #
+      # set C/C++/Objc preprocessor macros
+      AC_DEFINE_UNQUOTED([GIT_PACKAGE_VERSION], ["${GIT_PACKAGE_VERSION}"], [package version determined from git repository])
+      AC_DEFINE_UNQUOTED([PACKAGE_VERSION], ["${GIT_PACKAGE_VERSION}"], [package version determined from git repository])
+      AC_DEFINE_UNQUOTED([VERSION], ["${GIT_PACKAGE_VERSION}"], [package version determined from git repository])
    fi
 ])dnl
 
