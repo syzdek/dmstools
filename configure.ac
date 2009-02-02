@@ -42,7 +42,7 @@ AC_SUBST(LIB_VERSION_INFO, 2:1:1)
 AC_SUBST(LIB_RELEASE_INFO, 2) # used by Win32 DLLs
 
 AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_SRCDIR([syzdek-coding.tags])
+AC_CONFIG_SRCDIR([dmstools.tags])
 AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_HEADERS([config.h])
 
