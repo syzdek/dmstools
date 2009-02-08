@@ -37,7 +37,7 @@
  *  GNU Libtool Clean:
  *     libtool --mode=clean rm -f codetagger.lo codetagger
  */
-#define _SCT_SRC_CODINGTAGGER_M 1
+#define _DMSTOOLS_SRC_CODINGTAGGER_C 1
 
 /////////////
 //         //
