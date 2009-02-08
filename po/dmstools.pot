@@ -1,0 +1,185 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: dmstools 0.0.5.16.g71c0\n"
+"Report-Msgid-Bugs-To: david@syzdek.net\n"
+"POT-Creation-Date: 2009-02-07 18:21-0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/codetagger.c:328 src/codetagger.c:1032
+msgid "   compiling regular expression\n"
+msgstr ""
+
+#: src/codetagger.c:341 src/codetagger.c:673
+#, c-format
+msgid "   compiled regular expression \"%s\"\n"
+msgstr ""
+
+#: src/codetagger.c:347
+msgid "   expanding tags\n"
+msgstr ""
+
+#: src/codetagger.c:367
+#, c-format
+msgid "   inserting tag \"%s\" (line %i)\n"
+msgstr ""
+
+#: src/codetagger.c:382
+#, c-format
+msgid "%s: missing end @%sEND@ in %s\n"
+msgstr ""
+
+#: src/codetagger.c:559
+#, c-format
+msgid "   retrieving tag \"%s\"\n"
+msgstr ""
+
+#: src/codetagger.c:565
+#, c-format
+msgid ": %s: %i: unknown tag \"%s\"\n"
+msgstr ""
+
+#: src/codetagger.c:599
+#, c-format
+msgid "   freeing tag \"%s\"\n"
+msgstr ""
+
+#: src/codetagger.c:602
+msgid "   freeing unknown tag\n"
+msgstr ""
+
+#: src/codetagger.c:626
+msgid "freeing tag index\n"
+msgstr ""
+
+#: src/codetagger.c:662
+msgid "   compiling regular expression for tags\n"
+msgstr ""
+
+#: src/codetagger.c:676
+#, c-format
+msgid "creating tag index from \"%s\"\n"
+msgstr ""
+
+#: src/codetagger.c:695
+msgid "   freeing file buffer\n"
+msgstr ""
+
+#: src/codetagger.c:697
+msgid "   freeing regular expressions\n"
+msgstr ""
+
+#: src/codetagger.c:719
+#, c-format
+msgid "processing file \"%s\"\n"
+msgstr ""
+
+#: src/codetagger.c:722
+msgid "   inspecting file\n"
+msgstr ""
+
+#: src/codetagger.c:730
+msgid "   opening file\n"
+msgstr ""
+
+#: src/codetagger.c:738
+msgid "   allocating memory for file buffer\n"
+msgstr ""
+
+#: src/codetagger.c:747
+msgid "   reading file\n"
+msgstr ""
+
+#: src/codetagger.c:757
+msgid "   closing file\n"
+msgstr ""
+
+#: src/codetagger.c:761
+msgid "   analyzing file contents\n"
+msgstr ""
+
+#: src/codetagger.c:773
+msgid "   allocating memory for file index\n"
+msgstr ""
+
+#: src/codetagger.c:783
+msgid "   indexing file's contents\n"
+msgstr ""
+
+#: src/codetagger.c:875
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr ""
+
+#: src/codetagger.c:878
+#, c-format
+msgid ""
+"%s: unrecognized option `--%c'\n"
+"Try `%s --help' for more information.\n"
+msgstr ""
+
+#: src/codetagger.c:894
+#, c-format
+msgid ""
+"%s: missing required option `-f'\n"
+"Try `%s --help' for more information.\n"
+msgstr ""
+
+#: src/codetagger.c:906
+#, c-format
+msgid ": no tag definitions were found in \"%s\"\n"
+msgstr ""
+
+#. TRANSLATORS: The following strings provide usage for command. These
+#. strings are displayed if the program is passed `--help' on the command
+#. line. The two strings referenced are: PROGRAM_NAME, and
+#. PACKAGE_BUGREPORT
+#: src/codetagger.c:929
+#, c-format
+msgid ""
+"Usage: %s [OPTIONS] files\n"
+"  -f file                   file containing tags\n"
+"  -h, --help                print this help and exit\n"
+"  -l str                    left enclosing string for tags\n"
+"  -r str                    right enclosing string for tags\n"
+"  -t, --test                show what would be done\n"
+"  -v, --verbose             print verbose messages\n"
+"  -V, --version             print version number and exit\n"
+"\n"
+"Report bugs to <%s>.\n"
+msgstr ""
+
+#. TRANSLATORS: The following strings provide version and copyright
+#. information if the program is passed --version on the command line.
+#. The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
+#. PACKAGE_VERSION.
+#: src/codetagger.c:952
+#, c-format
+msgid ""
+"%s (%s) %s\n"
+"Written by David M. Syzdek.\n"
+"\n"
+"%s\n"
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+msgstr ""
+
+#: src/codetagger.c:996
+#, c-format
+msgid "   indexing tag \"%s\"\n"
+msgstr ""
+
+#: src/codetagger.c:1007 src/codetagger.c:1015 src/codetagger.c:1026
+#, c-format
+msgid ": out of virtual memory\n"
+msgstr ""

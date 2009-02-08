@@ -84,6 +84,26 @@
 
 ///////////////////
 //               //
+//  i18l Support //
+//               //
+///////////////////
+
+#ifdef HAVE_GETTEXT
+#   include <gettext.h>
+#   include <libintl.h>
+#   define _(String) gettext (String)
+#   define gettext_noop(String) String
+#   define N_(String) gettext_noop (String)
+#else
+#   define _(String) (String)
+#   define N_(String) String
+#   define textdomain(Domain)
+#   define bindtextdomain(Package, Directory)
+#endif
+
+
+///////////////////
+//               //
 //  Definitions  //
 //               //
 ///////////////////
@@ -305,7 +325,7 @@ int expand_tags(const char * filename, Config * cnf)
    };
 
    /* compiles regex used to locate tags */
-   debug_printf(5, "   compiling regular expression\n");
+   debug_printf(5, _("   compiling regular expression\n"));
    strncat(regstr,       "(.*)",              STR_LEN);
    escape_string(regstr, cnf->leftTagString,  STR_LEN);
    strncat(regstr,       "([_[:blank:][:alnum:]]+)START",   STR_LEN);
@@ -318,13 +338,13 @@ int expand_tags(const char * filename, Config * cnf)
       free_filedata(data);
       return(0);
    };
-   debug_printf(8, "   compiled regular expression \"%s\"\n", regstr);
+   debug_printf(8, _("   compiled regular expression \"%s\"\n"), regstr);
 
    /* counts lines in data */
    for(data_len = 0; data[data_len]; data_len++);
 
    /* loops through file */
-   debug_printf(5, "   expanding tags\n");
+   debug_printf(5, _("   expanding tags\n"));
    for(data_pos = 0; data_pos < data_len; data_pos++)
    {
       /* copies the old file into the new file */
@@ -344,7 +364,7 @@ int expand_tags(const char * filename, Config * cnf)
       if ((tag = find_tag(tagName, cnf->tagList, filename, data_pos+1)))
       {
          /* writes contents of the tag */
-         debug_printf(3, "   inserting tag \"%s\" (line %i)\n", tagName, data_pos);
+         debug_printf(3, _("   inserting tag \"%s\" (line %i)\n"), tagName, data_pos);
          for(tag_pos = 0; tag->contents[tag_pos]; tag_pos++)
             file_printf(fdout, "%s%s\n", margin, tag->contents[tag_pos]);
 
@@ -359,7 +379,7 @@ int expand_tags(const char * filename, Config * cnf)
          /* exits with error if end tag is not found */
          if (err)
          {
-            fprintf(stderr, "%s: missing end @%sEND@ in %s\n", PROGRAM_NAME, tagName, filename);
+            fprintf(stderr, _("%s: missing end @%sEND@ in %s\n"), PROGRAM_NAME, tagName, filename);
             file_link(fdout, NULL, tmpfile);
             free_filedata(data);
             return(-1);
@@ -536,13 +556,13 @@ TagData * find_tag(const char * tagName, TagData ** tagList,
    if (!(fileName))
       return(NULL);
 
-   debug_printf(5, "   retrieving tag \"%s\"\n", tagName);
+   debug_printf(5, _("   retrieving tag \"%s\"\n"), tagName);
 
    for(i = 0; tagList[i]; i++)
       if (!(strcasecmp(tagName, tagList[i]->name)))
          return(tagList[i]);
 
-   debug_printf(1, PROGRAM_NAME ": %s: %i: unknown tag \"%s\"\n", fileName, lineNumber, tagName);
+   debug_printf(1, _(PROGRAM_NAME ": %s: %i: unknown tag \"%s\"\n"), fileName, lineNumber, tagName);
 
    return(NULL);
 }
@@ -576,10 +596,10 @@ void free_tag(TagData * tag)
 
    if (tag->name)
    {
-      debug_printf(7, "   freeing tag \"%s\"\n", tag->name);
+      debug_printf(7, _("   freeing tag \"%s\"\n"), tag->name);
       free(tag->name);
    } else {
-      debug_printf(7, "   freeing unknown tag\n");
+      debug_printf(7, _("   freeing unknown tag\n"));
    };
 
    if (tag->contents)
@@ -603,7 +623,7 @@ void free_taglist(TagData ** taglist)
    int i;
    if (!(taglist))
       return;
-   debug_printf(7, "freeing tag index\n");
+   debug_printf(7, _("freeing tag index\n"));
    for(i = 0; taglist[i]; i++)
       free_tag(taglist[i]);
    free(taglist);
@@ -639,7 +659,7 @@ int generate_taglist(Config * cnf)
    for(lineCount = 0; data[lineCount]; lineCount++);
 
    /* compiles regex used to locate tags */
-   debug_printf(5, "   compiling regular expression for tags\n");
+   debug_printf(5, _("   compiling regular expression for tags\n"));
    strncat(regstr,       "^",              STR_LEN);
    escape_string(regstr, cnf->leftTagString,  STR_LEN);
    strncat(regstr,       "([_[:blank:][:alnum:]]+)START",   STR_LEN);
@@ -650,10 +670,10 @@ int generate_taglist(Config * cnf)
       printf("regex error: %s\n", errmsg);
       return(-1);
    };
-   debug_printf(8, "   compiled regular expression \"%s\"\n", regstr);
+   debug_printf(8, _("   compiled regular expression \"%s\"\n"), regstr);
 
    /* loops through looking for tags */
-   debug_printf(3, "creating tag index from \"%s\"\n", cnf->tagFile);
+   debug_printf(3, _("creating tag index from \"%s\"\n"), cnf->tagFile);
    for(i = 0; i < lineCount; i++)
    {
       if (!(err = regexec(&regex, data[i], 5, match, 0)))
@@ -672,9 +692,9 @@ int generate_taglist(Config * cnf)
    };
 
    /* frees resources */
-   debug_printf(7, "   freeing file buffer\n");
+   debug_printf(7, _("   freeing file buffer\n"));
    free_filedata(data);
-   debug_printf(7, "   freeing regular expressions\n");
+   debug_printf(7, _("   freeing regular expressions\n"));
    regfree(&regex);
 
    /* ends function */
@@ -696,10 +716,10 @@ char ** get_file_contents(const char * file)
    struct stat    sb;
 
    /* prints debug information */
-   debug_printf(2, "processing file \"%s\"\n", file);
+   debug_printf(2, _("processing file \"%s\"\n"), file);
 
    /* stat file */
-   debug_printf(6, "   inspecting file\n"); 
+   debug_printf(6, _("   inspecting file\n"));
    if ((stat(file, &sb)) == -1)
    {
       perror(PROGRAM_NAME ": stat()");
@@ -707,7 +727,7 @@ char ** get_file_contents(const char * file)
    };
 
    /* opens file for reading */
-   debug_printf(6, "   opening file\n"); 
+   debug_printf(6, _("   opening file\n"));
    if ((fd = open(file, O_RDONLY)) == -1)
    {
       perror(PROGRAM_NAME ": open()");
@@ -715,7 +735,7 @@ char ** get_file_contents(const char * file)
    };
 
    /* allocates memory for buffer */
-   debug_printf(7, "   allocating memory for file buffer\n"); 
+   debug_printf(7, _("   allocating memory for file buffer\n"));
    if (!(buff = (char *) malloc(sb.st_size + 1)))
    {
       fprintf(stderr, PROGRAM_NAME ": out of virtual memory\n");
@@ -724,7 +744,7 @@ char ** get_file_contents(const char * file)
    };
 
    /* reads file into buffer */
-   debug_printf(6, "   reading file\n"); 
+   debug_printf(6, _("   reading file\n"));
    if ((len = read(fd, buff, sb.st_size)) == -1)
    {
       perror(PROGRAM_NAME ": read()");
@@ -734,11 +754,11 @@ char ** get_file_contents(const char * file)
    buff[len] = '\0';
 
    /* closes file */
-   debug_printf(6, "   closing file\n"); 
+   debug_printf(6, _("   closing file\n"));
    close(fd);
 
    /* counts and terminates lines */
-   debug_printf(5, "   analyzing file contents\n"); 
+   debug_printf(5, _("   analyzing file contents\n"));
    count = 0;
    for(i = 0; i < len; i++)
    {
@@ -750,7 +770,7 @@ char ** get_file_contents(const char * file)
    };
 
    /* allocates memory for line array */
-   debug_printf(7, "   allocating memory for file index\n"); 
+   debug_printf(7, _("   allocating memory for file index\n"));
    count++;
    if (!(lines = (char **) malloc(sizeof(char *) * count)))
    {
@@ -760,7 +780,7 @@ char ** get_file_contents(const char * file)
    };
 
    /* places lines in array */
-   debug_printf(5, "   indexing file's contents\n"); 
+   debug_printf(5, _("   indexing file's contents\n"));
    lines[0] = buff;
    count = 0;
    for(i = 0; i < len; i++)
@@ -799,6 +819,12 @@ int main(int argc, char * argv[])
       {"version",       no_argument, 0, 'V'},
       {NULL,            0,           0, 0  }
    };
+
+#ifdef HAVE_GETTEXT
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, LOCALEDIR);
+   textdomain (PACKAGE);
+#endif
 
    /* initialize variables */
    memset(&cnf, 0, sizeof(Config));
@@ -846,11 +872,13 @@ int main(int argc, char * argv[])
             break;
             
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
             return(1);
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
+                  "Try `%s --help' for more information.\n"
+               ),  PROGRAM_NAME, c, PROGRAM_NAME
+            );
             return(1);
       };
    };
@@ -863,8 +891,10 @@ int main(int argc, char * argv[])
    };
    if (!(cnf.tagFile ))
    {
-      fprintf(stderr, "%s: missing required option `-f'\n", PROGRAM_NAME);
-      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+      fprintf(stderr, _("%s: missing required option `-f'\n"
+            "Try `%s --help' for more information.\n"
+         ), PROGRAM_NAME, PROGRAM_NAME
+      );
       return(1);
    };
 
@@ -873,7 +903,7 @@ int main(int argc, char * argv[])
       return(0);
    if (!(cnf.tagCount))
    {
-      fprintf(stderr, PROGRAM_NAME ": no tag definitions were found in \"%s\"\n", cnf.tagFile);
+      fprintf(stderr, _(PROGRAM_NAME ": no tag definitions were found in \"%s\"\n"), cnf.tagFile);
       return(1);
    };
 
@@ -892,18 +922,22 @@ int main(int argc, char * argv[])
 /// displays usage
 void my_usage(void)
 {
-   printf("Usage: %s [OPTIONS] files\n", PROGRAM_NAME);
-   printf("  -f file                   file containing tags\n");
-   printf("  -h, --help                print this help and exit\n");
-   printf("  -l str                    left enclosing string for tags\n");
-   printf("  -r str                    right enclosing string for tags\n");
-   printf("  -t, --test                show what would be done\n");
-   printf("  -v, --verbose             print verbose messages\n");
-   printf("  -V, --version             print version number and exit\n");
-   printf("\n");
-#ifdef PACKAGE_BUGREPORT
-   printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
-#endif
+   // TRANSLATORS: The following strings provide usage for command. These
+   // strings are displayed if the program is passed `--help' on the command
+   // line. The two strings referenced are: PROGRAM_NAME, and
+   // PACKAGE_BUGREPORT
+   printf(_("Usage: %s [OPTIONS] files\n"
+         "  -f file                   file containing tags\n"
+         "  -h, --help                print this help and exit\n"
+         "  -l str                    left enclosing string for tags\n"
+         "  -r str                    right enclosing string for tags\n"
+         "  -t, --test                show what would be done\n"
+         "  -v, --verbose             print verbose messages\n"
+         "  -V, --version             print version number and exit\n"
+         "\n"
+         "Report bugs to <%s>.\n"
+      ), PROGRAM_NAME, PACKAGE_BUGREPORT
+   );
    return;
 }
 
@@ -911,18 +945,18 @@ void my_usage(void)
 /// displays version information
 void my_version(void)
 {
-#if defined(PACKAGE_NAME) && defined(PACKAGE_VERSION)
-   printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
-#else
-   printf("%s\n", PROGRAM_NAME);
-#endif
-   printf("Written by David M. Syzdek.\n");
-   printf("\n");
-#if defined(PACKAGE_COPYRIGHT)
-   printf("%s\n", PACKAGE_COPYRIGHT);
-#endif
-   printf("This is free software; see the source for copying conditions.  There is NO\n");
-   printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
+   // TRANSLATORS: The following strings provide version and copyright
+   // information if the program is passed --version on the command line.
+   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
+   // PACKAGE_VERSION.
+   printf(_("%s (%s) %s\n"
+         "Written by David M. Syzdek.\n"
+         "\n"
+         "%s\n"
+         "This is free software; see the source for copying conditions.  There is NO\n"
+         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_COPYRIGHT
+   );
    return;
 }
 
@@ -959,7 +993,7 @@ int process_tag(char * tagName, char ** data, int len, int pos, Config * cnf)
    memset(errmsg, 0, STR_LEN);
 
    /* prints debugging information */
-   debug_printf(5, "   indexing tag \"%s\"\n", tagName);
+   debug_printf(5, _("   indexing tag \"%s\"\n"), tagName);
 
    /* counts tags in taglist */
    tagCount = 0;
@@ -970,7 +1004,7 @@ int process_tag(char * tagName, char ** data, int len, int pos, Config * cnf)
    tagCount++;
    if (!(tag = (TagData *) malloc(sizeof(TagData))))
    {
-      fprintf(stderr, PROGRAM_NAME ": out of virtual memory\n");
+      fprintf(stderr, _(PROGRAM_NAME ": out of virtual memory\n"));
       return(-1);
    };
    memset(tag, 0, sizeof(TagData));
@@ -978,7 +1012,7 @@ int process_tag(char * tagName, char ** data, int len, int pos, Config * cnf)
    /* allocates memory for array */
    if (!(ptr = realloc(cnf->tagList, sizeof(TagData) * (tagCount + 1))))
    {
-      fprintf(stderr, PROGRAM_NAME ": out of virtual memory\n");
+      fprintf(stderr, _(PROGRAM_NAME ": out of virtual memory\n"));
       free_tag(tag);
       return(-1);
    };
@@ -989,13 +1023,13 @@ int process_tag(char * tagName, char ** data, int len, int pos, Config * cnf)
    /* saves tag name */
    if (!(tag->name = strdup(tagName)))
    {
-      fprintf(stderr, PROGRAM_NAME ": out of virtual memory\n");
+      fprintf(stderr, _(PROGRAM_NAME ": out of virtual memory\n"));
       free_tag(tag);
       return(-1);
    };
 
    /* compiles regular expression */
-   debug_printf(5, "   compiling regular expression\n");
+   debug_printf(5, _("   compiling regular expression\n"));
    escape_string(regstr, cnf->leftTagString,  STR_LEN);
    strncat(regstr,       "(",                 STR_LEN);
    strncat(regstr,       tagName,             STR_LEN);

@@ -84,12 +84,12 @@ AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
 # GNU gettext support
-#AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT([external])
 
 AC_SYZDEK_GIT_PACKAGE_VERSION
 
 # Creates outputs
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile po/Makefile.in])
 AC_OUTPUT
 
 # Show local config

@@ -23,8 +23,8 @@
 #
 
 # Sub directories
-SUBDIRS					=
-DIST_SUBDIRS				=
+SUBDIRS					= po
+DIST_SUBDIRS				= po
 
 
 # Global flags
@@ -34,6 +34,7 @@ AM_CFLAGS				= -O2 -W -Wall -Werror
 AM_CXXFLAGS				= -O2 -W -Wall -Werror
 AM_OBJCFLAGS				= -O2 -W -Wall -Werror
 AM_CPPFLAGS				= -O2 -W -Wall -Werror -DHAVE_COMMON_H=1
+ACLOCAL_AMFLAGS				= -I m4
 
 
 # automake targets
@@ -81,7 +82,8 @@ src_recurse_SOURCES			= $(noinst_HEADERS) \
 # lists
 TESTS					=
 XFAIL_TESTS				=
-EXTRA_DIST				= build-aux/git-package-version \
+EXTRA_DIST				= build-aux/config.rpath \
+					  build-aux/git-package-version \
 					  $(srcdir)/dmstools.tags \
 					  $(srcdir)/doc/Doxyfile \
 					  $(srcdir)/doc/codetagger.1.in \
