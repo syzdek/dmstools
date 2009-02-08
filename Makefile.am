@@ -37,7 +37,8 @@ AM_CPPFLAGS				= -O2 -W -Wall -Werror -DHAVE_COMMON_H=1
 
 
 # automake targets
-bin_PROGRAMS				= src/bitops src/codetagger src/posixregex 
+bin_PROGRAMS				= src/bitops src/codetagger src/posixregex
+noinst_PROGRAMS				= src/recurse
 noinst_HEADERS				= src/common.h
 man_MANS				= doc/codetagger.1
 
@@ -61,6 +62,13 @@ src_posixregex_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_posixregex_CPPFLAGS			= -DPROGRAM_NAME="\"posixregex\"" $(AM_CPPFLAGS)
 src_posixregex_SOURCES			= $(noinst_HEADERS) \
 					  src/posixregex.c
+
+
+# macros for src/posixregex
+src_recurse_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
+src_recurse_CPPFLAGS			= -DPROGRAM_NAME="\"recurse\"" $(AM_CPPFLAGS)
+src_recurse_SOURCES			= $(noinst_HEADERS) \
+					  src/recurse.c
 
 
 # macros for src/codetagger
