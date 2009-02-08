@@ -43,7 +43,6 @@ AC_SUBST(LIB_RELEASE_INFO, 2) # used by Win32 DLLs
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([dmstools.tags])
-AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_HEADERS([config.h])
 
 # determines host type
@@ -60,11 +59,7 @@ AC_PROG_CC
 #AC_PROG_CXX
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
-
-# checks for Unix Variants
-AC_AIX
-#AC_MINIX
-#AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS # replaces AC_AIX AC_GNU_SOURCE AC_MINIX
 AC_C_BIGENDIAN
 
 # binary locations
@@ -75,11 +70,21 @@ AC_CHECK_TOOLS(NM,	nm gnm,		[AC_MSG_ERROR([missing binutil "nm"])])
 AC_CHECK_TOOLS(RANLIB,	ranlib granlib,	[AC_MSG_ERROR([missing binutil "ranlib"])])
 AC_CHECK_TOOLS(STRIP,	strip gstrip,	[AC_MSG_ERROR([missing binutil "strip"])])
 
+# shell programs
+AC_PROG_AWK
+AC_PROG_EGREP
+AC_PROG_FGREP
+AM_PROG_LEX
+AC_PROG_LN_S
+
 # GNU Libtool Support
 AC_LIBTOOL_DLOPEN
 AC_DISABLE_FAST_INSTALL
 AC_LIBTOOL_WIN32_DLL
-#AC_PROG_LIBTOOL
+AC_PROG_LIBTOOL
+
+# GNU gettext support
+#AM_GNU_GETTEXT([external])
 
 AC_SYZDEK_GIT_PACKAGE_VERSION
 
