@@ -1367,9 +1367,17 @@ int main(int argc, char * argv[])
       return(1);
    };
 
-   /* loops through files to be tagged */
+   // loops through files to be tagged
    for(i = optind; i < argc; i++)
-      codetagger_update_file(&cnf, argv[i]);
+      switch (codetagger_scan_directory(&cnf, argv[i]))
+      {
+         case -1: return(1);
+         case 0:  break;
+         default:
+            if (!(cnf.opts & CODETAGGER_OPT_CONTINUE))
+               return(1);
+            break;
+      };
 
    /* frees memory */
    codetagger_free_taglist(&cnf, cnf.tagList);
