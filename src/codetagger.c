@@ -180,7 +180,7 @@ struct codetagger_config
 void codetagger_debug_trace PARAMS((CodeTagger * cnf, const char * func,
    const char * fmt, ...));
 
-// escapes each character of the string and places the result at the end of the buffer
+// creates a regex safe string (escapes chracters meaning full in regex)
 int codetagger_escape_string PARAMS((CodeTagger * cnf, char * buff,
    const char * str, unsigned len));
 
@@ -273,7 +273,7 @@ void codetagger_debug_trace(CodeTagger * cnf, const char * func, const char * fm
 }
 
 
-/// escapes each character of the string and places the result at the end of the buffer
+// creates a regex safe string (escapes chracters meaning full in regex)
 /// @param[in] buff  buffer into which escape the string
 /// @param[in] str   string to escape and concatenate from
 /// @param[in] len   size of buffer
