@@ -1081,6 +1081,7 @@ int main(int argc, char * argv[])
             break;
          case 'q':
             cnf.opts |= CODETAGGER_OPT_QUIET;
+            cnf.opts &= cnf.opts & (~CODETAGGER_OPT_VERBOSE);
             break;
          case 'R':
             cnf.opts |= CODETAGGER_OPT_RECURSE;
@@ -1096,6 +1097,7 @@ int main(int argc, char * argv[])
             return(0);
          case 'v':
             cnf.opts |= CODETAGGER_OPT_VERBOSE;
+            cnf.opts &= cnf.opts & (~CODETAGGER_OPT_QUIET);
             break;
          case '?':
             fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
