@@ -420,8 +420,8 @@ FILE * codetagger_file_open(CodeTagger * cnf, const char * file, char * buff, in
 
    buff[0] = '\0';
 
-   //if (test_mode)
-   //   return(NULL);
+   if (cnf->opts & CODETAGGER_OPT_TEST)
+      return(NULL);
 
    snprintf(buff, buff_len, "%s.XXXXXXXXXX", file);
    if (!(fd = mkstemp(buff)))
