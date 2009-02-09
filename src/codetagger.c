@@ -209,7 +209,7 @@ void codetagger_free_tag PARAMS((CodeTaggerData * tag));
 void codetagger_free_taglist PARAMS((CodeTaggerData ** taglist));
 
 // generate array of tags from file
-int codetagger_generate_taglist PARAMS((CodeTagger * cnf));
+int codetagger_parse_tag_file PARAMS((CodeTagger * cnf));
 
 // reads file into an array
 char ** codetagger_get_file_contents PARAMS((const char * file));
@@ -647,7 +647,7 @@ void codetagger_free_taglist(CodeTaggerData ** taglist)
 
 /// generate array of tags from file
 /// @param[in] file  file name of file which contains tag definitions
-int codetagger_generate_taglist(CodeTagger * cnf)
+int codetagger_parse_tag_file(CodeTagger * cnf)
 {
    /* declares local vars */
    int           i;
@@ -1124,7 +1124,7 @@ int main(int argc, char * argv[])
    codetagger_debug(&cnf);
 
    /* parses tag file */
-   if ((codetagger_generate_taglist(&cnf)))
+   if ((codetagger_parse_tag_file(&cnf)))
       return(0);
    if (!(cnf.tagCount))
    {
