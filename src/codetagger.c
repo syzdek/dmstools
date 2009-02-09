@@ -146,8 +146,8 @@
 /////////////////
 
 /// tag data
-typedef struct tag_data TagData;
-struct tag_data
+typedef struct codetagger_data CodeTaggerData;
+struct codetagger_data
 {
    char     * name;
    char    ** contents;
@@ -156,15 +156,15 @@ struct tag_data
 
 
 /// config data
-typedef struct config_data Config;
-struct config_data
+typedef struct codetagger_config CodeTagger;
+struct codetagger_config
 {
-   unsigned      opts;
-   unsigned      tagCount;
-   TagData    ** tagList;
-   const char  * tagFile;
-   const char  * leftTagString;
-   const char  * rightTagString;
+   unsigned          opts;
+   unsigned          tagCount;
+   const char      * tagFile;
+   const char      * leftTagString;
+   const char      * rightTagString;
+   CodeTaggerData ** tagList;
 };
 
 
@@ -180,8 +180,8 @@ struct config_data
  *  test modes.  I feel the amount of complexity removed justified
  *  the addition of these variables. --David M. Syzdek 2008/06/21
  */
-//int verbosity = 0;	///< sets verbosity of program
-//int test_mode = 0;	///< toggles test mode
+//int verbosity = 0;   ///< sets verbosity of program
+//int test_mode = 0;   ///< toggles test mode
 
 
 //////////////////
@@ -197,7 +197,7 @@ void codetagger_debug PARAMS((int level, const char * fmt, ...));
 int codetagger_escape_string PARAMS((char * buff, const char * str, unsigned len));
 
 // processes original file by inserting/expanding tags
-int codetagger_expand_tags PARAMS((const char * filename, Config * cnf));
+int codetagger_expand_tags PARAMS((const char * filename, CodeTagger * cnf));
 
 // replaces original file with temp file and unlinks temp file name
 int codetagger_file_link PARAMS((FILE * fdout, const char * ofile, const char * tfile));
@@ -209,20 +209,20 @@ FILE * codetagger_file_open PARAMS((const char * file, char * buff, int buff_len
 void codetagger_file_printf PARAMS((FILE * fdout, const char * fmt, ...));
 
 // finds a specific tag in the array of tag data
-TagData * codetagger_find_tag PARAMS((const char * tagName, TagData ** tagList,
+CodeTaggerData * codetagger_find_tag PARAMS((const char * tagName, CodeTaggerData ** tagList,
                            const char * fileName, int lineNumber));
 
 // frees memory used to hold file contents
 void codetagger_free_filedata PARAMS((char ** lines));
 
 // frees memory used store tag
-void codetagger_free_tag PARAMS((TagData * tag));
+void codetagger_free_tag PARAMS((CodeTaggerData * tag));
 
 // frees memory used store an array of tags
-void codetagger_free_taglist PARAMS((TagData ** taglist));
+void codetagger_free_taglist PARAMS((CodeTaggerData ** taglist));
 
 // generate array of tags from file
-int codetagger_generate_taglist PARAMS((Config * cnf));
+int codetagger_generate_taglist PARAMS((CodeTagger * cnf));
 
 // reads file into an array
 char ** codetagger_get_file_contents PARAMS((const char * file));
@@ -235,7 +235,7 @@ void codetagger_version PARAMS((void));
 
 // extracts tag data from tag file
 int codetagger_process_tag PARAMS((char * name, char ** data, int len, int pos,
-                        Config * cnf));
+                        CodeTagger * cnf));
 
 // main statement
 int main PARAMS((int argc, char * argv[]));
@@ -293,7 +293,7 @@ int codetagger_escape_string(char * buff, const char * str, unsigned len)
 /// processes original file by inserting/expanding tags
 /// @param[in]  file  name of file to process
 /// @param[in]  cnf   array of tags to insert into new file
-int codetagger_expand_tags(const char * filename, Config * cnf)
+int codetagger_expand_tags(const char * filename, CodeTagger * cnf)
 {
    /* declares local vars */
    int           data_pos;
@@ -301,7 +301,7 @@ int codetagger_expand_tags(const char * filename, Config * cnf)
    int           tag_pos;
    int           err;
    unsigned      tagCount;
-   TagData     * tag;
+   CodeTaggerData     * tag;
    char       ** data;
    char          tmpfile[CODETAGGER_STR_LEN];
    char          margin[CODETAGGER_STR_LEN];
@@ -553,7 +553,7 @@ void codetagger_file_printf(FILE * fdout, const char * fmt, ...)
 /// @param[in] name name of tag to find
 /// @param[in] taglist array of tags to search
 /// @param[in] line_number line number of the current file being processed
-TagData * codetagger_find_tag(const char * tagName, TagData ** tagList,
+CodeTaggerData * codetagger_find_tag(const char * tagName, CodeTaggerData ** tagList,
                    const char * fileName, int lineNumber)
 {
    int i;
@@ -596,7 +596,7 @@ void codetagger_free_filedata(char ** lines)
 
 /// frees memory used store tag
 /// @param[in]  tag  tag data structure to free
-void codetagger_free_tag(TagData * tag)
+void codetagger_free_tag(CodeTaggerData * tag)
 {
    int i;
 
@@ -627,7 +627,7 @@ void codetagger_free_tag(TagData * tag)
 
 /// frees memory used store an array of tags
 /// @param[in]  taglist  array of tags to free
-void codetagger_free_taglist(TagData ** taglist)
+void codetagger_free_taglist(CodeTaggerData ** taglist)
 {
    int i;
    if (!(taglist))
@@ -642,7 +642,7 @@ void codetagger_free_taglist(TagData ** taglist)
 
 /// generate array of tags from file
 /// @param[in] file  file name of file which contains tag definitions
-int codetagger_generate_taglist(Config * cnf)
+int codetagger_generate_taglist(CodeTagger * cnf)
 {
    /* declares local vars */
    int           i;
@@ -862,7 +862,7 @@ void codetagger_version(void)
 /// @param[in]  len       length of data array
 /// @param[in]  pos       current position within the data
 /// @param[in]  taglistp  pointer to array of tags
-int codetagger_process_tag(char * tagName, char ** data, int len, int pos, Config * cnf)
+int codetagger_process_tag(char * tagName, char ** data, int len, int pos, CodeTagger * cnf)
 {
    /* declares local vars */
    int           i;
@@ -870,7 +870,7 @@ int codetagger_process_tag(char * tagName, char ** data, int len, int pos, Confi
    int           count;
    int           tagCount;
    int           line_count;
-   TagData     * tag;
+   CodeTaggerData     * tag;
    void        * ptr;
    char          regstr[CODETAGGER_STR_LEN];
    char          errmsg[CODETAGGER_STR_LEN];
@@ -897,15 +897,15 @@ int codetagger_process_tag(char * tagName, char ** data, int len, int pos, Confi
 
    /* allocates memory for tag */
    tagCount++;
-   if (!(tag = (TagData *) malloc(sizeof(TagData))))
+   if (!(tag = (CodeTaggerData *) malloc(sizeof(CodeTaggerData))))
    {
       fprintf(stderr, _(PROGRAM_NAME ": out of virtual memory\n"));
       return(-1);
    };
-   memset(tag, 0, sizeof(TagData));
+   memset(tag, 0, sizeof(CodeTaggerData));
 
    /* allocates memory for array */
-   if (!(ptr = realloc(cnf->tagList, sizeof(TagData) * (tagCount + 1))))
+   if (!(ptr = realloc(cnf->tagList, sizeof(CodeTaggerData) * (tagCount + 1))))
    {
       fprintf(stderr, _(PROGRAM_NAME ": out of virtual memory\n"));
       codetagger_free_tag(tag);
@@ -989,7 +989,7 @@ int main(int argc, char * argv[])
    int           c;
    int           i;
    int           opt_index;
-   Config        cnf;
+   CodeTagger        cnf;
 
    /* getopt options */
    static char   short_opt[] = "f:hl:r:tvV";
@@ -1012,7 +1012,7 @@ int main(int argc, char * argv[])
 #endif
 
    /* initialize variables */
-   memset(&cnf, 0, sizeof(Config));
+   memset(&cnf, 0, sizeof(CodeTagger));
    cnf.leftTagString  = "@";
    cnf.rightTagString = "@";
    cnf.tagFile        = NULL;
