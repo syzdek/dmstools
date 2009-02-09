@@ -39,26 +39,6 @@
  */
 #define _DMSTOOLS_SRC_CODINGTAGGER_C 1
 
-/////////////
-//         //
-//  Notes  //
-//         //
-/////////////
-
-/*
- *  Debug Levels:
- *      0 - errors only
- *      1 - warnings
- *      2 - file processing notices
- *      3 - tag processing notices
- *      4 - general processing notices
- *      5 - detailed general processing notices
- *      6 - file operations
- *      7 - memory operations
- *      8 - variable dumps
- *      Debug levels are accumulative.
- */
-
 ///////////////
 //           //
 //  Headers  //
