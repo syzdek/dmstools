@@ -197,7 +197,7 @@ void codetagger_debug PARAMS((int level, const char * fmt, ...));
 int codetagger_escape_string PARAMS((char * buff, const char * str, unsigned len));
 
 // processes original file by inserting/expanding tags
-int expand_tags PARAMS((const char * filename, Config * cnf));
+int codetagger_expand_tags PARAMS((const char * filename, Config * cnf));
 
 // replaces original file with temp file and unlinks temp file name
 int codetagger_file_link PARAMS((FILE * fdout, const char * ofile, const char * tfile));
@@ -293,7 +293,7 @@ int codetagger_escape_string(char * buff, const char * str, unsigned len)
 /// processes original file by inserting/expanding tags
 /// @param[in]  file  name of file to process
 /// @param[in]  cnf   array of tags to insert into new file
-int expand_tags(const char * filename, Config * cnf)
+int codetagger_expand_tags(const char * filename, Config * cnf)
 {
    /* declares local vars */
    int           data_pos;
@@ -933,7 +933,7 @@ int main(int argc, char * argv[])
 
    /* loops through files to be tagged */
    for(i = optind; i < argc; i++)
-      expand_tags(argv[i], &cnf);
+      codetagger_expand_tags(argv[i], &cnf);
 
    /* frees memory */
    codetagger_free_taglist(cnf.tagList);
