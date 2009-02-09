@@ -175,7 +175,10 @@ struct codetagger_config
 //////////////////
 
 // prints debug messages
-void codetagger_debug PARAMS((int level, const char * fmt, ...));
+#define codetagger_debug(cnf)           codetagger_debug_trace(cnf, __func__, NULL)
+#define codetagger_debug_ext(cnf, ...)  codetagger_debug_trace(cnf, __func__, __VA_ARGS__)
+void codetagger_debug_trace PARAMS((CodeTagger * cnf, const char * func,
+   const char * fmt, ...));
 
 // escapes each character of the string and places the result at the end of the buffer
 int codetagger_escape_string PARAMS((char * buff, const char * str, unsigned len));
@@ -235,20 +238,33 @@ int main PARAMS((int argc, char * argv[]));
 /////////////////
 
 /// prints debug messages
-/// @param[in] level the verbose level of the current message
+/// @param[in] cnf   pointer to config data structure
+/// @param[in] func  name of calling function
 /// @param[in] fmt   the format string of the message
 /// @param[in] ...   the format arguments of the message
-void codetagger_debug(int level, const char * fmt, ...)
+void codetagger_debug_trace(CodeTagger * cnf, const char * func, const char * fmt, ...)
 {
-   va_list arg;
+   int     len;
+   char    buff[1024];
+   va_list ap;
 
-   if (level > 0)
+   if (!(cnf))
       return;
-
-   va_start (arg, fmt);
-      vprintf(fmt, arg);
-   va_end (arg);
-
+   if (!(cnf->opts & CODETAGGER_OPT_DEBUG))
+      return;
+   if (!(fmt))
+   {
+      fprintf(stderr, "codetagger: %s\n", func);
+      return;
+   };
+   va_start(ap, fmt);
+      len = vsnprintf(buff, 1023, fmt, ap);
+   va_end(ap);
+   buff[1023] = '\0';
+   if (!(func))
+      fprintf(stderr, "codetagger: %s\n", buff);
+   else
+      fprintf(stderr, "codetagger: %s %s\n", func, buff);
    return;
 }
 
@@ -299,6 +315,8 @@ int codetagger_expand_tags(CodeTagger * cnf, const char * filename)
    FILE        * fdout;
    regex_t       regex;
    regmatch_t    match[5];
+
+   codetagger_debug(cnf);
 
    /* initialzes data */
    fdout      = NULL;
@@ -641,6 +659,8 @@ int codetagger_generate_taglist(CodeTagger * cnf)
    char       ** data;
    regex_t       regex;
    regmatch_t    match[5];
+
+   codetagger_debug(cnf);
 
    /* initialize data */
    memset(regstr,   0, CODETAGGER_STR_LEN);
@@ -1100,6 +1120,8 @@ int main(int argc, char * argv[])
       );
       return(1);
    };
+
+   codetagger_debug(&cnf);
 
    /* parses tag file */
    if ((codetagger_generate_taglist(&cnf)))
