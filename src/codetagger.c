@@ -143,9 +143,15 @@ struct codetagger_config
 {
    unsigned          opts;
    unsigned          tagCount;
+   unsigned          buffer_size;          ///< size of each file buffer
+   unsigned          pos_original;         ///< current location in buffer for original file
+   unsigned          pos_updated;          ///< current location in buffer for updated file
+   char            * buffer_original;      ///< buffer for original file
+   char            * buffer_updated;       ///< buffer for updated file
    const char      * tagFile;
    const char      * leftTagString;
    const char      * rightTagString;
+   regex_t           generic_tag;          ///< generic regex for finding start tag
    CodeTaggerData ** tagList;
 };
 
@@ -195,6 +201,9 @@ char ** codetagger_get_file_contents PARAMS((CodeTagger * cnf, const char * file
 
 // generate array of tags from file
 int codetagger_parse_tag_file PARAMS((CodeTagger * cnf));
+
+// prepares generic regular expressions
+int codetagger_prepare_regex PARAMS((CodeTagger * cnf));
 
 // retrieves a specific tag from the tag list
 CodeTaggerData * codetagger_retrieve_tag_data PARAMS((CodeTagger * cnf,
@@ -673,6 +682,32 @@ int codetagger_parse_tag_file(CodeTagger * cnf)
 }
 
 
+/// prepares generic regular expressions
+/// @param[in] cnf   pointer to config data structure
+int codetagger_prepare_regex(CodeTagger * cnf)
+{
+   int           err;
+   char          errmsg[CODETAGGER_STR_LEN];
+   char          regstr[CODETAGGER_STR_LEN];
+
+   codetagger_debug(cnf);
+
+   strncat(regstr, "(.*)", CODETAGGER_STR_LEN);
+   codetagger_escape_string(cnf, regstr, cnf->leftTagString,  CODETAGGER_STR_LEN);
+   strncat(regstr, "([_[:blank:][:alnum:]]+)START", CODETAGGER_STR_LEN);
+   codetagger_escape_string(cnf, regstr, cnf->rightTagString, CODETAGGER_STR_LEN);
+
+   if ((err = regcomp(&cnf->generic_tag, regstr, REG_EXTENDED|REG_ICASE)))
+   {
+      regerror(err, &cnf->generic_tag, errmsg, CODETAGGER_STR_LEN-1);
+      fprintf(stderr, PROGRAM_NAME ": regex error: %s\n", errmsg);
+      return(1);
+   };
+
+   return(0);
+}
+
+
 /// retrieves a specific tag from the tag list
 /// @param[in] name name of tag to find
 /// @param[in] taglist array of tags to search
@@ -907,27 +942,24 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename)
    char       ** data;
    char          tmpfile[CODETAGGER_STR_LEN];
    char          margin[CODETAGGER_STR_LEN];
-   char          errmsg[CODETAGGER_STR_LEN];
    char          tagName[CODETAGGER_STR_LEN];
    char          regstr[CODETAGGER_STR_LEN];
    char          tagend[CODETAGGER_STR_LEN];
    FILE        * fdout;
-   regex_t       regex;
    regmatch_t    match[5];
 
    codetagger_debug(cnf);
 
-   /* initialzes data */
    fdout      = NULL;
    tagCount   = 0;
    tmpfile[0] = '\0';
    memset(regstr, 0, CODETAGGER_STR_LEN);
 
-   /* reads file and stores contents */
+   // reads file and stores contents
    if (!(data = codetagger_get_file_contents(cnf, filename)))
       return(1);
 
-   /* creates temp file */
+   // creates temp file
    if (!(cnf->opts & CODETAGGER_OPT_TEST))
    {
       if (!(fdout = codetagger_file_open(cnf, filename, tmpfile, CODETAGGER_STR_LEN)))
@@ -937,51 +969,35 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename)
       };
    };
 
-   /* compiles regex used to locate tags */
-   codetagger_verbose(cnf, _("   compiling regular expression\n"));
-   strncat(regstr,       "(.*)",              CODETAGGER_STR_LEN);
-   codetagger_escape_string(cnf, regstr, cnf->leftTagString,  CODETAGGER_STR_LEN);
-   strncat(regstr,       "([_[:blank:][:alnum:]]+)START",   CODETAGGER_STR_LEN);
-   codetagger_escape_string(cnf, regstr, cnf->rightTagString, CODETAGGER_STR_LEN);
-   if ((err = regcomp(&regex, regstr, REG_EXTENDED|REG_ICASE)))
-   {
-      regerror(err, &regex, errmsg, CODETAGGER_STR_LEN-1);
-      printf("regex error: %s\n", errmsg);
-      codetagger_file_link(cnf, fdout, NULL, tmpfile);
-      codetagger_free_filedata(cnf, data);
-      return(0);
-   };
-   codetagger_verbose(cnf, _("   compiled regular expression \"%s\"\n"), regstr);
-
-   /* counts lines in data */
+   // counts lines in data
    for(data_len = 0; data[data_len]; data_len++);
 
-   /* loops through file */
+   // loops through file
    codetagger_verbose(cnf, _("   expanding tags\n"));
    for(data_pos = 0; data_pos < data_len; data_pos++)
    {
-      /* copies the old file into the new file */
+      // copies the old file into the new file
       codetagger_file_printf(cnf, fdout, "%s\n", data[data_pos]);
 
-      /* checks line for a tag */
-      if ((err = regexec(&regex, data[data_pos], 5, match, 0)))
+      // checks line for a tag
+      if ((err = regexec(&cnf->generic_tag, data[data_pos], 5, match, 0)))
          continue;
 
-      /* copies tag information into buffers */
+      // copies tag information into buffers
       memset(margin,  0, CODETAGGER_STR_LEN);
       memset(tagName, 0, CODETAGGER_STR_LEN);
       memcpy(margin,  &data[data_pos][(int)match[1].rm_so], match[1].rm_eo - match[1].rm_so);
       memcpy(tagName, &data[data_pos][(int)match[2].rm_so], match[2].rm_eo - match[2].rm_so);
 
-      /* applies the tag to the new file */
+      // applies the tag to the new file
       if ((tag = codetagger_retrieve_tag_data(cnf, tagName, filename, data_pos+1)))
       {
-         /* writes contents of the tag */
+         // writes contents of the tag
          codetagger_verbose(cnf, _("   inserting tag \"%s\" (line %i)\n"), tagName, data_pos);
          for(tag_pos = 0; tag->contents[tag_pos]; tag_pos++)
             codetagger_file_printf(cnf, fdout, "%s%s\n", margin, tag->contents[tag_pos]);
 
-         /* searches for end tag */
+         // searches for end tag
          err = 1;
          while((data_pos < (data_len-1)) && (err))
          {
@@ -989,7 +1005,7 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename)
             err = regexec(&tag->regex, data[data_pos], 5, match, 0);
          };
 
-         /* exits with error if end tag is not found */
+         // exits with error if end tag is not found
          if (err)
          {
             fprintf(stderr, _("%s: missing end @%sEND@ in %s\n"), PROGRAM_NAME, tagName, filename);
@@ -998,20 +1014,20 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename)
             return(-1);
          };
 
-         /* copies end tag into buffer */
+         // copies end tag into buffer
          memset(tagend, 0, CODETAGGER_STR_LEN);
          memcpy(tagend,  &data[data_pos][(int)match[1].rm_so], match[1].rm_eo - match[1].rm_so);
 
-         /* prints end tag */
+         // prints end tag
          codetagger_file_printf(cnf, fdout, "%s%s%s%s\n", margin, cnf->leftTagString,
                      tagend, cnf->rightTagString);
 
-         /* counts tags */
+         // counts tags
          tagCount++;
       };
    };
 
-   /* closes and saves file */
+   // closes and saves file
    if (!(tagCount))
    {
       fprintf(stderr, PROGRAM_NAME ": no tags were found in \"%s\"\n", filename);
@@ -1020,10 +1036,10 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename)
       codetagger_file_link(cnf, fdout, filename, tmpfile);
    };
 
-   /* frees memory */
+   // frees memory
    codetagger_free_filedata(cnf, data);
 
-   /* ends function */
+   // ends function
    return(0);
 }
 
@@ -1337,6 +1353,8 @@ int main(int argc, char * argv[])
    };
 
    codetagger_debug(&cnf);
+
+   codetagger_prepare_regex(&cnf);
 
    /* parses tag file */
    if ((codetagger_parse_tag_file(&cnf)))
