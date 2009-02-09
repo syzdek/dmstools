@@ -208,9 +208,6 @@ FILE * codetagger_file_open PARAMS((const char * file, char * buff, int buff_len
 // writes formatted data to temp file if the program is not in test mode
 void codetagger_file_printf PARAMS((FILE * fdout, const char * fmt, ...));
 
-// reads file into an array
-char ** codetagger_get_file_contents PARAMS((const char * file));
-
 // finds a specific tag in the array of tag data
 TagData * codetagger_find_tag PARAMS((const char * tagName, TagData ** tagList,
                            const char * fileName, int lineNumber));
@@ -226,6 +223,9 @@ void codetagger_free_taglist PARAMS((TagData ** taglist));
 
 // generate array of tags from file
 int codetagger_generate_taglist PARAMS((Config * cnf));
+
+// reads file into an array
+char ** codetagger_get_file_contents PARAMS((const char * file));
 
 // displays usage
 void codetagger_usage PARAMS((void));
