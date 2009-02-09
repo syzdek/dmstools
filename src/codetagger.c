@@ -72,6 +72,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <dirent.h>
 #include <getopt.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -80,6 +81,7 @@
 #include <strings.h>
 #include <stdarg.h>
 #include <regex.h>
+#include <errno.h>
 
 
 ///////////////////
@@ -180,6 +182,9 @@ struct codetagger_config
 void codetagger_debug_trace PARAMS((CodeTagger * cnf, const char * func,
    const char * fmt, ...));
 
+// prints error message
+void codetagger_error PARAMS((CodeTagger * cnf, const char * fmt, ...));
+
 // creates a regex safe string (escapes chracters meaning full in regex)
 int codetagger_escape_string PARAMS((CodeTagger * cnf, char * buff,
    const char * str, unsigned len));
@@ -214,6 +219,13 @@ int codetagger_parse_tag_file PARAMS((CodeTagger * cnf));
 // retrieves a specific tag from the tag list
 CodeTaggerData * codetagger_retrieve_tag_data PARAMS((CodeTagger * cnf,
    const char * tagName, const char * fileName, int lineNumber));
+
+// recursively scans directory for files to update
+int codetagger_scan_directory PARAMS((CodeTagger * cnf, const char * origin));
+
+// scan file to determine wether to attempt and update
+int codetagger_scan_file PARAMS((CodeTagger * cnf, const char * file,
+   unsigned * countp, char *** queuep, unsigned * sizep));
 
 // updates original file by inserting/expanding tags
 int codetagger_update_file PARAMS((CodeTagger * cnf, const char * filename));
@@ -269,6 +281,36 @@ void codetagger_debug_trace(CodeTagger * cnf, const char * func, const char * fm
       fprintf(stderr, "codetagger: %s\n", buff);
    else
       fprintf(stderr, "codetagger: %s %s\n", func, buff);
+   return;
+}
+
+
+/// prints error message
+/// @param[in] cnf    pointer to config data structure
+/// @param[in] fatal  name of calling function
+/// @param[in] fmt    the format string of the message
+/// @param[in] ...    the format arguments of the message
+void codetagger_error(CodeTagger * cnf, const char * fmt, ...)
+{
+   int     len;
+   char    buff[1024];
+   va_list ap;
+
+   codetagger_debug(cnf);
+
+   if (!(fmt))
+      return;
+   if (cnf)
+      if ((cnf->opts & CODETAGGER_OPT_CONTINUE) && (cnf->opts & CODETAGGER_OPT_QUIET))
+         return;
+
+   va_start(ap, fmt);
+      len = vsnprintf(buff, 1023, fmt, ap);
+   va_end(ap);
+   buff[1023] = '\0';
+
+   fprintf(stderr, PROGRAM_NAME ": %s", buff);
+
    return;
 }
 
@@ -680,6 +722,193 @@ CodeTaggerData * codetagger_retrieve_tag_data(CodeTagger * cnf, const char * tag
    codetagger_verbose(cnf, _(PROGRAM_NAME ": %s: %i: unknown tag \"%s\"\n"), fileName, lineNumber, tagName);
 
    return(NULL);
+}
+
+
+/// recursively scans directory for files to update
+/// @param[in] cnf   pointer to config data structure
+int codetagger_scan_directory(CodeTagger * cnf, const char * origin)
+{
+   int             err;
+   DIR           * d;
+   char          * file;
+   char         ** queue;
+   void          * ptr;
+   size_t          len_dir;
+   size_t          len_file;
+   unsigned        size;
+   unsigned        count;
+   struct dirent * dp;
+
+   size  = 0;
+   count = 0;
+   ptr   = NULL;
+   queue = NULL;
+
+   // seeds queue with first file/directory
+   if ((err = codetagger_scan_file(cnf, origin, &count, &queue, &size)))
+      return(err);
+
+   if (!(cnf->opts & CODETAGGER_OPT_RECURSE))
+   {
+      if (queue)
+      {
+         free(queue[0]);
+         free(queue);
+      };
+      return(0);
+   };
+
+   while(count)
+   {
+      if (cnf->opts & CODETAGGER_OPT_VERBOSE)
+         printf("%s\n", queue[count-1]);
+
+      // opens directory for processing
+      if (!(d = opendir(queue[count-1])))
+      {
+         codetagger_error(cnf, "%s: %s\n", queue[count-1], strerror(errno));
+         if (!(cnf->opts & CODETAGGER_OPT_CONTINUE))
+            return(1);
+      };
+
+      len_dir = strlen(queue[count-1]);
+
+      for(dp = readdir(d); dp; dp = readdir(d))
+      {
+         len_file = strlen(dp->d_name);
+         if (!(file = malloc(sizeof(char) * (len_dir + len_file + 2))))
+         {
+            fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+            return(-1);
+         };
+         sprintf(file, "%s/%s", queue[count-1], dp->d_name);
+
+         if ( (dp->d_name[0] == '.') && (cnf->opts & CODETAGGER_OPT_HIDDEN) )
+         {
+            if ( (dp->d_name[1] != '/') &&
+                 (dp->d_name[1] != '\0') &&
+                 (dp->d_name[1] != '.') )
+            {
+               switch (err = codetagger_scan_file(cnf, file, &count, &queue, &size))
+               {
+                  case -1:
+                     free(file);
+                     closedir(d);
+                     return(1);
+                  case 0:
+                     free(file);
+                     break;
+                  default:
+                     free(file);
+                     if (!(cnf->opts & CODETAGGER_OPT_CONTINUE))
+                     {
+                        closedir(d);
+                        return(1);
+                     };
+                     break;
+               };
+            };
+         }
+         else if (dp->d_name[0] != '.')
+         {
+            switch (err = codetagger_scan_file(cnf, file, &count, &queue, &size))
+            {
+               case -1:
+                  free(file);
+                  closedir(d);
+                  return(1);
+               case 0:
+                  free(file);
+                  break;
+               default:
+                  free(file);
+                  if (!(cnf->opts & CODETAGGER_OPT_CONTINUE))
+                  {
+                     closedir(d);
+                     return(1);
+                  };
+                  break;
+            };
+         };
+      };
+
+      // closes directory and removes from queue
+      closedir(d);
+      count--;
+      free(queue[count]);
+   };
+
+   free(queue);
+
+   return(0);
+}
+
+
+/// scan file to determine wether to attempt and update
+/// @param[in] cnf   pointer to config data structure
+int codetagger_scan_file(CodeTagger * cnf, const char * file,
+   unsigned * countp, char *** queuep, unsigned * sizep)
+{
+   int             err;
+   void          * ptr;
+   unsigned        u;
+   struct stat     sb;
+
+   if (cnf->opts & CODETAGGER_OPT_LINKS)
+      err = stat(file, &sb);
+   else
+      err = lstat(file, &sb);
+   if (err == -1)
+   {
+      codetagger_error(cnf, "%s: %s\n", file, strerror(errno));
+      return(1);
+   };
+   switch(sb.st_mode & (S_IFDIR|S_IFREG|S_IFLNK))
+   {
+      case S_IFDIR:
+         // adjust size of array
+         if (*countp >= *sizep)
+         {
+            *sizep += 20;
+            if (!(ptr = realloc(*queuep, sizeof(char *) * (*sizep))))
+            {
+               fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+               return(-1);
+            };
+            *queuep = ptr;
+         };
+
+         // copy path name
+         if (!(ptr = strdup(file)))
+         {
+            fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+            return(-1);
+         };
+
+         // insert path name at head of array
+         for(u = (*countp); u > 0; u--)
+            (*queuep)[u] = (*queuep)[u-1];
+         (*queuep)[0] = ptr;
+         (*countp)++;
+         break;
+
+      case S_IFLNK:  // ignore symbolic links
+         break;
+
+      case S_IFREG:
+         if (cnf->opts & CODETAGGER_OPT_VERBOSE)
+            printf("%s\n", file);
+         return(codetagger_update_file(cnf, file));
+         break;
+
+      default:
+         codetagger_error(cnf, "%s: unknown file type\n", file);
+         return(1);
+         break;
+   };
+
+   return(0);
 }
 
 
