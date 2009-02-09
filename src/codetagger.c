@@ -998,7 +998,7 @@ int main(int argc, char * argv[])
    CodeTagger        cnf;
 
    /* getopt options */
-   static char   short_opt[] = "f:hl:r:tvV";
+   static char   short_opt[] = "acdfhi:Ll:qRr:tvV";
    static struct option long_opt[] =
    {
       {"continue",      no_argument, 0, 'c'},
