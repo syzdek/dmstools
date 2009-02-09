@@ -137,7 +137,7 @@
 //             //
 /////////////////
 
-/* tag data */
+/// tag data
 typedef struct tag_data TagData;
 struct tag_data
 {
@@ -147,7 +147,7 @@ struct tag_data
 };
 
 
-/* config data */
+/// config data
 typedef struct config_data Config;
 struct config_data
 {
@@ -181,53 +181,53 @@ int test_mode = 0;	///< toggles test mode
 //              //
 //////////////////
 
-/* prints debug messages */
+// prints debug messages
 void debug_printf PARAMS((int level, const char * fmt, ...));
 
-/* escapes each character of the string and places the result at the end of the buffer */
+// escapes each character of the string and places the result at the end of the buffer
 int escape_string PARAMS((char * buff, const char * str, unsigned len));
 
-/* processes original file by inserting/expanding tags */
+// processes original file by inserting/expanding tags
 int expand_tags PARAMS((const char * filename, Config * cnf));
 
-/* replaces original file with temp file and unlinks temp file name */
+// replaces original file with temp file and unlinks temp file name
 int file_link PARAMS((FILE * fdout, const char * ofile, const char * tfile));
 
-/* opens temporary file for writing using mkstemp() */
+// opens temporary file for writing using mkstemp()
 FILE * file_open PARAMS((const char * file, char * buff, int buff_len));
 
-/* writes formatted data to temp file if the program is not in test mode */
+// writes formatted data to temp file if the program is not in test mode
 void file_printf PARAMS((FILE * fdout, const char * fmt, ...));
 
-/* reads file into an array */
+// reads file into an array
 char ** get_file_contents PARAMS((const char * file));
 
-/* finds a specific tag in the array of tag data */
+// finds a specific tag in the array of tag data
 TagData * find_tag PARAMS((const char * tagName, TagData ** tagList,
                            const char * fileName, int lineNumber));
 
-/* frees memory used to hold file contents */
+// frees memory used to hold file contents
 void free_filedata PARAMS((char ** lines));
 
-/* frees memory used store tag */
+// frees memory used store tag
 void free_tag PARAMS((TagData * tag));
 
-/* frees memory used store an array of tags */
+// frees memory used store an array of tags
 void free_taglist PARAMS((TagData ** taglist));
 
-/* generate array of tags from file */
+// generate array of tags from file
 int generate_taglist PARAMS((Config * cnf));
 
-/* main statement */
+// main statement
 int main PARAMS((int argc, char * argv[]));
 
-/* displays usage */
+// displays usage
 void my_usage PARAMS((void));
 
-/* displays version information */
+// displays version information
 void my_version PARAMS((void));
 
-/* extracts tag data from tag file */
+// extracts tag data from tag file
 int process_tag PARAMS((char * name, char ** data, int len, int pos,
                         Config * cnf));
 
