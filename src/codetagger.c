@@ -168,22 +168,6 @@ struct codetagger_config
 };
 
 
-/////////////////
-//             //
-//  Variables  //
-//             //
-/////////////////
-
-/*
- *  I normally avoid global variables, however the following
- *  variables significantly simplify managing debug levels and
- *  test modes.  I feel the amount of complexity removed justified
- *  the addition of these variables. --David M. Syzdek 2008/06/21
- */
-//int verbosity = 0;   ///< sets verbosity of program
-//int test_mode = 0;   ///< toggles test mode
-
-
 //////////////////
 //              //
 //  Prototypes  //
