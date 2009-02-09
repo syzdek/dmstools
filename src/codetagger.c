@@ -121,6 +121,16 @@
 #define PACKAGE_VERSION ""
 #endif
 
+#define MY_OPT_CONTINUE    0x0001
+#define MY_OPT_DEBUG       0x0002
+#define MY_OPT_FORCE       0x0004
+#define MY_OPT_HIDDEN      0x0008
+#define MY_OPT_LINKS       0x0010
+#define MY_OPT_QUIET       0x0020
+#define MY_OPT_RECURSE     0x0040
+#define MY_OPT_TEST        0x0080
+#define MY_OPT_VERBOSE     0x0100
+
 #ifndef PARAMS
 #define PARAMS(protos) protos
 #endif
@@ -151,6 +161,7 @@ struct tag_data
 typedef struct config_data Config;
 struct config_data
 {
+   unsigned      opts;
    unsigned      tagCount;
    TagData    ** tagList;
    const char  * tagFile;
@@ -171,8 +182,8 @@ struct config_data
  *  test modes.  I feel the amount of complexity removed justified
  *  the addition of these variables. --David M. Syzdek 2008/06/21
  */
-int verbosity = 0;	///< sets verbosity of program
-int test_mode = 0;	///< toggles test mode
+//int verbosity = 0;	///< sets verbosity of program
+//int test_mode = 0;	///< toggles test mode
 
 
 //////////////////
@@ -246,7 +257,7 @@ void debug_printf(int level, const char * fmt, ...)
 {
    va_list arg;
 
-   if (level > verbosity)
+   if (level > 0)
       return;
 
    va_start (arg, fmt);
@@ -315,7 +326,7 @@ int expand_tags(const char * filename, Config * cnf)
       return(1);
 
    /* creates temp file */
-   if (!(test_mode))
+   if (!(cnf->opts & MY_OPT_TEST))
    {
       if (!(fdout = file_open(filename, tmpfile, STR_LEN)))
       {
@@ -501,8 +512,8 @@ FILE * file_open(const char * file, char * buff, int buff_len)
 
    buff[0] = '\0';
 
-   if (test_mode)
-      return(NULL);
+   //if (test_mode)
+   //   return(NULL);
 
    snprintf(buff, buff_len, "%s.XXXXXXXXXX", file);
    if (!(fd = mkstemp(buff)))
@@ -529,8 +540,8 @@ void file_printf(FILE * fdout, const char * fmt, ...)
 {
    va_list arg;
 
-   if (test_mode)
-      return;
+   //if (test_mode)
+   //   return;
 
    va_start (arg, fmt);
       vfprintf(fdout, fmt, arg);
@@ -813,7 +824,10 @@ int main(int argc, char * argv[])
    static char   short_opt[] = "f:hl:r:tvV";
    static struct option long_opt[] =
    {
+      {"continue",      no_argument, 0, 'c'},
       {"help",          no_argument, 0, 'h'},
+      {"silent",        no_argument, 0, 'q'},
+      {"quiet",         no_argument, 0, 'q'},
       {"test",          no_argument, 0, 't'},
       {"verbose",       no_argument, 0, 'v'},
       {"version",       no_argument, 0, 'V'},
@@ -831,7 +845,6 @@ int main(int argc, char * argv[])
    cnf.leftTagString  = "@";
    cnf.rightTagString = "@";
    cnf.tagFile        = NULL;
-   verbosity          = 0;
    opt_index          = 0;
 
    /* loops through arguments */
@@ -842,35 +855,48 @@ int main(int argc, char * argv[])
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
             break;
-
-         case 'f':
-            cnf.tagFile = optarg;
+         case 'a':
+            cnf.opts |= MY_OPT_HIDDEN;
             break;
-            
+         case 'c':
+            cnf.opts |= MY_OPT_CONTINUE;
+            break;
+         case 'd':
+            cnf.opts |= MY_OPT_DEBUG;
+            break;
+         case 'f':
+            cnf.opts |= MY_OPT_FORCE;
+            break;
          case 'h':
             my_usage();
             return(0);
-            
+         case 'i':
+            cnf.tagFile = optarg;
+            break;
+         case 'L':
+            cnf.opts |= MY_OPT_LINKS;
+            break;
          case 'l':
             cnf.leftTagString = optarg;
             break;
-            
+         case 'q':
+            cnf.opts |= MY_OPT_QUIET;
+            break;
+         case 'R':
+            cnf.opts |= MY_OPT_RECURSE;
+            break;
          case 'r':
             cnf.rightTagString = optarg;
             break;
-            
          case 't':
-            test_mode = 1;
+            cnf.opts |= MY_OPT_TEST;
             break;
-            
          case 'V':
             my_version();
             return(0);
-            
          case 'v':
-            verbosity++;
+            cnf.opts |= MY_OPT_VERBOSE;
             break;
-            
          case '?':
             fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
             return(1);
@@ -927,10 +953,17 @@ void my_usage(void)
    // line. The two strings referenced are: PROGRAM_NAME, and
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s [OPTIONS] files\n"
-         "  -f file                   file containing tags\n"
+         "  -a                        include hidden files\n"
+         "  -c                        continue on error\n"
+         "  -d                        enter debug mode\n"
+         "  -f                        force writes\n"
          "  -h, --help                print this help and exit\n"
+         "  -i file                   file containing tags\n"
+         "  -L                        follow symbolic links\n"
          "  -l str                    left enclosing string for tags\n"
+         "  -q, --quiet, --silent     do not print messages\n"
          "  -r str                    right enclosing string for tags\n"
+         "  -R                        recursively follow directories\n"
          "  -t, --test                show what would be done\n"
          "  -v, --verbose             print verbose messages\n"
          "  -V, --version             print version number and exit\n"
