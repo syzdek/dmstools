@@ -196,11 +196,6 @@ FILE * codetagger_file_open PARAMS((CodeTagger * cnf, const char * file,
 void codetagger_file_printf PARAMS((CodeTagger * cnf, FILE * fdout,
    const char * fmt, ...));
 
-// finds a specific tag in the array of tag data
-CodeTaggerData * codetagger_find_tag PARAMS((CodeTagger * cnf,
-   const char * tagName, CodeTaggerData ** tagList, const char * fileName,
-   int lineNumber));
-
 // frees memory used to hold file contents
 void codetagger_free_filedata PARAMS((CodeTagger * cnf, char ** lines));
 
@@ -210,11 +205,15 @@ void codetagger_free_tag PARAMS((CodeTagger * cnf, CodeTaggerData * tag));
 // frees memory used store an array of tags
 void codetagger_free_taglist PARAMS((CodeTagger * cnf, CodeTaggerData ** taglist));
 
+// reads file into an array
+char ** codetagger_get_file_contents PARAMS((CodeTagger * cnf, const char * file));
+
 // generate array of tags from file
 int codetagger_parse_tag_file PARAMS((CodeTagger * cnf));
 
-// reads file into an array
-char ** codetagger_get_file_contents PARAMS((CodeTagger * cnf, const char * file));
+// retrieves a specific tag from the tag list
+CodeTaggerData * codetagger_retrieve_tag_data PARAMS((CodeTagger * cnf,
+   const char * tagName, const char * fileName, int lineNumber));
 
 // updates original file by inserting/expanding tags
 int codetagger_update_file PARAMS((CodeTagger * cnf, const char * filename));
@@ -416,36 +415,6 @@ void codetagger_file_printf(CodeTagger * cnf, FILE * fdout, const char * fmt, ..
    va_end (arg);
 
    return;
-}
-
-
-/// finds a specific tag in the array of tag data
-/// @param[in] name name of tag to find
-/// @param[in] taglist array of tags to search
-/// @param[in] line_number line number of the current file being processed
-CodeTaggerData * codetagger_find_tag(CodeTagger * cnf, const char * tagName,
-   CodeTaggerData ** tagList, const char * fileName, int lineNumber)
-{
-   int i;
-
-   codetagger_debug(cnf);
-
-   if (!(tagName))
-      return(NULL);
-   if (!(tagList))
-      return(NULL);
-   if (!(fileName))
-      return(NULL);
-
-   codetagger_verbose(cnf, _("   retrieving tag \"%s\"\n"), tagName);
-
-   for(i = 0; tagList[i]; i++)
-      if (!(strcasecmp(tagName, tagList[i]->name)))
-         return(tagList[i]);
-
-   codetagger_verbose(cnf, _(PROGRAM_NAME ": %s: %i: unknown tag \"%s\"\n"), fileName, lineNumber, tagName);
-
-   return(NULL);
 }
 
 
@@ -682,6 +651,38 @@ int codetagger_parse_tag_file(CodeTagger * cnf)
 }
 
 
+/// retrieves a specific tag from the tag list
+/// @param[in] name name of tag to find
+/// @param[in] taglist array of tags to search
+/// @param[in] line_number line number of the current file being processed
+CodeTaggerData * codetagger_retrieve_tag_data(CodeTagger * cnf, const char * tagName,
+   const char * fileName, int lineNumber)
+{
+   int i;
+
+   codetagger_debug(cnf);
+
+   if (!(cnf))
+      return(NULL);
+   if (!(cnf->tagList))
+      return(NULL);
+   if (!(tagName))
+      return(NULL);
+   if (!(fileName))
+      return(NULL);
+
+   codetagger_verbose(cnf, _("   retrieving tag \"%s\"\n"), tagName);
+
+   for(i = 0; cnf->tagList[i]; i++)
+      if (!(strcasecmp(tagName, cnf->tagList[i]->name)))
+         return(cnf->tagList[i]);
+
+   codetagger_verbose(cnf, _(PROGRAM_NAME ": %s: %i: unknown tag \"%s\"\n"), fileName, lineNumber, tagName);
+
+   return(NULL);
+}
+
+
 /// updates original file by inserting/expanding tags
 /// @param[in]  file  name of file to process
 /// @param[in]  cnf   array of tags to insert into new file
@@ -764,7 +765,7 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename)
       memcpy(tagName, &data[data_pos][(int)match[2].rm_so], match[2].rm_eo - match[2].rm_so);
 
       /* applies the tag to the new file */
-      if ((tag = codetagger_find_tag(cnf, tagName, cnf->tagList, filename, data_pos+1)))
+      if ((tag = codetagger_retrieve_tag_data(cnf, tagName, filename, data_pos+1)))
       {
          /* writes contents of the tag */
          codetagger_verbose(cnf, _("   inserting tag \"%s\" (line %i)\n"), tagName, data_pos);
