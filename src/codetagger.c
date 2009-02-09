@@ -645,79 +645,6 @@ void codetagger_free_taglist(CodeTaggerData ** taglist)
 }
 
 
-/// generate array of tags from file
-/// @param[in] file  file name of file which contains tag definitions
-int codetagger_parse_tag_file(CodeTagger * cnf)
-{
-   /* declares local vars */
-   int           i;
-   int           err;
-   int           lineCount;
-   char          regstr[CODETAGGER_STR_LEN];
-   char          errmsg[CODETAGGER_STR_LEN];
-   char          tagName[CODETAGGER_STR_LEN];
-   char       ** data;
-   regex_t       regex;
-   regmatch_t    match[5];
-
-   codetagger_debug(cnf);
-
-   /* initialize data */
-   memset(regstr,   0, CODETAGGER_STR_LEN);
-   memset(errmsg,   0, CODETAGGER_STR_LEN);
-   memset(tagName,  0, CODETAGGER_STR_LEN);
-
-   /* reads tag file */
-   if (!(data = codetagger_get_file_contents(cnf->tagFile)))
-      return(-1);
-
-   /* counts number of lines in tag file */
-   for(lineCount = 0; data[lineCount]; lineCount++);
-
-   /* compiles regex used to locate tags */
-   codetagger_verbose(5, _("   compiling regular expression for tags\n"));
-   strncat(regstr,       "^",              CODETAGGER_STR_LEN);
-   codetagger_escape_string(regstr, cnf->leftTagString,  CODETAGGER_STR_LEN);
-   strncat(regstr,       "([_[:blank:][:alnum:]]+)START",   CODETAGGER_STR_LEN);
-   codetagger_escape_string(regstr, cnf->rightTagString, CODETAGGER_STR_LEN);
-   if ((err = regcomp(&regex, regstr, REG_EXTENDED|REG_ICASE)))
-   {
-      regerror(err, &regex, errmsg, CODETAGGER_STR_LEN-1);
-      printf("regex error: %s\n", errmsg);
-      return(-1);
-   };
-   codetagger_verbose(8, _("   compiled regular expression \"%s\"\n"), regstr);
-
-   /* loops through looking for tags */
-   codetagger_verbose(3, _("creating tag index from \"%s\"\n"), cnf->tagFile);
-   for(i = 0; i < lineCount; i++)
-   {
-      if (!(err = regexec(&regex, data[i], 5, match, 0)))
-      {
-         data[i][(int)match[1].rm_eo] = '\0';
-         strncpy(tagName, &data[i][(int)match[1].rm_so], CODETAGGER_STR_LEN-1);
-         i++;
-         if ((i = codetagger_process_tag(tagName, data, lineCount, i, cnf)) == -1)
-         {
-            codetagger_free_filedata(data);
-            regfree(&regex);
-            return(-1);
-         };
-         cnf->tagCount++;
-      };
-   };
-
-   /* frees resources */
-   codetagger_verbose(7, _("   freeing file buffer\n"));
-   codetagger_free_filedata(data);
-   codetagger_verbose(7, _("   freeing regular expressions\n"));
-   regfree(&regex);
-
-   /* ends function */
-   return(0);
-}
-
-
 /// reads file into an array
 /// @param[in]  file  file name of file to process
 char ** codetagger_get_file_contents(const char * file)
@@ -811,6 +738,73 @@ char ** codetagger_get_file_contents(const char * file)
 
    /* ends function */
    return(lines);
+}
+
+
+/// generate array of tags from file
+/// @param[in] file  file name of file which contains tag definitions
+int codetagger_parse_tag_file(CodeTagger * cnf)
+{
+   int           i;
+   int           err;
+   int           lineCount;
+   char          regstr[CODETAGGER_STR_LEN];
+   char          errmsg[CODETAGGER_STR_LEN];
+   char          tagName[CODETAGGER_STR_LEN];
+   char       ** data;
+   regex_t       regex;
+   regmatch_t    match[5];
+
+   codetagger_debug(cnf);
+
+   memset(regstr,   0, CODETAGGER_STR_LEN);
+   memset(errmsg,   0, CODETAGGER_STR_LEN);
+   memset(tagName,  0, CODETAGGER_STR_LEN);
+
+   if (!(data = codetagger_get_file_contents(cnf->tagFile)))
+      return(-1);
+
+   for(lineCount = 0; data[lineCount]; lineCount++);
+
+   // compiles regex used to locate tags
+   codetagger_verbose(5, _("   compiling regular expression for tags\n"));
+   strncat(regstr,       "^",              CODETAGGER_STR_LEN);
+   codetagger_escape_string(regstr, cnf->leftTagString,  CODETAGGER_STR_LEN);
+   strncat(regstr,       "([_[:blank:][:alnum:]]+)START",   CODETAGGER_STR_LEN);
+   codetagger_escape_string(regstr, cnf->rightTagString, CODETAGGER_STR_LEN);
+   if ((err = regcomp(&regex, regstr, REG_EXTENDED|REG_ICASE)))
+   {
+      regerror(err, &regex, errmsg, CODETAGGER_STR_LEN-1);
+      printf("regex error: %s\n", errmsg);
+      return(-1);
+   };
+   codetagger_verbose(8, _("   compiled regular expression \"%s\"\n"), regstr);
+
+   // loops through looking for tags
+   codetagger_verbose(3, _("creating tag index from \"%s\"\n"), cnf->tagFile);
+   for(i = 0; i < lineCount; i++)
+   {
+      if (!(err = regexec(&regex, data[i], 5, match, 0)))
+      {
+         data[i][(int)match[1].rm_eo] = '\0';
+         strncpy(tagName, &data[i][(int)match[1].rm_so], CODETAGGER_STR_LEN-1);
+         i++;
+         if ((i = codetagger_process_tag(tagName, data, lineCount, i, cnf)) == -1)
+         {
+            codetagger_free_filedata(data);
+            regfree(&regex);
+            return(-1);
+         };
+         cnf->tagCount++;
+      };
+   };
+
+   codetagger_verbose(7, _("   freeing file buffer\n"));
+   codetagger_free_filedata(data);
+   codetagger_verbose(7, _("   freeing regular expressions\n"));
+   regfree(&regex);
+
+   return(0);
 }
 
 
