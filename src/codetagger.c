@@ -227,9 +227,6 @@ void codetagger_free_taglist PARAMS((TagData ** taglist));
 // generate array of tags from file
 int codetagger_generate_taglist PARAMS((Config * cnf));
 
-// main statement
-int main PARAMS((int argc, char * argv[]));
-
 // displays usage
 void codetagger_usage PARAMS((void));
 
@@ -239,6 +236,9 @@ void codetagger_version PARAMS((void));
 // extracts tag data from tag file
 int codetagger_process_tag PARAMS((char * name, char ** data, int len, int pos,
                         Config * cnf));
+
+// main statement
+int main PARAMS((int argc, char * argv[]));
 
 
 /////////////////
@@ -807,142 +807,6 @@ char ** codetagger_get_file_contents(const char * file)
 }
 
 
-/// main statement
-/// @param[in]  argc  number of arguments passed to program
-/// @param[in]  argv  array of arguments passed to program
-int main(int argc, char * argv[])
-{
-   /* declares local vars */
-   int           c;
-   int           i;
-   int           opt_index;
-   Config        cnf;
-
-   /* getopt options */
-   static char   short_opt[] = "f:hl:r:tvV";
-   static struct option long_opt[] =
-   {
-      {"continue",      no_argument, 0, 'c'},
-      {"help",          no_argument, 0, 'h'},
-      {"silent",        no_argument, 0, 'q'},
-      {"quiet",         no_argument, 0, 'q'},
-      {"test",          no_argument, 0, 't'},
-      {"verbose",       no_argument, 0, 'v'},
-      {"version",       no_argument, 0, 'V'},
-      {NULL,            0,           0, 0  }
-   };
-
-#ifdef HAVE_GETTEXT
-   setlocale (LC_ALL, "");
-   bindtextdomain (PACKAGE, LOCALEDIR);
-   textdomain (PACKAGE);
-#endif
-
-   /* initialize variables */
-   memset(&cnf, 0, sizeof(Config));
-   cnf.leftTagString  = "@";
-   cnf.rightTagString = "@";
-   cnf.tagFile        = NULL;
-   opt_index          = 0;
-
-   /* loops through arguments */
-   while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
-   {
-      switch(c)
-      {
-         case -1:	/* no more arguments */
-         case 0:	/* long options toggles */
-            break;
-         case 'a':
-            cnf.opts |= CODETAGGER_OPT_HIDDEN;
-            break;
-         case 'c':
-            cnf.opts |= CODETAGGER_OPT_CONTINUE;
-            break;
-         case 'd':
-            cnf.opts |= CODETAGGER_OPT_DEBUG;
-            break;
-         case 'f':
-            cnf.opts |= CODETAGGER_OPT_FORCE;
-            break;
-         case 'h':
-            codetagger_usage();
-            return(0);
-         case 'i':
-            cnf.tagFile = optarg;
-            break;
-         case 'L':
-            cnf.opts |= CODETAGGER_OPT_LINKS;
-            break;
-         case 'l':
-            cnf.leftTagString = optarg;
-            break;
-         case 'q':
-            cnf.opts |= CODETAGGER_OPT_QUIET;
-            break;
-         case 'R':
-            cnf.opts |= CODETAGGER_OPT_RECURSE;
-            break;
-         case 'r':
-            cnf.rightTagString = optarg;
-            break;
-         case 't':
-            cnf.opts |= CODETAGGER_OPT_TEST;
-            break;
-         case 'V':
-            codetagger_version();
-            return(0);
-         case 'v':
-            cnf.opts |= CODETAGGER_OPT_VERBOSE;
-            break;
-         case '?':
-            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
-            return(1);
-         default:
-            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
-                  "Try `%s --help' for more information.\n"
-               ),  PROGRAM_NAME, c, PROGRAM_NAME
-            );
-            return(1);
-      };
-   };
-
-   /* verifies arguments were passed on the command line */
-   if ((optind == argc) || (optind == 1))
-   {
-      codetagger_usage();
-      return(1);
-   };
-   if (!(cnf.tagFile ))
-   {
-      fprintf(stderr, _("%s: missing required option `-f'\n"
-            "Try `%s --help' for more information.\n"
-         ), PROGRAM_NAME, PROGRAM_NAME
-      );
-      return(1);
-   };
-
-   /* parses tag file */
-   if ((codetagger_generate_taglist(&cnf)))
-      return(0);
-   if (!(cnf.tagCount))
-   {
-      fprintf(stderr, _(PROGRAM_NAME ": no tag definitions were found in \"%s\"\n"), cnf.tagFile);
-      return(1);
-   };
-
-   /* loops through files to be tagged */
-   for(i = optind; i < argc; i++)
-      codetagger_expand_tags(argv[i], &cnf);
-
-   /* frees memory */
-   codetagger_free_taglist(cnf.tagList);
-
-   /* ends function */
-   return(0);
-}
-
-
 /// displays usage
 void codetagger_usage(void)
 {
@@ -1113,6 +977,142 @@ int codetagger_process_tag(char * tagName, char ** data, int len, int pos, Confi
 
    /* ends function */
    return(i);
+}
+
+
+/// main statement
+/// @param[in]  argc  number of arguments passed to program
+/// @param[in]  argv  array of arguments passed to program
+int main(int argc, char * argv[])
+{
+   /* declares local vars */
+   int           c;
+   int           i;
+   int           opt_index;
+   Config        cnf;
+
+   /* getopt options */
+   static char   short_opt[] = "f:hl:r:tvV";
+   static struct option long_opt[] =
+   {
+      {"continue",      no_argument, 0, 'c'},
+      {"help",          no_argument, 0, 'h'},
+      {"silent",        no_argument, 0, 'q'},
+      {"quiet",         no_argument, 0, 'q'},
+      {"test",          no_argument, 0, 't'},
+      {"verbose",       no_argument, 0, 'v'},
+      {"version",       no_argument, 0, 'V'},
+      {NULL,            0,           0, 0  }
+   };
+
+#ifdef HAVE_GETTEXT
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, LOCALEDIR);
+   textdomain (PACKAGE);
+#endif
+
+   /* initialize variables */
+   memset(&cnf, 0, sizeof(Config));
+   cnf.leftTagString  = "@";
+   cnf.rightTagString = "@";
+   cnf.tagFile        = NULL;
+   opt_index          = 0;
+
+   /* loops through arguments */
+   while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
+   {
+      switch(c)
+      {
+         case -1:	/* no more arguments */
+         case 0:	/* long options toggles */
+            break;
+         case 'a':
+            cnf.opts |= CODETAGGER_OPT_HIDDEN;
+            break;
+         case 'c':
+            cnf.opts |= CODETAGGER_OPT_CONTINUE;
+            break;
+         case 'd':
+            cnf.opts |= CODETAGGER_OPT_DEBUG;
+            break;
+         case 'f':
+            cnf.opts |= CODETAGGER_OPT_FORCE;
+            break;
+         case 'h':
+            codetagger_usage();
+            return(0);
+         case 'i':
+            cnf.tagFile = optarg;
+            break;
+         case 'L':
+            cnf.opts |= CODETAGGER_OPT_LINKS;
+            break;
+         case 'l':
+            cnf.leftTagString = optarg;
+            break;
+         case 'q':
+            cnf.opts |= CODETAGGER_OPT_QUIET;
+            break;
+         case 'R':
+            cnf.opts |= CODETAGGER_OPT_RECURSE;
+            break;
+         case 'r':
+            cnf.rightTagString = optarg;
+            break;
+         case 't':
+            cnf.opts |= CODETAGGER_OPT_TEST;
+            break;
+         case 'V':
+            codetagger_version();
+            return(0);
+         case 'v':
+            cnf.opts |= CODETAGGER_OPT_VERBOSE;
+            break;
+         case '?':
+            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
+            return(1);
+         default:
+            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
+                  "Try `%s --help' for more information.\n"
+               ),  PROGRAM_NAME, c, PROGRAM_NAME
+            );
+            return(1);
+      };
+   };
+
+   /* verifies arguments were passed on the command line */
+   if ((optind == argc) || (optind == 1))
+   {
+      codetagger_usage();
+      return(1);
+   };
+   if (!(cnf.tagFile ))
+   {
+      fprintf(stderr, _("%s: missing required option `-f'\n"
+            "Try `%s --help' for more information.\n"
+         ), PROGRAM_NAME, PROGRAM_NAME
+      );
+      return(1);
+   };
+
+   /* parses tag file */
+   if ((codetagger_generate_taglist(&cnf)))
+      return(0);
+   if (!(cnf.tagCount))
+   {
+      fprintf(stderr, _(PROGRAM_NAME ": no tag definitions were found in \"%s\"\n"), cnf.tagFile);
+      return(1);
+   };
+
+   /* loops through files to be tagged */
+   for(i = optind; i < argc; i++)
+      codetagger_expand_tags(argv[i], &cnf);
+
+   /* frees memory */
+   codetagger_free_taglist(cnf.tagList);
+
+   /* ends function */
+   return(0);
 }
 
 
