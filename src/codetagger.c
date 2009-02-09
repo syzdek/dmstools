@@ -923,7 +923,7 @@ int main(int argc, char * argv[])
    };
 
    /* parses tag file */
-   if ((generate_taglist(&cnf)))
+   if ((codetagger_generate_taglist(&cnf)))
       return(0);
    if (!(cnf.tagCount))
    {
