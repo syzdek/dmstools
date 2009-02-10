@@ -184,18 +184,6 @@ void codetagger_error PARAMS((CodeTagger * cnf, const char * fmt, ...));
 int codetagger_escape_string PARAMS((CodeTagger * cnf, char * buff,
    const char * str, unsigned len));
 
-// replaces original file with temp file and unlinks temp file name
-int codetagger_file_link PARAMS((CodeTagger * cnf, FILE * fdout,
-   const char * ofile, const char * tfile));
-
-// opens temporary file for writing using mkstemp()
-FILE * codetagger_file_open PARAMS((CodeTagger * cnf, const char * file,
-   char * buff, int buff_len));
-
-// writes formatted data to temp file if the program is not in test mode
-void codetagger_file_printf PARAMS((CodeTagger * cnf, FILE * fdout,
-   const char * fmt, ...));
-
 // frees memory used to hold file contents
 void codetagger_free_filedata PARAMS((CodeTagger * cnf, char ** lines));
 
@@ -226,10 +214,7 @@ int codetagger_scan_file PARAMS((CodeTagger * cnf, const char * file,
    unsigned * countp, char *** queuep, unsigned * sizep));
 
 // updates original file by inserting/expanding tags
-int codetagger_update_file PARAMS((CodeTagger * cnf, const char * filename));
-
-// updates original file by inserting/expanding tags
-int codetagger_update_file2 PARAMS((CodeTagger * cnf, const char * filename,
+int codetagger_update_file PARAMS((CodeTagger * cnf, const char * filename,
    struct stat * sbp));
 
 // displays usage
@@ -411,130 +396,6 @@ int codetagger_escape_string(CodeTagger * cnf, char * buff, const char * str,
    };
    buff[buffpos] = '\0';
    return(0);
-}
-
-
-/// replaces original file with temp file and unlinks temp file name
-/// @param[in]  cnf   pointer to config data structure
-/// @param[in]  fdout  the file stream of the temp file
-/// @param[in]  ofile  the original file name
-/// @param[in]  tfile  the temporary file name    
-int codetagger_file_link(CodeTagger * cnf, FILE * fdout, const char * ofile,
-   const char * tfile)
-{
-   struct stat sb;
-
-   codetagger_debug(cnf);
-
-   if (!(fdout))
-      return(0);
-   fclose(fdout);
-
-   if (!(tfile))
-      return(0);
-
-   if ( (tfile) && (!(ofile)) )
-   {
-      unlink(tfile); // removes temparary file
-      return(0);
-   };
-
-   if (stat(ofile, &sb))
-   {
-      perror(PROGRAM_NAME ": stat()");
-      return(-1);
-   };
-
-   if (chmod(tfile, sb.st_mode) == -1)
-   {
-      perror(PROGRAM_NAME ": chmod()");
-      return(-1);
-   };
-
-   if (!(geteuid()))
-   {
-      if (chown(tfile, sb.st_uid, sb.st_gid) == -1)
-      {
-         perror(PROGRAM_NAME ": chown()");
-         return(-1);
-      };
-   };
-
-   if (unlink(ofile) == -1)
-   {
-      perror(PROGRAM_NAME ": unlink()");
-      return(-1);
-   };
-
-   if (link(tfile, ofile) == -1)
-   {
-      perror(PROGRAM_NAME ": link()");
-      return(-1);
-   };
-
-   if (unlink(tfile) == -1)
-   {
-      perror(PROGRAM_NAME ": unlink()");
-      return(-1);
-   };
-
-   return(0);
-}
-
-
-/// opens temporary file for writing using mkstemp()
-/// @param[in]  cnf       pointer to config data structure
-/// @param[in]  file      file name of file to open for writing
-/// @param[in]  buff      buffer to store temporary file name
-/// @param[in]  buff_len  length of buffer
-FILE * codetagger_file_open(CodeTagger * cnf, const char * file, char * buff,
-   int buff_len)
-{
-   int    fd;
-   FILE * fdout;
-
-   codetagger_debug(cnf);
-
-   buff[0] = '\0';
-
-   if (cnf->opts & CODETAGGER_OPT_TEST)
-      return(NULL);
-
-   snprintf(buff, buff_len, "%s.XXXXXXXXXX", file);
-   if (!(fd = mkstemp(buff)))
-   {
-      perror(PROGRAM_NAME ": mkstemp()");
-      return(NULL);
-   };
-
-   if (!(fdout = fdopen(fd, "w")))
-   {
-      perror(PROGRAM_NAME ": fdpopen()");
-      return(NULL);
-   };
-
-   return(fdout);
-}
-
-
-/// writes formatted data to temp file if the program is not in test mode
-/// @param[in]  cnf    pointer to config data structure
-/// @param[in]  fdout  file stream to write data
-/// @param[in]  fmt    format of data to write to stream
-/// @param[in]  ...    format arguments
-void codetagger_file_printf(CodeTagger * cnf, FILE * fdout, const char * fmt, ...)
-{
-   va_list arg;
-
-   codetagger_debug(cnf);
-   if (cnf->opts & CODETAGGER_OPT_TEST)
-      return;
-
-   va_start (arg, fmt);
-      vfprintf(fdout, fmt, arg);
-   va_end (arg);
-
-   return;
 }
 
 
@@ -980,8 +841,7 @@ int codetagger_scan_file(CodeTagger * cnf, const char * file,
          break;
 
       case S_IFREG:
-         //return(codetagger_update_file(cnf, file));
-         return(codetagger_update_file2(cnf, file, &sb));
+         return(codetagger_update_file(cnf, file, &sb));
          break;
 
       default:
@@ -997,125 +857,7 @@ int codetagger_scan_file(CodeTagger * cnf, const char * file,
 /// updates original file by inserting/expanding tags
 /// @param[in]  cnf       pointer to config data structure
 /// @param[in]  filename  name of file to process
-int codetagger_update_file(CodeTagger * cnf, const char * filename)
-{
-   /* declares local vars */
-   int           data_pos;
-   int           data_len;
-   int           tag_pos;
-   int           err;
-   unsigned      tagCount;
-   CodeTaggerData     * tag;
-   char       ** data;
-   char          tmpfile[CODETAGGER_STR_LEN];
-   char          margin[CODETAGGER_STR_LEN];
-   char          tagName[CODETAGGER_STR_LEN];
-   char          regstr[CODETAGGER_STR_LEN];
-   char          tagend[CODETAGGER_STR_LEN];
-   FILE        * fdout;
-   regmatch_t    match[5];
-
-   codetagger_debug(cnf);
-
-   codetagger_verbose(cnf, _("processing \"%s\"\n"), filename);
-
-   fdout      = NULL;
-   tagCount   = 0;
-   tmpfile[0] = '\0';
-   memset(regstr, 0, CODETAGGER_STR_LEN);
-
-   // reads file and stores contents
-   if (!(data = codetagger_get_file_contents(cnf, filename)))
-      return(1);
-
-   // creates temp file
-   if (!(cnf->opts & CODETAGGER_OPT_TEST))
-   {
-      if (!(fdout = codetagger_file_open(cnf, filename, tmpfile, CODETAGGER_STR_LEN)))
-      {
-         codetagger_free_filedata(cnf, data);
-         return(1);
-      };
-   };
-
-   // counts lines in data
-   for(data_len = 0; data[data_len]; data_len++);
-
-   // loops through file
-   for(data_pos = 0; data_pos < data_len; data_pos++)
-   {
-      // copies the old file into the new file
-      codetagger_file_printf(cnf, fdout, "%s\n", data[data_pos]);
-
-      // checks line for a tag
-      if ((err = regexec(&cnf->generic_tag, data[data_pos], 5, match, 0)))
-         continue;
-
-      // copies tag information into buffers
-      memset(margin,  0, CODETAGGER_STR_LEN);
-      memset(tagName, 0, CODETAGGER_STR_LEN);
-      memcpy(margin,  &data[data_pos][(int)match[1].rm_so], match[1].rm_eo - match[1].rm_so);
-      memcpy(tagName, &data[data_pos][(int)match[2].rm_so], match[2].rm_eo - match[2].rm_so);
-
-      // applies the tag to the new file
-      if ((tag = codetagger_retrieve_tag_data(cnf, tagName, filename, data_pos+1)))
-      {
-         // writes contents of the tag
-         for(tag_pos = 0; tag->contents[tag_pos]; tag_pos++)
-            codetagger_file_printf(cnf, fdout, "%s%s\n", margin, tag->contents[tag_pos]);
-
-         // searches for end tag
-         err = 1;
-         while((data_pos < (data_len-1)) && (err))
-         {
-            data_pos++;
-            err = regexec(&tag->regex, data[data_pos], 5, match, 0);
-         };
-
-         // exits with error if end tag is not found
-         if (err)
-         {
-            fprintf(stderr, _("%s: missing end @%sEND@ in %s\n"), PROGRAM_NAME, tagName, filename);
-            codetagger_file_link(cnf, fdout, NULL, tmpfile);
-            codetagger_free_filedata(cnf, data);
-            return(-1);
-         };
-
-         // copies end tag into buffer
-         memset(tagend, 0, CODETAGGER_STR_LEN);
-         memcpy(tagend,  &data[data_pos][(int)match[1].rm_so], match[1].rm_eo - match[1].rm_so);
-
-         // prints end tag
-         codetagger_file_printf(cnf, fdout, "%s%s%s%s\n", margin, cnf->leftTagString,
-                     tagend, cnf->rightTagString);
-
-         // counts tags
-         tagCount++;
-      };
-   };
-
-   // closes and saves file
-   if (!(tagCount))
-   {
-      codetagger_file_link(cnf, fdout, NULL, tmpfile);
-   } else {
-      if (!(cnf->opts & CODETAGGER_OPT_QUIET))
-         printf(_("updating \"%s\"\n"), filename);
-      codetagger_file_link(cnf, fdout, filename, tmpfile);
-   };
-
-   // frees memory
-   codetagger_free_filedata(cnf, data);
-
-   // ends function
-   return(0);
-}
-
-
-/// updates original file by inserting/expanding tags
-/// @param[in]  cnf       pointer to config data structure
-/// @param[in]  filename  name of file to process
-int codetagger_update_file2(CodeTagger * cnf, const char * filename,
+int codetagger_update_file(CodeTagger * cnf, const char * filename,
    struct stat * sbp)
 {
    int    fd;
