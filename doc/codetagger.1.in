@@ -1,6 +1,6 @@
 .\"
 .\" DMS Tools and Utilities
-.\" Copyright (C) 2008 David M. Syzdek <david@syzdek.net>
+.\" Copyright (C) 2008, 2009 David M. Syzdek <david@syzdek.net>
 .\"
 .\" @SYZDEK_COPYRIGHT_HEADER_START@
 .\"
@@ -19,7 +19,7 @@
 .SH NAME
 codetagger \- replaces the text between tags with text from tag file
 .SH SYNOPSIS
-\fBcodetagger\fR \fB-f\fR \fItagfile\fR [\fB-l\fR \fIleftmarker\fR] [\fB-r\fR \fIrightmarker\fR] [\fB--test\fR | \fB-t\fR] [\fB--verbose\fR | \fB-v\fR] [\fIFILE\fR...]
+\fBcodetagger\fR [\fB-acdfLRt\fR] [\fB-in\fR \fIfile\fR] [\fB-l\fR \fIleftmarker\fR] [\fB-r\fR \fIrightmarker\fR] [\fB--test\fR | \fB-t\fR] [\fB--verbose\fR | \fB-v\fR] [\fIFILE\fR...]
 .sp
 \fBcodetagger\fR [\fB--help\fR | \fB-h\fR] [\fB--version\fR | \fB-V\fR]
 .SH DESCRIPTION
@@ -51,23 +51,41 @@ pairs will be ignored by \fBcodetagger\fR.
 
 .SH OPTIONS
 .TP
-\fB\-f\fR \fItagfile\fR
-\fItagfile\fR is file to be used as the tag definition file.
+\fB\-a\fR
+Include hidden files in the list of files to process.
+.TP
+\fB\-c\fR
+Continue if a non-fatal error is encountered. The default is to exit if any error is encountered.
+.TP
+\fB\-d\fR
+Enable debug output.
 .TP
 \fB\-h\fR, \fB--help\fR
-displays usage information and exits.
+Displays usage information and exits.
+.TP
+\fB\-i\fR \fItagfile\fR
+\fItagfile\fR is file to be used as the tag definition file.
+.TP
+\fB\-L\fR
+Follow symbolic links when recursively processing directories.
 .TP
 \fB-l\fR \fIleftmarker\fR
-sets \fIleftmarker\fR of the tags. The default value is \fI@\fR.
+Sets \fIleftmarker\fR of the tags. The default value is \fI@\fR.
+.TP
+\fB\-q\fR
+Suppress warnings and non-fatal error messages.
+.TP
+\fB-R\fR
+Recursively follow directories.
 .TP
 \fB-r\fR \fIrightmarker\fR
-sets \fIrightmarker\fR of the tags. The default value is \fI@\fR.
+Sets \fIrightmarker\fR of the tags. The default value is \fI@\fR.
 .TP
 \fB\-t\fR, \fB--test\fR
-shows what would be done, but does not modify any files.
+Shows what would be done, but does not modify any files.
 .TP
 \fB\-v\fR, \fB--verbose\fR
-increase verbosity of program's output.  Multiple uses causes increased verbosity.
+Enable verbose output.
 .TP
 \fB\-V\fR, \fB--version\fR
 displays version number and exits.
