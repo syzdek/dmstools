@@ -1123,8 +1123,10 @@ int codetagger_update_file2(CodeTagger * cnf, const char * filename,
    int    pos;
    int    changed;
    int    len_margin;
+   int    len_stripped;
    int    len_tagname;
    char   margin[CODETAGGER_STR_LEN];
+   char   stripped[CODETAGGER_STR_LEN];
    char   tagname[CODETAGGER_STR_LEN];
    char * bol;
    regmatch_t match[5];
@@ -1187,6 +1189,13 @@ int codetagger_update_file2(CodeTagger * cnf, const char * filename,
       margin[len_margin]   = '\0';
       tagname[len_tagname] = '\0';
 
+      len_stripped = 0;
+      strncpy(stripped, margin, len_margin);
+      for(pos = len_margin; ((pos > 0) && (!(len_stripped))); pos--)
+         if ((stripped[pos-1] != ' ') && (stripped[pos-1] != '\t'))
+            len_stripped = pos;
+      stripped[len_stripped] = '\0';
+
       bol = &cnf->buff_orig[cnf->pos_orig+1];
 
       if (!(tag = codetagger_retrieve_tag_data(cnf, tagname, filename, cnf->pos_orig)))
@@ -1203,8 +1212,14 @@ int codetagger_update_file2(CodeTagger * cnf, const char * filename,
 
       for(pos = 0; tag->contents[pos]; pos++)
       {
-         if ((err = codetagger_buffer_write(cnf, margin, len_margin, filename)))
-            return(err);
+         if (!(tag->contents[pos][0]))
+         {
+            if ((err = codetagger_buffer_write(cnf, stripped, len_stripped, filename)))
+               return(err);
+         } else {
+            if ((err = codetagger_buffer_write(cnf, margin, len_margin, filename)))
+               return(err);
+         };
          if ((err = codetagger_buffer_write(cnf, tag->contents[pos], strlen(tag->contents[pos]), filename)))
             return(err);
          if ((unsigned)(cnf->pos_modd+1) >= cnf->buff_size)
