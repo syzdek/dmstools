@@ -143,15 +143,16 @@ struct codetagger_config
 {
    unsigned          opts;
    unsigned          tagCount;
-   unsigned          buffer_size;          ///< size of each file buffer
-   unsigned          pos_original;         ///< current location in buffer for original file
-   unsigned          pos_updated;          ///< current location in buffer for updated file
-   char            * buffer_original;      ///< buffer for original file
-   char            * buffer_updated;       ///< buffer for updated file
+   unsigned          buff_size;          ///< size of each file buffer
+   int               len_orig;           ///< length of the content of the original file
+   int               pos_orig;           ///< current location in buffer for original file
+   int               pos_modd;           ///< current location in buffer for updated file
+   char            * buff_orig;          ///< buffer for original file
+   char            * buff_modd;          ///< buffer for updated file
    const char      * tagFile;
    const char      * leftTagString;
    const char      * rightTagString;
-   regex_t           generic_tag;          ///< generic regex for finding start tag
+   regex_t           generic_tag;        ///< generic regex for finding start tag
    CodeTaggerData ** tagList;
 };
 
@@ -161,6 +162,14 @@ struct codetagger_config
 //  Prototypes  //
 //              //
 //////////////////
+
+// resizes file buffers
+int codetagger_buffer_resize PARAMS((CodeTagger * cnf, unsigned size,
+   const char * error_prefix));
+
+// appends source data to buffer of modified file
+int codetagger_buffer_write PARAMS((CodeTagger * cnf, const char * src,
+   unsigned len, const char * filename));
 
 // prints debug messages
 #define codetagger_debug(cnf)           codetagger_debug_trace(cnf, __func__, NULL)
@@ -219,6 +228,10 @@ int codetagger_scan_file PARAMS((CodeTagger * cnf, const char * file,
 // updates original file by inserting/expanding tags
 int codetagger_update_file PARAMS((CodeTagger * cnf, const char * filename));
 
+// updates original file by inserting/expanding tags
+int codetagger_update_file2 PARAMS((CodeTagger * cnf, const char * filename,
+   struct stat * sbp));
+
 // displays usage
 void codetagger_usage PARAMS((void));
 
@@ -241,6 +254,76 @@ int main PARAMS((int argc, char * argv[]));
 //  Functions  //
 //             //
 /////////////////
+
+/// resizes file buffers
+/// @param[in]  cnf   pointer to config data structure
+/// @param[in]  size   requested buffer size
+int codetagger_buffer_resize(CodeTagger * cnf, unsigned size,
+   const char * error_prefix)
+{
+   void * ptr;
+
+   codetagger_debug(cnf);
+
+   if (!(cnf))
+      return(0);
+
+   if (cnf->buff_size > size)
+      return(0);
+
+   if (size > (1024*1024*10))
+   {
+      if (error_prefix)
+         codetagger_error(cnf, "%s: exceeded memory limits\n", error_prefix);
+      else
+         codetagger_error(cnf, "exceeded memory limits\n");
+      return(1);
+   };
+
+   size += 1024 * 20; // pads buffer by 10K to reduce calls to realloc()
+   codetagger_debug_ext(cnf, "%i", size);
+
+   if (!(ptr = realloc(cnf->buff_orig, size)))
+   {
+      codetagger_error(NULL, "out of virtual memory\n");
+      return(-1);
+   };
+   cnf->buff_orig = ptr;
+
+   if (!(ptr = realloc(cnf->buff_modd, size)))
+   {
+      codetagger_error(NULL, "out of virtual memory\n");
+      return(-1);
+   };
+   cnf->buff_modd = ptr;
+
+   cnf->buff_size = size;
+
+   return(0);
+}
+
+
+// appends source data to buffer of modified file
+/// @param[in]  cnf       pointer to config data structure
+/// @param[in]  src       source buffer to copy
+/// @param[in]  len       length of data
+/// @param[in]  filename  filename being processed
+int codetagger_buffer_write(CodeTagger * cnf, const char * src, unsigned len,
+   const char * filename)
+{
+   int err;
+
+   if ((unsigned)(cnf->pos_modd+len) >= cnf->buff_size)
+         if ((err = codetagger_buffer_resize(cnf, cnf->pos_modd+len, filename)))
+            return(err);
+
+   memcpy(&cnf->buff_modd[cnf->pos_modd], src, len);
+
+   cnf->pos_modd += len;
+
+   return(0);
+}
+
 
 /// prints debug messages
 /// @param[in]  cnf   pointer to config data structure
@@ -269,7 +352,7 @@ void codetagger_debug_trace(CodeTagger * cnf, const char * func, const char * fm
    if (!(func))
       fprintf(stderr, "codetagger: %s\n", buff);
    else
-      fprintf(stderr, "codetagger: %s %s\n", func, buff);
+      fprintf(stderr, "codetagger: %s: %s\n", func, buff);
    return;
 }
 
@@ -488,12 +571,7 @@ void codetagger_free_tag(CodeTagger * cnf, CodeTaggerData * tag)
       return;
 
    if (tag->name)
-   {
-      codetagger_verbose(cnf, _("   freeing tag \"%s\"\n"), tag->name);
       free(tag->name);
-   } else {
-      codetagger_verbose(cnf, _("   freeing unknown tag\n"));
-   };
 
    if (tag->contents)
    {
@@ -518,7 +596,6 @@ void codetagger_free_taglist(CodeTagger * cnf, CodeTaggerData ** taglist)
    codetagger_debug(cnf);
    if (!(taglist))
       return;
-   codetagger_verbose(cnf, _("freeing tag index\n"));
    for(i = 0; taglist[i]; i++)
       codetagger_free_tag(cnf, taglist[i]);
    free(taglist);
@@ -676,6 +753,9 @@ int codetagger_prepare_regex(CodeTagger * cnf)
    char          regstr[CODETAGGER_STR_LEN];
 
    codetagger_debug(cnf);
+
+   memset(regstr, 0, CODETAGGER_STR_LEN);
+   memset(errmsg, 0, CODETAGGER_STR_LEN);
 
    strncat(regstr, "(.*)", CODETAGGER_STR_LEN);
    codetagger_escape_string(cnf, regstr, cnf->leftTagString,  CODETAGGER_STR_LEN);
@@ -900,7 +980,8 @@ int codetagger_scan_file(CodeTagger * cnf, const char * file,
          break;
 
       case S_IFREG:
-         return(codetagger_update_file(cnf, file));
+         //return(codetagger_update_file(cnf, file));
+         return(codetagger_update_file2(cnf, file, &sb));
          break;
 
       default:
@@ -1027,6 +1108,148 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename)
    codetagger_free_filedata(cnf, data);
 
    // ends function
+   return(0);
+}
+
+
+/// updates original file by inserting/expanding tags
+/// @param[in]  cnf       pointer to config data structure
+/// @param[in]  filename  name of file to process
+int codetagger_update_file2(CodeTagger * cnf, const char * filename,
+   struct stat * sbp)
+{
+   int    fd;
+   int    err;
+   int    pos;
+   int    changed;
+   int    len_margin;
+   int    len_tagname;
+   char   margin[CODETAGGER_STR_LEN];
+   char   tagname[CODETAGGER_STR_LEN];
+   char * bol;
+   regmatch_t match[5];
+   CodeTaggerData * tag;
+
+   codetagger_debug(cnf);
+   codetagger_debug_ext(cnf, filename);
+   codetagger_verbose(cnf, _("processing \"%s\"\n"), filename);
+
+   changed = 0;
+
+   if ((err = codetagger_buffer_resize(cnf, sbp->st_size, filename)))
+      return(err);
+
+   // imports original file into buffer
+   if ((fd = open(filename, O_RDONLY)) == -1)
+   {
+      codetagger_error(cnf, "%s: %s\n", filename, strerror(errno));
+      return(1);
+   };
+   if ((cnf->len_orig = read(fd, cnf->buff_orig, sbp->st_size)) == -1)
+   {
+      codetagger_error(cnf, "%s: %s\n", filename, strerror(errno));
+      close(fd);
+      return(1);
+   };
+   cnf->buff_orig[sbp->st_size] = '\0';
+   close(fd);
+
+   cnf->pos_modd = 0;
+   bol           = &cnf->buff_orig[0];
+
+   for(cnf->pos_orig = 0; cnf->pos_orig < cnf->len_orig; cnf->pos_orig++)
+   {
+      if ((unsigned)(cnf->pos_modd+1) >= cnf->buff_size)
+         if ((err = codetagger_buffer_resize(cnf, cnf->pos_modd+1, filename)))
+            return(err);
+
+      cnf->buff_modd[cnf->pos_modd] = cnf->buff_orig[cnf->pos_orig];
+      cnf->pos_modd++;
+      if (cnf->buff_orig[cnf->pos_orig] != '\n')
+         continue;
+
+      cnf->buff_orig[cnf->pos_orig] = '\0';
+      err = regexec(&cnf->generic_tag, bol, 5, match, 0);
+      cnf->buff_orig[cnf->pos_orig] = '\n';
+
+      if (err != 0)
+      {
+         bol = &cnf->buff_orig[cnf->pos_orig+1];
+         continue;
+      };
+
+      len_margin  = match[1].rm_eo - match[1].rm_so;
+      len_tagname = match[2].rm_eo - match[2].rm_so;
+
+      memcpy(margin,  &bol[(int)match[1].rm_so], len_margin);
+      memcpy(tagname, &bol[(int)match[2].rm_so], len_tagname);
+
+      margin[len_margin]   = '\0';
+      tagname[len_tagname] = '\0';
+
+      bol = &cnf->buff_orig[cnf->pos_orig+1];
+
+      if (!(tag = codetagger_retrieve_tag_data(cnf, tagname, filename, cnf->pos_orig)))
+         continue;
+
+      // fast forwards to end tag in original file
+      if ((err = regexec(&tag->regex, &cnf->buff_orig[cnf->pos_orig+1], 5, match, 0)))
+      {
+         codetagger_error(cnf, "%s: missing \"%sEND\" tag\n", filename, tagname);
+         return(1);
+      };
+      cnf->pos_orig += match[1].rm_eo;
+      bol = &cnf->buff_orig[cnf->pos_orig];
+
+      for(pos = 0; tag->contents[pos]; pos++)
+      {
+         if ((err = codetagger_buffer_write(cnf, margin, len_margin, filename)))
+            return(err);
+         if ((err = codetagger_buffer_write(cnf, tag->contents[pos], strlen(tag->contents[pos]), filename)))
+            return(err);
+         if ((unsigned)(cnf->pos_modd+1) >= cnf->buff_size)
+            if ((err = codetagger_buffer_resize(cnf, cnf->pos_modd+1, filename)))
+               return(err);
+         cnf->buff_modd[cnf->pos_modd] = '\n';
+         cnf->pos_modd++;
+      };
+
+      if ((err = codetagger_buffer_write(cnf, margin, len_margin, filename)))
+         return(err);
+      if ((err = codetagger_buffer_write(cnf, cnf->leftTagString, strlen(cnf->leftTagString), filename)))
+         return(err);
+      if ((err = codetagger_buffer_write(cnf, tagname, len_tagname, filename)))
+         return(err);
+      if ((err = codetagger_buffer_write(cnf, "END", 3, filename)))
+         return(err);
+   };
+
+   if (cnf->pos_modd != cnf->pos_orig)
+      changed = 1;
+   else
+      for(pos = 0; ( (pos < cnf->pos_orig) && (!(changed)) ); pos++)
+         if (cnf->buff_modd[pos] != cnf->buff_orig[pos])
+            changed = 1;
+   if (!(changed))
+      return(0);
+
+   if (!(cnf->opts & CODETAGGER_OPT_QUIET))
+      printf("updating \"%s\"\n", filename);
+
+   if ((fd = open(filename, O_WRONLY|O_TRUNC|O_CREAT)) == -1)
+   {
+      codetagger_error(cnf, "%s: %s\n", filename, strerror(errno));
+      close(fd);
+      return(1);
+   };
+   if (write(fd, cnf->buff_modd, cnf->pos_modd) == -1)
+   {
+      codetagger_error(cnf, "%s: %s\n", filename, strerror(errno));
+      close(fd);
+      return(1);
+   };
+   close(fd);
+
    return(0);
 }
 
@@ -1335,10 +1558,22 @@ int main(int argc, char * argv[])
 
    codetagger_debug(&cnf);
 
-   codetagger_prepare_regex(&cnf);
+   codetagger_debug_ext(&cnf, "Debug Mode:        %s", (cnf.opts & CODETAGGER_OPT_DEBUG)    ? "yes" : "no");
+   codetagger_debug_ext(&cnf, "Continue on Error: %s", (cnf.opts & CODETAGGER_OPT_CONTINUE) ? "yes" : "no");
+   codetagger_debug_ext(&cnf, "Hidden Files:      %s", (cnf.opts & CODETAGGER_OPT_HIDDEN)   ? "yes" : "no");
+   codetagger_debug_ext(&cnf, "Follow Symlinks:   %s", (cnf.opts & CODETAGGER_OPT_LINKS)    ? "yes" : "no");
+   codetagger_debug_ext(&cnf, "Quiet Mode:        %s", (cnf.opts & CODETAGGER_OPT_QUIET)    ? "yes" : "no");
+   codetagger_debug_ext(&cnf, "Recurse Mode:      %s", (cnf.opts & CODETAGGER_OPT_RECURSE)  ? "yes" : "no");
+   codetagger_debug_ext(&cnf, "Test Mode:         %s", (cnf.opts & CODETAGGER_OPT_TEST)     ? "yes" : "no");
+   codetagger_debug_ext(&cnf, "Verbose Mode:      %s", (cnf.opts & CODETAGGER_OPT_VERBOSE)  ? "yes" : "no");
+   codetagger_debug_ext(&cnf, "Left Bracket:      %s", cnf.leftTagString);
+   codetagger_debug_ext(&cnf, "Right Bracket:     %s", cnf.rightTagString);
 
    if ((codetagger_parse_tag_file(&cnf)))
       return(0);
+
+   if (codetagger_prepare_regex(&cnf))
+      return(1);
 
    if (!(cnf.tagCount))
    {
