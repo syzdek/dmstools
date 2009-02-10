@@ -28,13 +28,14 @@ DIST_SUBDIRS				= po
 
 
 # Global flags
-AM_LIBS					=
-AM_LDFLAGS				=
+AM_LIBS					= @LTLIBINTL@
+AM_LDFLAGS				= @LTLIBINTL@
 AM_CFLAGS				= -O2 -W -Wall -Werror
 AM_CXXFLAGS				= -O2 -W -Wall -Werror
 AM_OBJCFLAGS				= -O2 -W -Wall -Werror
-AM_CPPFLAGS				= -O2 -W -Wall -Werror -DHAVE_COMMON_H=1
+AM_CPPFLAGS				= -O2 -W -Wall -Werror -DHAVE_COMMON_H=1 -I$(top_srcdir)/include
 ACLOCAL_AMFLAGS				= -I m4
+DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
@@ -84,6 +85,7 @@ TESTS					=
 XFAIL_TESTS				=
 EXTRA_DIST				= build-aux/config.rpath \
 					  build-aux/git-package-version \
+					  include/gettext.h \
 					  $(srcdir)/dmstools.tags \
 					  $(srcdir)/doc/Doxyfile \
 					  $(srcdir)/doc/codetagger.1.in \
