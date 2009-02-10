@@ -24,7 +24,7 @@
 		A02133F90E0E4CCE00336FDD /* README */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = README; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A02133FA0E0E4CCE00336FDD /* dmstools.tags */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = dmstools.tags; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A02133FB0E0E4CCE00336FDD /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
-		A02134D30E0E719000336FDD /* codetagger.1.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = codetagger.1.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A02134D30E0E719000336FDD /* codetagger.1.in */ = {isa = PBXFileReference; explicitFileType = text.man; fileEncoding = 4; indentWidth = 8; path = codetagger.1.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A02135010E0E7C6200336FDD /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		A03242690E0E453700D5D5CA /* Makefile.am */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = Makefile.am; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A04419700E0E442800D47FEA /* compile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = compile; sourceTree = "<group>"; };
