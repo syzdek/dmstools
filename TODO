@@ -3,6 +3,5 @@ DMS Tools and Utilities
 Copyright (C) 2008 David M. Syzdek <david@syzdek.net>
 
 - Write README file. (syzdek)
-- directory recursion for codetagger (williams)
-- don't change file if no replaceable tags are found (williams)
 - warning on failure to find anything to do. (williams)
+- add support to codetagger for exclude lists and patterns (syzdek)

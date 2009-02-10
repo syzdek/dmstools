@@ -26,7 +26,7 @@ AC_PREREQ(2.61)
 
 AC_COPYRIGHT([Copyright (c) 2008, 2009 David M. Syzdek <david@syzdek.net>.])
 AC_REVISION($Revision: 1.13 $)
-AC_INIT([DMS Tools and Utilities],[0.0.5a],[david@syzdek.net],[dmstools])
+AC_INIT([DMS Tools and Utilities],[0.0.5],[david@syzdek.net],[dmstools])
 
 AC_SUBST([RELEASE_MONTH],     ["January 2009"])
 AC_SUBST([PACKAGE_COPYRIGHT], ["Copyright (C) 2008, 2009 David M. Syzdek."])
