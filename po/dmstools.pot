@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: dmstools 0.0.5.16.g71c0\n"
+"Project-Id-Version: dmstools 0.0.5.51.g86fd\n"
 "Report-Msgid-Bugs-To: david@syzdek.net\n"
-"POT-Creation-Date: 2009-02-07 18:21-0900\n"
+"POT-Creation-Date: 2009-02-09 23:50-0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,142 +16,50 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/codetagger.c:328 src/codetagger.c:1032
-msgid "   compiling regular expression\n"
-msgstr ""
-
-#: src/codetagger.c:341 src/codetagger.c:673
+#: src/codetagger.c:722
 #, c-format
-msgid "   compiled regular expression \"%s\"\n"
+msgid "indexing \"%s\"\n"
 msgstr ""
 
-#: src/codetagger.c:347
-msgid "   expanding tags\n"
-msgstr ""
-
-#: src/codetagger.c:367
-#, c-format
-msgid "   inserting tag \"%s\" (line %i)\n"
-msgstr ""
-
-#: src/codetagger.c:382
-#, c-format
-msgid "%s: missing end @%sEND@ in %s\n"
-msgstr ""
-
-#: src/codetagger.c:559
-#, c-format
-msgid "   retrieving tag \"%s\"\n"
-msgstr ""
-
-#: src/codetagger.c:565
+#: src/codetagger.c:801
 #, c-format
 msgid ": %s: %i: unknown tag \"%s\"\n"
 msgstr ""
 
-#: src/codetagger.c:599
+#: src/codetagger.c:1020 src/codetagger.c:1137
 #, c-format
-msgid "   freeing tag \"%s\"\n"
+msgid "processing \"%s\"\n"
 msgstr ""
 
-#: src/codetagger.c:602
-msgid "   freeing unknown tag\n"
-msgstr ""
-
-#: src/codetagger.c:626
-msgid "freeing tag index\n"
-msgstr ""
-
-#: src/codetagger.c:662
-msgid "   compiling regular expression for tags\n"
-msgstr ""
-
-#: src/codetagger.c:676
+#: src/codetagger.c:1078
 #, c-format
-msgid "creating tag index from \"%s\"\n"
+msgid "%s: missing end @%sEND@ in %s\n"
 msgstr ""
 
-#: src/codetagger.c:695
-msgid "   freeing file buffer\n"
-msgstr ""
-
-#: src/codetagger.c:697
-msgid "   freeing regular expressions\n"
-msgstr ""
-
-#: src/codetagger.c:719
+#: src/codetagger.c:1103
 #, c-format
-msgid "processing file \"%s\"\n"
-msgstr ""
-
-#: src/codetagger.c:722
-msgid "   inspecting file\n"
-msgstr ""
-
-#: src/codetagger.c:730
-msgid "   opening file\n"
-msgstr ""
-
-#: src/codetagger.c:738
-msgid "   allocating memory for file buffer\n"
-msgstr ""
-
-#: src/codetagger.c:747
-msgid "   reading file\n"
-msgstr ""
-
-#: src/codetagger.c:757
-msgid "   closing file\n"
-msgstr ""
-
-#: src/codetagger.c:761
-msgid "   analyzing file contents\n"
-msgstr ""
-
-#: src/codetagger.c:773
-msgid "   allocating memory for file index\n"
-msgstr ""
-
-#: src/codetagger.c:783
-msgid "   indexing file's contents\n"
-msgstr ""
-
-#: src/codetagger.c:875
-#, c-format
-msgid "Try `%s --help' for more information.\n"
-msgstr ""
-
-#: src/codetagger.c:878
-#, c-format
-msgid ""
-"%s: unrecognized option `--%c'\n"
-"Try `%s --help' for more information.\n"
-msgstr ""
-
-#: src/codetagger.c:894
-#, c-format
-msgid ""
-"%s: missing required option `-f'\n"
-"Try `%s --help' for more information.\n"
-msgstr ""
-
-#: src/codetagger.c:906
-#, c-format
-msgid ": no tag definitions were found in \"%s\"\n"
+msgid "updating \"%s\"\n"
 msgstr ""
 
 #. TRANSLATORS: The following strings provide usage for command. These
 #. strings are displayed if the program is passed `--help' on the command
 #. line. The two strings referenced are: PROGRAM_NAME, and
 #. PACKAGE_BUGREPORT
-#: src/codetagger.c:929
+#: src/codetagger.c:1279
 #, c-format
 msgid ""
 "Usage: %s [OPTIONS] files\n"
-"  -f file                   file containing tags\n"
+"  -a                        include hidden files\n"
+"  -c                        continue on error\n"
+"  -d                        enter debug mode\n"
+"  -f                        force writes\n"
 "  -h, --help                print this help and exit\n"
+"  -i file                   file containing tags\n"
+"  -L                        follow symbolic links\n"
 "  -l str                    left enclosing string for tags\n"
+"  -q, --quiet, --silent     do not print messages\n"
 "  -r str                    right enclosing string for tags\n"
+"  -R                        recursively follow directories\n"
 "  -t, --test                show what would be done\n"
 "  -v, --verbose             print verbose messages\n"
 "  -V, --version             print version number and exit\n"
@@ -163,7 +71,7 @@ msgstr ""
 #. information if the program is passed --version on the command line.
 #. The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
 #. PACKAGE_VERSION.
-#: src/codetagger.c:952
+#: src/codetagger.c:1330
 #, c-format
 msgid ""
 "%s (%s) %s\n"
@@ -174,12 +82,31 @@ msgid ""
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
 
-#: src/codetagger.c:996
-#, c-format
-msgid "   indexing tag \"%s\"\n"
-msgstr ""
-
-#: src/codetagger.c:1007 src/codetagger.c:1015 src/codetagger.c:1026
+#: src/codetagger.c:1383 src/codetagger.c:1391 src/codetagger.c:1402
 #, c-format
 msgid ": out of virtual memory\n"
+msgstr ""
+
+#: src/codetagger.c:1548
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr ""
+
+#: src/codetagger.c:1551
+#, c-format
+msgid ""
+"%s: unrecognized option `--%c'\n"
+"Try `%s --help' for more information.\n"
+msgstr ""
+
+#: src/codetagger.c:1567
+#, c-format
+msgid ""
+"%s: missing required option `-f'\n"
+"Try `%s --help' for more information.\n"
+msgstr ""
+
+#: src/codetagger.c:1595
+#, c-format
+msgid ": no tag definitions were found in \"%s\"\n"
 msgstr ""
