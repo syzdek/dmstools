@@ -2,6 +2,15 @@
 DMS Tools and Utilities
 Copyright (C) 2008 David M. Syzdek <david@syzdek.net>
 
-- Write README file. (syzdek)
-- warning on failure to find anything to do. (williams)
-- add support to codetagger for exclude lists and patterns (syzdek)
+General:
+ * Write README file. (syzdek)
+
+Codetagger:
+ * warning on failure to find anything to do. (williams)
+ * add support to codetagger for exclude lists and patterns (syzdek)
+
+Fuzzygrep:
+   Write a high speed search tool for find usernames in large log files.
+
+dmsgrep:
+   Write a utility which searches through sorted files using a binary search.
