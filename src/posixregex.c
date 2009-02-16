@@ -347,19 +347,24 @@ void my_posixregex(void)
 /// displays usage
 void my_usage(void)
 {
-   printf("Usage: %s [OPTIONS] string1 string2 ... stringN\n", PROGRAM_NAME);
-   printf("  -h, --help                print this help and exit\n");
-   printf("  -p, --posixregex          print regular expression patterns\n");
-   printf("  -q, --quiet, --silent     do not print messages\n");
-   printf("  -r regex                  regular expression to use for testing strings\n");
-   printf("  -v, --verbose             print verbose messages\n");
-   printf("  -V, --version             print version number and exit\n");
-   printf("Variables:\n");
-   printf("  POSIXREGEX                default regular expression to use for testing strings\n");
-   printf("\n");
-#ifdef PACKAGE_BUGREPORT
-   printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
-#endif
+// TRANSLATORS: The following strings provide usage for command. These
+   // strings are displayed if the program is passed `--help' on the command
+   // line. The two strings referenced are: PROGRAM_NAME, and
+   // PACKAGE_BUGREPORT
+   printf(_("Usage: %s [OPTIONS] string1 string2 ... stringN\n"
+         "  -h, --help                print this help and exit\n"
+         "  -p, --posixregex          print regular expression patterns\n"
+         "  -q, --quiet, --silent     do not print messages\n"
+         "  -r regex                  regular expression to use for testing strings\n"
+         "  -v, --verbose             print verbose messages\n"
+         "  -V, --version             print version number and exit\n"
+         "\n"
+         "Variables:\n"
+         "  POSIXREGEX                default regular expression to use for testing strings\n"
+         "\n"
+         "Report bugs to <%s>.\n"
+      ), PROGRAM_NAME, PACKAGE_BUGREPORT
+   );
    return;
 }
 
