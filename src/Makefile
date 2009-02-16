@@ -32,17 +32,14 @@ CC		= gcc
 CFLAGS		?= -W -Wall -g -O2 -DHAVE_COMMON_H=1
 LDFLAGS		?= -W -Wall -g -O2
 
--include $(PROGRAM).mak
-
 all:
 	for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
-		make $(MAKEFLAGS) PROGRAM=$${BINARY} $${BINARY}; \
+		make $(MAKEFLAGS) $${BINARY}; \
 	done;
 
-install:
+install: all
 	mkdir -p $(bindir)
 	for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
-		make $(MAKEFLAGS) PROGRAM=$${BINARY} $${BINARY}; \
 		$(LIBTOOL) --mode=install install -c $${BINARY} $(bindir)/$${BINARY}; \
 	done;
 
@@ -53,7 +50,9 @@ uninstall:
 
 clean: 
 	for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
-		make $(MAKEFLAGS) PROGRAM=$${BINARY} $${BINARY}-clean; \
+		make $(MAKEFLAGS) $${BINARY}-clean; \
 	done;
+
+-include *.mak
 
 # end of Makefile
