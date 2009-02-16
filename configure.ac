@@ -86,6 +86,7 @@ AC_PROG_LIBTOOL
 # GNU gettext support
 AM_GNU_GETTEXT([external])
 
+AC_CHECK_LIB([users],[noobs],,[AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
 AC_SYZDEK_GIT_PACKAGE_VERSION
 
 # Creates outputs
