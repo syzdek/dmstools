@@ -37,11 +37,20 @@ all:
 		make $(MAKEFLAGS) $${BINARY}; \
 	done;
 
+%-install:
+	BINARY=$$(echo ${@} |sed -e 's/-install$$//g'); \
+	make $(MAKEFLAGS) $${BINARY}; \
+	$(LIBTOOL) --mode=install install -c $${BINARY} $(bindir)/$${BINARY};
+
 install: all
 	mkdir -p $(bindir)
 	for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
 		$(LIBTOOL) --mode=install install -c $${BINARY} $(bindir)/$${BINARY}; \
 	done;
+
+%-uninstall:
+	BINARY=$$(echo ${@} |sed -e 's/-install$$//g'); \
+	$(LIBTOOL) --mode=uninstall rm -f $(bindir)/$${BINARY};
 
 uninstall:
 	for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
