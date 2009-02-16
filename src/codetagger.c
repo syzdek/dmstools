@@ -96,6 +96,9 @@
 #ifndef PACKAGE_BUGREPORT
 #define PACKAGE_BUGREPORT "david@syzdek.net"
 #endif
+#ifndef PACKAGE_COPYRIGHT
+#define PACKAGE_COPYRIGHT ""
+#endif
 #ifndef PACKAGE_NAME
 #define PACKAGE_NAME ""
 #endif
