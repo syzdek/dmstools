@@ -86,31 +86,51 @@
 
 ///////////////////
 //               //
+//  i18l Support //
+//               //
+///////////////////
+
+#ifdef HAVE_GETTEXT
+#   include <gettext.h>
+#   include <libintl.h>
+#   define _(String) gettext (String)
+#   define gettext_noop(String) String
+#   define N_(String) gettext_noop (String)
+#else
+#   define _(String) (String)
+#   define N_(String) String
+#   define textdomain(Domain)
+#   define bindtextdomain(Package, Directory)
+#endif
+
+
+///////////////////
+//               //
 //  Definitions  //
 //               //
 ///////////////////
+
+#ifndef PROGRAM_NAME
+#define PROGRAM_NAME "posixregex"
+#endif
+#ifndef PACKAGE_BUGREPORT
+#define PACKAGE_BUGREPORT "david@syzdek.net"
+#endif
+#ifndef PACKAGE_COPYRIGHT
+#define PACKAGE_COPYRIGHT ""
+#endif
+#ifndef PACKAGE_NAME
+#define PACKAGE_NAME ""
+#endif
+#ifndef PACKAGE_VERSION
+#define PACKAGE_VERSION ""
+#endif
 
 #undef BUFFER_SIZE
 #define BUFFER_SIZE 1024
 
 #undef MAX_MATCHES
 #define MAX_MATCHES 128
-
-#ifndef PROGRAM_NAME
-#define PROGRAM_NAME "posixregex"
-#endif
-
-#ifndef PACKAGE_NAME
-#define PACKAGE_NAME ""
-#endif
-
-#ifndef PACKAGE_VERSION
-#define PACKAGE_VERSION ""
-#endif
-
-#ifndef PACKAGE_BUGREPORT
-#define PACKAGE_BUGREPORT "david@syzdek.net"
-#endif
 
 #ifndef PARAMS
 #define PARAMS(protos) protos
@@ -213,11 +233,13 @@ int main(int argc, char * argv[])
             verbosity++;
             break;
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
             return(1);
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
+                  "Try `%s --help' for more information.\n"
+               ),  PROGRAM_NAME, c, PROGRAM_NAME
+            );
             return(1);
       };
    };
@@ -226,8 +248,10 @@ int main(int argc, char * argv[])
       restr = getenv("POSIXREGEX");
    if (!(restr))
    {
-      fprintf(stderr, "%s: missing required argument `-- r'\n", PROGRAM_NAME);
-      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+      fprintf(stderr, _("%s: missing required argument `-- r'\n"
+            "Try `%s --help' for more information.\n"
+         ), PROGRAM_NAME, PROGRAM_NAME
+      );
       return(1);
    };
 
@@ -293,23 +317,29 @@ int main(int argc, char * argv[])
 /// displays POSIX regular expressions
 void my_posixregex(void)
 {
-   printf("POSIX        ASCII           Description\n");
-   printf("[:alnum:]    [A-Za-z0-9]     Alphanumeric characters\n");
-   printf("[:alpha:]    [A-Za-z]        Alphabetic characters\n");
-   printf("[:blank:]    [ \\t]           Space and tab\n");
-   printf("[:cntrl:]    [\\x00-\\x1F\\x7F] Control characters\n");
-   printf("[:digit:]    [0-9]           Digits\n");
-   printf("[:graph:]    [\\x21-\\x7E]     Visible characters\n");
-   printf("[:lower:]    [a-z]           Lowercase letters\n");
-   printf("[:print:]    [\\x20-\\x7E]     Visible characters and spaces\n");
-   printf("[:space:]    [ \\t\\r\\n\\v\\f]   Whitespace characters\n");
-   printf("[:upper:]    [A-Z]           Uppercase letters\n");
-   printf("[:xdigit:]   [A-Fa-f0-9]     Hexadecimal digits\n");
-   printf("%s", "[:punct:]    [-!\"#$%&'()*+,./:;<=>?@[\\]_`{|}~]   Punctuation characters\n");
-   printf("\n");
-   printf("Example Uses:\n");
-   printf("    posixregex -r '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string\n");
-   printf("    posixregex -r '\\$([[:digit:]]+)\\.([[:digit:]]{2,2})' 'Your change is $7.45.'\n");
+   // TRANSLATORS: The following strings provide a table of POSIX regular
+   // expersion key words, key word values, and a description of the key
+   // word.  The table is displayed if the program is passed --posixregex
+   // on the command line.
+   printf(_("POSIX        ASCII           Description\n"
+          "[:alnum:]    [A-Za-z0-9]     Alphanumeric characters\n"
+          "[:alpha:]    [A-Za-z]        Alphabetic characters\n"
+          "[:blank:]    [ \\t]           Space and tab\n"
+          "[:cntrl:]    [\\x00-\\x1F\\x7F] Control characters\n"
+          "[:digit:]    [0-9]           Digits\n"
+          "[:graph:]    [\\x21-\\x7E]     Visible characters\n"
+          "[:lower:]    [a-z]           Lowercase letters\n"
+          "[:print:]    [\\x20-\\x7E]     Visible characters and spaces\n"
+          "[:space:]    [ \\t\\r\\n\\v\\f]   Whitespace characters\n"
+          "[:upper:]    [A-Z]           Uppercase letters\n"
+          "[:xdigit:]   [A-Fa-f0-9]     Hexadecimal digits\n"
+          "[:punct:]    [-!\"#$%%&'()*+,./:;<=>?@[\\]_`{|}~]   Punctuation characters\n"
+          "\n"
+          "Example Uses:\n"
+          "    posixregex -r '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string\n"
+          "    posixregex -r '\\$([[:digit:]]+)\\.([[:digit:]]{2,2})' 'Your change is $7.45.'\n"
+      )
+   );
    return;
 }
 
@@ -337,14 +367,18 @@ void my_usage(void)
 /// displays version
 void my_version(void)
 {
-   printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
-   printf("Written by David M. Syzdek.\n");
-   printf("\n");
-#ifdef PACKAGE_COPYRIGHT
-   printf("%s\n", PACKAGE_COPYRIGHT);
-#endif
-   printf("This is free software; see the source for copying conditions.  There is NO\n");
-   printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
+   // TRANSLATORS: The following strings provide version and copyright
+   // information if the program is passed --version on the command line.
+   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
+   // PACKAGE_VERSION.
+   printf(_("%s (%s) %s\n"
+         "Written by David M. Syzdek.\n"
+         "\n"
+         "%s\n"
+         "This is free software; see the source for copying conditions.  There is NO\n"
+         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_COPYRIGHT
+   );
    return;
 }
 
