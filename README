@@ -1,18 +1,77 @@
 
 DMS Tools and Utilities
-Copyright (C) 2008 David M. Syzdek <david@syzdek.net>
+Copyright (C) 2009 David M. Syzdek <david@syzdek.net>
 
-@SYZDEK_COPYRIGHT_HEADER_START@
+This package is a collection miscellaneous programs that are not large enough
+to require thier own projects, but are useful none the less.  For basic
+installation instructions, please see the INSTALL file.
 
-Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.2
-or any later version published by the Free Software Foundation;
-with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
-A copy of the license is included in the section entitled "GNU
-Free Documentation License".
+For the latest information about this project is available from the following
+websites:
 
-@SYZDEK_COPYRIGHT_HEADER_END@
+	http://github.com/syzdek/dmstools/
+	http://scm.syzdek.net/scm/devel/dmstools.git
 
 
-Nothing to see yet.  Please move along.
+Utilities and Tools
+===================
+
+The following utilities and tools are included in this package:
+
+	bitops - Performs multiple calculations upon two numbers for a quick
+		reference of the affects of bitwise operators.
+
+	codetagger - Replaces the text between two tags with the text
+		contained within a tag definitions file.
+
+	posixregex - Attempts to match the specified regular expression
+		using POSIX regular expressions against the provided strings.
+		Useful for testing a POSIX regular expressions or using POSIX
+		regular expressions in shell scripts.
+
+
+Getting the source
+==================
+
+The source code for this project is maintained using git (http://git-scm.com).
+The following instructions checkout the source code from the git repository
+and creates the autotool files:
+
+	git clone git://git.scm.syzdek.net/pub/scm/devel/dmstools.git
+	cd dmstools
+	aclocal && autoconf && autoheader && automake
+
+The git repository may also be cloned using the following locations:
+
+	git://github.com/syzdek/dmstools.git
+	http://http.scm.bindlebinaries.net/pub/scm/devel/dmstools.git
+
+
+Installing From Source
+======================
+
+Supported platforms:
+
+	* FreeBSD
+	* Slackware Linux 12.1
+	* OS X 10.5
+
+Required Software:
+
+	* GNU Autoconf
+	* GNU Automake
+	* GNU Compiler Collection
+	* GNU Lib C
+	* GNU Libtool
+	* Make
+
+Basic installation:
+
+	cd dmstools
+	./configure
+	make
+	make install
+
+For additional installation information and options, please refer to the
+INSTALLATION file.
 
