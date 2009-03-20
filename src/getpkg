@@ -49,17 +49,37 @@ EOF
 # Parse options:
 MODE=install # standard text-mode
 while [ 0 ];do
-   if [ "$1" = "-list" ]; then
+   if [ "$1" = "-find" ]; then
+      if [ "$2" = "" ]; then
+         usage;
+         exit;
+      fi
+      MODE=find
+      FIND_STRING="$2"
+      shift 2
+   elif [ "$1" = "-list" ]; then
       MODE=list
       shift 1
    elif [ "$1" = "-mirror" ];then
+      if [ "$2" = "" ]; then
+         usage;
+         exit;
+      fi
       URL_MIRROR="$2"
       shift 2
    elif [ "$1" = "-root" ];then
+      if [ "$2" = "" ]; then
+         usage;
+         exit;
+      fi
       FLAGS="$FLAGS -root $2"
       ROOT="$2"
       shift 2
    elif [ "$1" = "-setmirror" ];then
+      if [ "$2" = "" ]; then
+         usage;
+         exit;
+      fi
       SETMIRROR="$2"
       shift 2
    elif [ "$1" = "-wget" ];then
@@ -105,17 +125,33 @@ if test "$URL_MIRROR" = "";then
    exit 1
 fi
 
-if ! test -f $ADM_DIR/getpkg-data/SLACKWARE.md5 || test "$MODE" = "selfupdate";then
-   echo "downloading checksums for slackware packages..."
-   $BIN_WGET -q -O $ADM_DIR/getpkg-data/SLACKWARE.md5 \
-      $URL_MIRROR/slackware/CHECKSUMS.md5 || \
-      { echo "unable to download package list"; exit 1; }
-fi
-if ! test -f $ADM_DIR/getpkg-data/PATCHES.md5 || test "$MODE" = "selfupdate";then
-   echo "downloading checksums for slackware patches..."
-   $BIN_WGET -q -O $ADM_DIR/getpkg-data/PATCHES.md5 \
-      $URL_MIRROR/patches/CHECKSUMS.md5 || \
-      { echo "unable to download patch list"; exit 1; }
+FILES="${FILES} getpkg-data/SLACKWARE.md5:slackware/CHECKSUMS.md5"
+FILES="${FILES} getpkg-data/SLACKWARE.bz2:slackware/MANIFEST.bz2"
+FILES="${FILES} getpkg-data/SLACKWARE.txt:slackware/PACKAGES.TXT"
+FILES="${FILES} getpkg-data/PATCHES.md5:patches/CHECKSUMS.md5"
+FILES="${FILES} getpkg-data/PATCHES.bz2:patches/MANIFEST.bz2"
+FILES="${FILES} getpkg-data/PATCHES.txt:patches/PACKAGES.TXT"
+
+for PAIR in $FILES;do
+   FILE=`echo $PAIR|awk -F: '{print$1}'`
+   FILE_SUFFIX=`echo $PAIR|awk -F: '{print$2}'`
+   if ! test -f $ADM_DIR/$FILE || test "$MODE" = "selfupdate";then
+      echo "downloading $FILE_SUFFIX..."
+      $BIN_WGET -q -O $ADM_DIR/$FILE \
+         $URL_MIRROR/$FILE_SUFFIX || \
+         { echo "unable to download $FILE_SUFFIX"; exit 1; }
+   fi
+done
+
+if test "$FIND_STRING" != "";then
+   bzip2 -cd $ADM_DIR/getpkg-data/PATCHES.bz2 \
+      $ADM_DIR/getpkg-data/SLACKWARE.bz2 | \
+      egrep -v '^\|\|$' | \
+      egrep  "\|\||$FIND_STRING" | \
+      egrep -B 1 "$FIND_STRING" | \
+      sed -e 's/^[-[:alpha:]]\{10,10\} [[:alnum:]]\{1,\}\/[[:alnum:]]\{1,\}[[:space:]]\{1,\}[-: [:digit:]]\{1,\}/    /g' \
+          -e 's/^||[[:space:]]\{1,\}Package:[[:space:]]\{1,\}.\/[[:alpha:]]\{1,\}\//Package: /g'
+   exit
 fi
 
 if test "$MODE" = "list" || test "$MODE" = "search";then
@@ -123,11 +159,17 @@ if test "$MODE" = "list" || test "$MODE" = "search";then
       $ADM_DIR/getpkg-data/PATCHES.md5 | \
       egrep '^[[:alnum:]]{32,32}  ./[[:alpha:]]{1,10}/' | \
       sed 's/^[[:alnum:]]\{32,32\}  .\/[[:alpha:]]\{1,10\}\///g' | \
-      egrep '.tgz$' |sort | \
-      sed 's/.tgz$/ (available)/g' > $ADM_DIR/setup/tmp/PACKAGES.list
-   ls /var/log/packages/ |sed 's/$/ (installed)/g' >> $ADM_DIR/setup/tmp/PACKAGES.list
-   sort $ADM_DIR/setup/tmp/PACKAGES.list |grep "$PACKAGE_STRING" || \
-      echo "package not found"
+      egrep '.tgz$' |sed 's/.tgz$//g' |sort > $ADM_DIR/setup/tmp/PACKAGES.avl
+   rm -f $ADM_DIR/setup/tmp/PACKAGES.list
+   for PACKAGE in `cat $ADM_DIR/setup/tmp/PACKAGES.avl`;do
+      if test -f /var/log/packages/$PACKAGE;then
+         echo "$PACKAGE (installed)" >> $ADM_DIR/setup/tmp/PACKAGES.list
+      else
+         echo "$PACKAGE (available)" >> $ADM_DIR/setup/tmp/PACKAGES.list
+      fi
+   done
+   grep "$PACKAGE_STRING" $ADM_DIR/setup/tmp/PACKAGES.list
+   rm -f $ADM_DIR/setup/tmp/PACKAGES.avl
    rm -f $ADM_DIR/setup/tmp/PACKAGES.list
    exit;
 fi
@@ -154,25 +196,28 @@ for PACKAGE_STRING in $*;do
       echo "package is not available"
       exit 1
    fi
-   PACKAGE=`basename $PACKAGE_SUFFIX`
+   PACKAGE_FILE=`basename $PACKAGE_SUFFIX`
    PACKAGE_URL="$URL_MIRROR/$PACKAGE_SUFFIX"
+   PACKAGE=`basename $PACKAGE_SUFFIX .tgz`
     
-   echo "downloading $PACKAGE from $PACKAGE_URL..."
-   $BIN_WGET -q -O $ADM_DIR/setup/tmp/$PACKAGE $PACKAGE_URL || { echo "unable to download $PACKAGE"; exit 1; }
    CODE=0
-   if test "$MODE" = "upgrade";then
-      /sbin/upgradepkg $FLAGS $ADM_DIR/setup/tmp/$PACKAGE
-      CODE=$?
+   if test -f /var/log/packages/$PACKAGE;then
+      echo "$PACKAGE is already installed. Try 'getpkg -upgrade $PACKAGE'"
    else
-      /sbin/installpkg $FLAGS $ADM_DIR/setup/tmp/$PACKAGE
-      CODE=$?
+      echo "downloading $PACKAGE from $PACKAGE_URL..."
+      $BIN_WGET -q -O $ADM_DIR/setup/tmp/$PACKAGE_FILE $PACKAGE_URL || { echo "unable to download $PACKAGE"; exit 1; }
+      if test "$MODE" = "upgrade";then
+         /sbin/upgradepkg $FLAGS $ADM_DIR/setup/tmp/$PACKAGE_FILE
+         CODE=$?
+      else
+         /sbin/installpkg $FLAGS $ADM_DIR/setup/tmp/$PACKAGE_FILE
+         CODE=$?
+      fi
    fi
-   rm -f $ADM_DIR/setup/tmp/$PACKAGE
+   rm -f $ADM_DIR/setup/tmp/$PACKAGE_FILE
    if test $CODE -ne 0;then
      exit $CODE
    fi
 done
-
-
 
 # end of script
