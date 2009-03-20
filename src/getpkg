@@ -109,6 +109,8 @@ if ! test -f $ADM_DIR/getpkg-data/SLACKWARE.md5 || test "$MODE" = "selfupdate";t
    $BIN_WGET -q -O $ADM_DIR/getpkg-data/SLACKWARE.md5 \
       $URL_MIRROR/slackware/CHECKSUMS.md5 || \
       { echo "unable to download package list"; exit 1; }
+fi
+if ! test -f $ADM_DIR/getpkg-data/PATCHES.md5 || test "$MODE" = "selfupdate";then
    echo "downloading checksums for slackware patches..."
    $BIN_WGET -q -O $ADM_DIR/getpkg-data/PATCHES.md5 \
       $URL_MIRROR/patches/CHECKSUMS.md5 || \
