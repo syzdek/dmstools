@@ -99,6 +99,10 @@ if test "$URL_MIRROR" = "";then
    . $ADM_DIR/getpkg-data/getpkg.conf
    fi
 fi
+if test "$URL_MIRROR" = "";then
+   echo "missing Slackware mirror URL"
+   exit 1
+fi
 
 if ! test -f $ADM_DIR/getpkg-data/SLACKWARE.md5 || test "$MODE" = "selfupdate";then
    echo "downloading checksums for slackware packages..."
