@@ -1,0 +1,171 @@
+#!/bin/sh
+# Copyright 2009 David M. Syzdek, Anchorage, AK, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# set up script
+BIN_AWK=/usr/bin/awk
+BIN_MD5SUM=/usr/bin/md5sum
+BIN_WGET=/usr/bin/wget
+URL_MIRROR=""
+umask 022
+
+usage() {
+   cat << EOF
+Usage: getpkg [options] package_name
+
+getpkg is used to download and install .tgz Slackare packages from a Slackware
+mirror site and install the package.
+
+options:      -list (list available packages)
+              -mirror http://mirror.server.org/path/to/slackware-XX.X/
+              -setmirror URL (set default mirror URL)
+              -root /mnt (install someplace else, like /mnt)
+              -wget /path/to/wget
+              -selfupdate (update package listings from mirror)
+              -upgrade (using upgradepkg instead of installpkg)
+
+EOF
+}
+
+
+# Parse options:
+MODE=install # standard text-mode
+while [ 0 ];do
+   if [ "$1" = "-list" ]; then
+      MODE=list
+      shift 1
+   elif [ "$1" = "-mirror" ];then
+      URL_MIRROR="$2"
+      shift 2
+   elif [ "$1" = "-root" ];then
+      FLAGS="$FLAGS -root $2"
+      ROOT="$2"
+      shift 2
+   elif [ "$1" = "-setmirror" ];then
+      SETMIRROR="$2"
+      shift 2
+   elif [ "$1" = "-wget" ];then
+      BIN_WGET="$2"
+      shift 2
+   elif [ "$1" = "-search" ];then
+      PACKAGE_STRING="$2"
+      MODE=search
+      shift 2
+   elif [ "$1" = "-selfupdate" ];then
+      MODE=selfupdate
+      shift 1
+   elif [ "$1" = "-upgrade" ];then
+      MODE=upgrade
+      shift 1
+   else
+      break;
+   fi
+done
+
+# Set the prefix for the package database directories (getpkg-data).
+ADM_DIR="$ROOT/var/log"
+for PKGDBDIR in getpkg-data setup setup/tmp;do
+   if [ ! -d $ADM_DIR/$PKGDBDIR ]; then
+      rm -rf $ADM_DIR/$PKGDBDIR || exit 1
+      mkdir -p $ADM_DIR/$PKGDBDIR || exit 1
+      chmod 755 $ADM_DIR/$PKGDBDIR || exit 1
+   fi
+done
+
+if [ "$SETMIRROR" != "" ];then
+   echo "URL_MIRROR=\"$SETMIRROR\"" > $ADM_DIR/getpkg-data/getpkg.conf
+   exit
+fi
+
+if test "$URL_MIRROR" = "";then
+   if test -f $ADM_DIR/getpkg-data/getpkg.conf;then
+   . $ADM_DIR/getpkg-data/getpkg.conf
+   fi
+fi
+
+if ! test -f $ADM_DIR/getpkg-data/SLACKWARE.md5 || test "$MODE" = "selfupdate";then
+   echo "downloading checksums for slackware packages..."
+   $BIN_WGET -q -O $ADM_DIR/getpkg-data/SLACKWARE.md5 \
+      $URL_MIRROR/slackware/CHECKSUMS.md5 || \
+      { echo "unable to download package list"; exit 1; }
+   echo "downloading checksums for slackware patches..."
+   $BIN_WGET -q -O $ADM_DIR/getpkg-data/PATCHES.md5 \
+      $URL_MIRROR/patches/CHECKSUMS.md5 || \
+      { echo "unable to download patch list"; exit 1; }
+fi
+
+if test "$MODE" = "list" || test "$MODE" = "search";then
+   cat $ADM_DIR/getpkg-data/SLACKWARE.md5 \
+      $ADM_DIR/getpkg-data/PATCHES.md5 | \
+      egrep '^[[:alnum:]]{32,32}  ./[[:alpha:]]{1,10}/' | \
+      sed 's/^[[:alnum:]]\{32,32\}  .\/[[:alpha:]]\{1,10\}\///g' | \
+      egrep '.tgz$' |sort | \
+      sed 's/.tgz$/ (available)/g' > $ADM_DIR/setup/tmp/PACKAGES.list
+   ls /var/log/packages/ |sed 's/$/ (installed)/g' >> $ADM_DIR/setup/tmp/PACKAGES.list
+   sort $ADM_DIR/setup/tmp/PACKAGES.list |grep "$PACKAGE_STRING" || \
+      echo "package not found"
+   rm -f $ADM_DIR/setup/tmp/PACKAGES.list
+   exit;
+fi
+
+if test "$MODE" = "selfupdate";then
+   exit;
+elif [ $# = 0 ]; then
+  usage;
+  exit
+fi
+
+for PACKAGE_STRING in $*;do
+   if test "$PACKAGE_SUFFIX" = "";then
+      PACKAGE_LINE=`egrep "^[[:alnum:]]{32,32}  ./[[:alpha:]]{1,10}/$PACKAGE_STRING" $ADM_DIR/getpkg-data/PATCHES.md5|egrep '.tgz$'`
+      PACKAGE_MD5=`echo $PACKAGE_LINE|awk '{print$1}'`
+      PACKAGE_SUFFIX=`echo $PACKAGE_LINE|awk '{print$2}'|sed 's/^./patches/g'`
+   fi
+   if test "$PACKAGE_SUFFIX" = "";then
+      PACKAGE_LINE=`egrep "^[[:alnum:]]{32,32}  ./[[:alpha:]]{1,10}/$PACKAGE_STRING" $ADM_DIR/getpkg-data/SLACKWARE.md5|egrep '.tgz$'`
+      PACKAGE_MD5=`echo $PACKAGE_LINE|awk '{print$1}'`
+      PACKAGE_SUFFIX=`echo $PACKAGE_LINE|awk '{print$2}'|sed 's/^./slackware/g'`
+   fi
+   if test "$PACKAGE_SUFFIX" = "";then
+      echo "package is not available"
+      exit 1
+   fi
+   PACKAGE=`basename $PACKAGE_SUFFIX`
+   PACKAGE_URL="$URL_MIRROR/$PACKAGE_SUFFIX"
+    
+   echo "downloading $PACKAGE from $PACKAGE_URL..."
+   $BIN_WGET -q -O $ADM_DIR/setup/tmp/$PACKAGE $PACKAGE_URL || { echo "unable to download $PACKAGE"; exit 1; }
+   CODE=0
+   if test "$MODE" = "upgrade";then
+      /sbin/upgradepkg $FLAGS $ADM_DIR/setup/tmp/$PACKAGE
+      CODE=$?
+   else
+      /sbin/installpkg $FLAGS $ADM_DIR/setup/tmp/$PACKAGE
+      CODE=$?
+   fi
+   rm -f $ADM_DIR/setup/tmp/$PACKAGE
+   if test $CODE -ne 0;then
+     exit $CODE
+   fi
+done
+
+
+
+# end of script
