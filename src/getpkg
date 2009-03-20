@@ -214,7 +214,8 @@ for PACKAGE_STRING in $*;do
     
    CODE=0
    if test -f /var/log/packages/$PACKAGE;then
-      echo "$PACKAGE is already installed. Try 'getpkg -upgrade $PACKAGE'"
+      echo "$PACKAGE is already installed."
+      echo "Try 'getpkg -upgrade $PACKAGE'"
    else
       echo "downloading $PACKAGE from $PACKAGE_URL..."
       $BIN_WGET -q -O $ADM_DIR/setup/tmp/$PACKAGE_FILE $PACKAGE_URL || { echo "unable to download $PACKAGE"; exit 1; }
