@@ -35,6 +35,7 @@ mirror site and install the package.
 
 options:      -list (list available packages)
               -mirror http://mirror.server.org/path/to/slackware-XX.X/
+              -search STRING (search packages for STRING)
               -setmirror URL (set default mirror URL)
               -root /mnt (install someplace else, like /mnt)
               -wget /path/to/wget
