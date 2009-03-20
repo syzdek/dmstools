@@ -19,6 +19,11 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+if test ! -f /etc/slackware-version;then
+   echo "This utility is designed for Slackware Linux."
+   exit 1
+fi
+
 # set up script
 BIN_AWK=/usr/bin/awk
 BIN_MD5SUM=/usr/bin/md5sum
@@ -49,7 +54,6 @@ Example URL:
 
 EOF
 }
-
 
 # Parse options:
 MODE=install # standard text-mode
@@ -137,6 +141,10 @@ FILES="${FILES} getpkg-data/PATCHES.bz2:patches/MANIFEST.bz2"
 FILES="${FILES} getpkg-data/PATCHES.txt:patches/PACKAGES.TXT"
 
 for PAIR in $FILES;do
+   if test ! -x ${BIN_WGET};then
+      echo "missing required package wget"
+      exit 1;
+   fi
    FILE=`echo $PAIR|awk -F: '{print$1}'`
    FILE_SUFFIX=`echo $PAIR|awk -F: '{print$2}'`
    if ! test -f $ADM_DIR/$FILE || test "$MODE" = "selfupdate";then
