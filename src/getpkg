@@ -33,14 +33,19 @@ Usage: getpkg [options] package_name
 getpkg is used to download and install .tgz Slackare packages from a Slackware
 mirror site and install the package.
 
-options:      -list (list available packages)
-              -mirror http://mirror.server.org/path/to/slackware-XX.X/
+options:
+              -file STRING (find a package name by file name)
+              -list (list available packages)
+              -mirror URL (override default mirror URL)
               -search STRING (search packages for STRING)
               -setmirror URL (set default mirror URL)
               -root /mnt (install someplace else, like /mnt)
               -wget /path/to/wget
               -selfupdate (update package listings from mirror)
               -upgrade (using upgradepkg instead of installpkg)
+
+Example URL:
+   http://mirror.server.org/path/to/slackware-XX.X/
 
 EOF
 }
@@ -49,13 +54,12 @@ EOF
 # Parse options:
 MODE=install # standard text-mode
 while [ 0 ];do
-   if [ "$1" = "-find" ]; then
+   if [ "$1" = "-file" ]; then
       if [ "$2" = "" ]; then
          usage;
          exit;
       fi
-      MODE=find
-      FIND_STRING="$2"
+      FILE_STRING="$2"
       shift 2
    elif [ "$1" = "-list" ]; then
       MODE=list
@@ -143,12 +147,12 @@ for PAIR in $FILES;do
    fi
 done
 
-if test "$FIND_STRING" != "";then
+if test "$FILE_STRING" != "";then
    bzip2 -cd $ADM_DIR/getpkg-data/PATCHES.bz2 \
       $ADM_DIR/getpkg-data/SLACKWARE.bz2 | \
       egrep -v '^\|\|$' | \
-      egrep  "\|\||$FIND_STRING" | \
-      egrep -B 1 "$FIND_STRING" | \
+      egrep  "\|\||$FILE_STRING" | \
+      egrep -B 1 "$FILE_STRING" | \
       sed -e 's/^[-[:alpha:]]\{10,10\} [[:alnum:]]\{1,\}\/[[:alnum:]]\{1,\}[[:space:]]\{1,\}[-: [:digit:]]\{1,\}/    /g' \
           -e 's/^||[[:space:]]\{1,\}Package:[[:space:]]\{1,\}.\/[[:alpha:]]\{1,\}\//Package: /g'
    exit
