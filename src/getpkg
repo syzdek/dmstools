@@ -194,6 +194,11 @@ elif [ $# = 0 ]; then
 fi
 
 for PACKAGE_STRING in $*;do
+   PACKAGE="";
+   PACKAGE_LINE="";
+   PACKAGE_MD5="";
+   PACKAGE_SUFFIX="";
+   PACKAGE_URL="";
    if test "$PACKAGE_SUFFIX" = "";then
       PACKAGE_LINE=`egrep "^[[:alnum:]]{32,32}  ./[[:alpha:]]{1,10}/$PACKAGE_STRING" $ADM_DIR/getpkg-data/PATCHES.md5|egrep '.tgz$'`
       PACKAGE_MD5=`echo $PACKAGE_LINE|awk '{print$1}'`
