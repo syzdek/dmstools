@@ -145,7 +145,7 @@ int main(int argc, char * argv[])
    uintmax_t byte;
 
    // getopt options
-   static char   short_opt[] = "aBDhOsVXx";
+   static char   short_opt[] = "aBbDdhOosVXx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -169,8 +169,14 @@ int main(int argc, char * argv[])
          case 'B':
             opt |= MY_OPT_BIN;
             break;
+         case 'b':
+            base = 2;
+            break;
          case 'D':
             opt |= MY_OPT_DEC;
+            break;
+         case 'd':
+            base = 10;
             break;
          case 'h':
             my_usage();
@@ -178,11 +184,17 @@ int main(int argc, char * argv[])
          case 'O':
             opt |= MY_OPT_OCT;
             break;
+         case 'o':
+            base = 8;
+            break;
          case 's':
             opt = MY_TOGGLE(opt, MY_OPT_SPACE);
             break;
          case 'X':
             opt |= MY_OPT_HEX;
+            break;
+         case 'x':
+            base = 16;
             break;
          case 'V':
             my_version();
@@ -262,11 +274,15 @@ void my_usage()
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s num1 num2 ... numX\n"
          "  -B                        enable binary output\n"
+         "  -b                        assume binary notation for input\n"
          "  -D                        enable decimal output\n"
+         "  -d                        assume decimal notation for input\n"
          "  -h, --help                print this help and exit\n"
          "  -O                        enable octal output\n"
+         "  -o                        assume octal notation for input\n"
          "  -s                        display binary value in 8 bit blocks\n"
          "  -X                        enable hexadecimal output\n"
+         "  -x                        assume hexadecimal notation for input\n"
          "  -V, --version             print version number and exit\n"
          "\n"
          "Input Notation:\n"
