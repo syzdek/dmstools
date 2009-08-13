@@ -1,2 +1,5 @@
 # List of source files which contain translatable strings.
+src/bitops.c
 src/codetagger.c
+src/numconvert.c
+src/posixregex.c

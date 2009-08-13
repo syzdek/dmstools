@@ -1,26 +1,26 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# English translations for DMS Tools and Utilities package.
+# Copyright (C) 2009 Free Software Foundation, Inc.
+# This file is distributed under the same license as the DMS Tools and Utilities package.
+# David Syzdek <>, 2009.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: dmstools 0.0.5.25.g6b28bf2\n"
 "Report-Msgid-Bugs-To: david@syzdek.net\n"
 "POT-Creation-Date: 2009-08-12 18:25-0800\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2009-08-12 18:29-0800\n"
+"Last-Translator: David Syzdek <>\n"
+"Language-Team: English\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=ASCII\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/bitops.c:204 src/codetagger.c:1293 src/numconvert.c:188
 #: src/posixregex.c:236
 #, c-format
 msgid "Try `%s --help' for more information.\n"
-msgstr ""
+msgstr "Try `%s --help' for more information.\n"
 
 #: src/bitops.c:207 src/codetagger.c:1296 src/numconvert.c:191
 #: src/posixregex.c:239
@@ -29,6 +29,8 @@ msgid ""
 "%s: unrecognized option `--%c'\n"
 "Try `%s --help' for more information.\n"
 msgstr ""
+"%s: unrecognized option `--%c'\n"
+"Try `%s --help' for more information.\n"
 
 #. TRANSLATORS: The following strings provide usage for command. These
 #. strings are displayed if the program is passed `--help' on the command
@@ -51,6 +53,19 @@ msgid ""
 "\n"
 "Report bugs to <%s>.\n"
 msgstr ""
+"Usage: %s [options] num1 num2\n"
+"  -B                        display output in binary notation\n"
+"  -D                        display output in decimal notation\n"
+"  -H                        display output in hexadecimal notation\n"
+"  -O                        display output in octal notation\n"
+"\n"
+"Input Notation:\n"
+"  00NNNNNNNN                input number is in binary\n"
+"  NNNNNNNN                  input number is in decimal\n"
+"  0xNNNNNNNN                input number is in hexadecimal\n"
+"  0NNNNNNNN                 input number is in octal\n"
+"\n"
+"Report bugs to <%s>.\n"
 
 #. TRANSLATORS: The following strings provide version and copyright
 #. information if the program is passed --version on the command line.
@@ -67,21 +82,27 @@ msgid ""
 "This is free software; see the source for copying conditions.  There is NO\n"
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
+"%s (%s) %s\n"
+"Written by David M. Syzdek.\n"
+"\n"
+"%s\n"
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 
 #: src/codetagger.c:586
 #, c-format
 msgid "indexing \"%s\"\n"
-msgstr ""
+msgstr "indexing \"%s\"\n"
 
 #: src/codetagger.c:665
 #, c-format
 msgid ": %s: %i: unknown tag \"%s\"\n"
-msgstr ""
+msgstr ": %s: %i: unknown tag \"%s\"\n"
 
 #: src/codetagger.c:882
 #, c-format
 msgid "processing \"%s\"\n"
-msgstr ""
+msgstr "processing \"%s\"\n"
 
 #. TRANSLATORS: The following strings provide usage for command. These
 #. strings are displayed if the program is passed `--help' on the command
@@ -108,11 +129,28 @@ msgid ""
 "\n"
 "Report bugs to <%s>.\n"
 msgstr ""
+"Usage: %s [OPTIONS] files\n"
+"  -a                        include hidden files\n"
+"  -c                        continue on error\n"
+"  -d                        enter debug mode\n"
+"  -f                        force writes\n"
+"  -h, --help                print this help and exit\n"
+"  -i file                   file containing tags\n"
+"  -L                        follow symbolic links\n"
+"  -l str                    left enclosing string for tags\n"
+"  -q, --quiet, --silent     do not print messages\n"
+"  -r str                    right enclosing string for tags\n"
+"  -R                        recursively follow directories\n"
+"  -t, --test                show what would be done\n"
+"  -v, --verbose             print verbose messages\n"
+"  -V, --version             print version number and exit\n"
+"\n"
+"Report bugs to <%s>.\n"
 
 #: src/codetagger.c:1128 src/codetagger.c:1136 src/codetagger.c:1147
 #, c-format
 msgid ": out of virtual memory\n"
-msgstr ""
+msgstr ": out of virtual memory\n"
 
 #: src/codetagger.c:1312
 #, c-format
@@ -120,11 +158,13 @@ msgid ""
 "%s: missing required option `-f'\n"
 "Try `%s --help' for more information.\n"
 msgstr ""
+"%s: missing required option `-f'\n"
+"Try `%s --help' for more information.\n"
 
 #: src/codetagger.c:1340
 #, c-format
 msgid ": no tag definitions were found in \"%s\"\n"
-msgstr ""
+msgstr ": no tag definitions were found in \"%s\"\n"
 
 #: src/numconvert.c:204
 #, c-format
@@ -132,6 +172,8 @@ msgid ""
 "%s: missing required argument\n"
 "Try `%s --help' for more information.\n"
 msgstr ""
+"%s: missing required argument\n"
+"Try `%s --help' for more information.\n"
 
 #. TRANSLATORS: The following strings provide usage for command. These
 #. strings are displayed if the program is passed `--help' on the command
@@ -156,6 +198,21 @@ msgid ""
 "\n"
 "Report bugs to <%s>.\n"
 msgstr ""
+"Usage: %s num1 num2 ... numX\n"
+"  -B                        enable binary output\n"
+"  -D                        enable decimal output\n"
+"  -H                        enable hexadecimal output\n"
+"  -h, --help                print this help and exit\n"
+"  -O                        enable octal output\n"
+"  -s                        display binary value in 8 bit blocks\n"
+"  -V, --version             print version number and exit\n"
+"\n"
+"Input Notation:\n"
+"  NNNNNNNN                  input number is in decimal\n"
+"  0xNNNNNNNN                input number is in hexadecimal\n"
+"  0NNNNNNNN                 input number is in octal\n"
+"\n"
+"Report bugs to <%s>.\n"
 
 #: src/posixregex.c:251
 #, c-format
@@ -163,6 +220,8 @@ msgid ""
 "%s: missing required argument `-- r'\n"
 "Try `%s --help' for more information.\n"
 msgstr ""
+"%s: missing required argument `-- r'\n"
+"Try `%s --help' for more information.\n"
 
 #. TRANSLATORS: The following strings provide a table of POSIX regular
 #. expersion key words, key word values, and a description of the key
@@ -192,6 +251,26 @@ msgid ""
 "    posixregex -r '\\$([[:digit:]]+)\\.([[:digit:]]{2,2})' 'Your change is "
 "$7.45.'\n"
 msgstr ""
+"POSIX        ASCII           Description\n"
+"[:alnum:]    [A-Za-z0-9]     Alphanumeric characters\n"
+"[:alpha:]    [A-Za-z]        Alphabetic characters\n"
+"[:blank:]    [ \\t]           Space and tab\n"
+"[:cntrl:]    [\\x00-\\x1F\\x7F] Control characters\n"
+"[:digit:]    [0-9]           Digits\n"
+"[:graph:]    [\\x21-\\x7E]     Visible characters\n"
+"[:lower:]    [a-z]           Lowercase letters\n"
+"[:print:]    [\\x20-\\x7E]     Visible characters and spaces\n"
+"[:space:]    [ \\t\\r\\n\\v\\f]   Whitespace characters\n"
+"[:upper:]    [A-Z]           Uppercase letters\n"
+"[:xdigit:]   [A-Fa-f0-9]     Hexadecimal digits\n"
+"[:punct:]    [-!\"#$%%&'()*+,./:;<=>?@[\\]_`{|}~]   Punctuation characters\n"
+"\n"
+"Example Uses:\n"
+"    posixregex -r '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@)"
+"{0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\\?(.*)){0,1}$'  http://"
+"jdoe:password@www.foo.org:123/path/to/file?query_string\n"
+"    posixregex -r '\\$([[:digit:]]+)\\.([[:digit:]]{2,2})' 'Your change is "
+"$7.45.'\n"
 
 #. TRANSLATORS: The following strings provide usage for command. These
 #. strings are displayed if the program is passed `--help' on the command
@@ -214,3 +293,16 @@ msgid ""
 "\n"
 "Report bugs to <%s>.\n"
 msgstr ""
+"Usage: %s [OPTIONS] string1 string2 ... stringN\n"
+"  -h, --help                print this help and exit\n"
+"  -p, --posixregex          print regular expression patterns\n"
+"  -q, --quiet, --silent     do not print messages\n"
+"  -r regex                  regular expression to use for testing strings\n"
+"  -v, --verbose             print verbose messages\n"
+"  -V, --version             print version number and exit\n"
+"\n"
+"Variables:\n"
+"  POSIXREGEX                default regular expression to use for testing "
+"strings\n"
+"\n"
+"Report bugs to <%s>.\n"
