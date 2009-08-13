@@ -39,7 +39,7 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
-bin_PROGRAMS				= src/bitops src/codetagger src/posixregex
+bin_PROGRAMS				= src/bitops src/codetagger src/numconvert src/posixregex
 noinst_PROGRAMS				= src/recurse
 noinst_HEADERS				= src/common.h
 man_MANS				= doc/codetagger.1
@@ -57,6 +57,13 @@ src_codetagger_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_codetagger_CPPFLAGS			= -DPROGRAM_NAME="\"codetagger\"" $(AM_CPPFLAGS)
 src_codetagger_SOURCES			= $(noinst_HEADERS) \
 					  src/codetagger.c
+
+
+# macros for src/numconvert
+src_numconvert_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
+src_numconvert_CPPFLAGS			= -DPROGRAM_NAME="\"numconvert\"" $(AM_CPPFLAGS)
+src_numconvert_SOURCES			= $(noinst_HEADERS) \
+					  src/numconvert.c
 
 
 # macros for src/posixregex

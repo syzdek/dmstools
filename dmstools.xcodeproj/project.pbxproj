@@ -36,6 +36,7 @@
 		A04419760E0E442800D47FEA /* ltmain.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = ltmain.sh; sourceTree = "<group>"; };
 		A04419770E0E442800D47FEA /* missing */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = missing; sourceTree = "<group>"; };
 		A07BC6F10F0210CF00219629 /* bitops.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitops.c; sourceTree = "<group>"; };
+		A0B6D45D1033A3BA004E87EE /* numconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = numconvert.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -68,6 +69,7 @@
 				A07BC6F10F0210CF00219629 /* bitops.c */,
 				A004228B0E0E3C4200B0ED60 /* codetagger.c */,
 				A004228C0E0E3C4200B0ED60 /* common.h */,
+				A0B6D45D1033A3BA004E87EE /* numconvert.c */,
 				A004228D0E0E3C4200B0ED60 /* posixregex.c */,
 				A007E66F0EB09C51008A1261 /* recurse.c */,
 				A004228E0E0E3C4200B0ED60 /* vaportar.c */,
