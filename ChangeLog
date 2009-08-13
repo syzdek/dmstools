@@ -2,6 +2,11 @@
 DMS Tools and Utilities
 Copyright (C) 2008, 2009 David M. Syzdek <david@syzdek.net>
 
+0.0.7
+	- Adding support for binary input values in numconvert. (syzdek)
+	- Adding ability to specify a specific notation to use for parsing
+	  input values in numconvert. (syzdek)
+
 0.0.6	2009/08/12 (syzdek)
 	- Adding initial support for gettext. (syzdek)
 	- Adding experimental package manager for slackware linux. (syzdek)
