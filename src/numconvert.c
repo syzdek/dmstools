@@ -53,6 +53,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <string.h>
 
 
 ///////////////////
@@ -134,6 +135,7 @@ void my_version(void);
 int main(int argc, char * argv[])
 {
    int       c;
+   int       base;
    int       opt_index;
    int32_t   opt;
    intmax_t  x;
@@ -151,7 +153,8 @@ int main(int argc, char * argv[])
       {NULL,            0,           0, 0  }
    };
 
-   opt = MY_OPT_SPACE;
+   opt    = MY_OPT_SPACE;
+   base   = 0;
 
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -210,7 +213,18 @@ int main(int argc, char * argv[])
    for(x = optind; x < argc; x++)
    {
       len = 0;
-      num = strtoumax(argv[x], NULL, 0);
+      if (!(base))
+      {
+         if (!(strncmp("00", argv[x], 2)))
+            base = 2;
+         else if (!(strncmp("0x", argv[x], 2)))
+            base = 16;
+         else if (!(strncmp("0", argv[x], 1)))
+            base = 8;
+         else
+            base = 10;
+      };
+      num = strtoumax(argv[x], NULL, base);
       if (opt & MY_OPT_OCT) len = printf((len ? ",0%jo"    : "0%jo"),    num);
       if (opt & MY_OPT_DEC) len = printf((len ? ",%ju"     : "%ju"),     num);
       if (opt & MY_OPT_HEX) len = printf((len ? ",0x%0*jX" : "0x%0*jX"), (unsigned)(sizeof(uintmax_t)*2), num);
@@ -259,6 +273,7 @@ void my_usage()
          "  NNNNNNNN                  input number is in decimal\n"
          "  0xNNNNNNNN                input number is in hexadecimal\n"
          "  0NNNNNNNN                 input number is in octal\n"
+         "  00NNNNNNNN                input number is in binary\n"
          "\n"
          "Report bugs to <%s>.\n"
       ), PROGRAM_NAME, PACKAGE_BUGREPORT
