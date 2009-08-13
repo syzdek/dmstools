@@ -145,7 +145,7 @@ int main(int argc, char * argv[])
    uintmax_t byte;
 
    // getopt options
-   static char   short_opt[] = "aBDHhOsV";
+   static char   short_opt[] = "aBDhOsVXx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -172,9 +172,6 @@ int main(int argc, char * argv[])
          case 'D':
             opt |= MY_OPT_DEC;
             break;
-         case 'H':
-            opt |= MY_OPT_HEX;
-            break;         
          case 'h':
             my_usage();
             return(0);
@@ -183,6 +180,9 @@ int main(int argc, char * argv[])
             break;
          case 's':
             opt = MY_TOGGLE(opt, MY_OPT_SPACE);
+            break;
+         case 'X':
+            opt |= MY_OPT_HEX;
             break;
          case 'V':
             my_version();
@@ -263,10 +263,10 @@ void my_usage()
    printf(_("Usage: %s num1 num2 ... numX\n"
          "  -B                        enable binary output\n"
          "  -D                        enable decimal output\n"
-         "  -H                        enable hexadecimal output\n"
          "  -h, --help                print this help and exit\n"
          "  -O                        enable octal output\n"
          "  -s                        display binary value in 8 bit blocks\n"
+         "  -X                        enable hexadecimal output\n"
          "  -V, --version             print version number and exit\n"
          "\n"
          "Input Notation:\n"
