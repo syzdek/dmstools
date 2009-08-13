@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: dmstools 0.0.5.25.g6b28bf2\n"
+"Project-Id-Version: dmstools 0.0.6\n"
 "Report-Msgid-Bugs-To: david@syzdek.net\n"
-"POT-Creation-Date: 2009-08-12 18:25-0800\n"
+"POT-Creation-Date: 2009-08-12 18:34-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
