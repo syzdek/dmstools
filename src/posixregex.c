@@ -77,11 +77,11 @@
 #include "common.h"
 #endif
 
-#include <regex.h>
 #include <stdio.h>
 #include <getopt.h>
 #include <string.h>
 #include <stdlib.h>
+#include <regex.h>
 
 
 ///////////////////
