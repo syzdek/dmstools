@@ -39,7 +39,7 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
-bin_PROGRAMS				= src/bitops src/numconvert src/posixregex
+bin_PROGRAMS				= src/bitops src/numconvert
 noinst_PROGRAMS				= src/recurse
 noinst_HEADERS				= src/common.h
 man_MANS				= doc/codetagger.1
@@ -74,6 +74,9 @@ src_posixregex_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_posixregex_CPPFLAGS			= -DPROGRAM_NAME="\"posixregex\"" $(AM_CPPFLAGS)
 src_posixregex_SOURCES			= $(noinst_HEADERS) \
 					  src/posixregex.c
+if HAVE_REGEX
+bin_PROGRAMS += src/posixregex
+endif
 
 
 # macros for src/posixregex

@@ -93,6 +93,13 @@ case $host in
 esac
 AM_CONDITIONAL([IS_WIN32], [test x$win32_host = xyes])
 
+have_regex=yes
+AC_SEARCH_LIBS([regcomp],   [regex],,[have_regex=no])
+AC_SEARCH_LIBS([regexec],   [regex],,[have_regex=no])
+AC_SEARCH_LIBS([regfree],   [regex],,[have_regex=no])
+AC_SEARCH_LIBS([regerror],  [regex],,[have_regex=no])
+AM_CONDITIONAL([HAVE_REGEX], [test x$have_regex = xyes])
+
 AC_CHECK_LIB([users],[noobs],,[AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
 AC_SYZDEK_GIT_PACKAGE_VERSION
 
