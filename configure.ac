@@ -86,6 +86,13 @@ AC_PROG_LIBTOOL
 # GNU gettext support
 AM_GNU_GETTEXT([external])
 
+# tests for windows platform
+case $host in
+   *mingw*) win32_host='yes';;
+   *)       win32_host='no';;
+esac
+AM_CONDITIONAL([IS_WIN32], [test x$win32_host = xyes])
+
 AC_CHECK_LIB([users],[noobs],,[AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
 AC_SYZDEK_GIT_PACKAGE_VERSION
 
