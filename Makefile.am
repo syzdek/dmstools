@@ -40,7 +40,7 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 # automake targets
 bin_PROGRAMS				= src/bitops src/numconvert
-noinst_PROGRAMS				= src/recurse
+noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
 man_MANS				= doc/codetagger.1
 
@@ -84,6 +84,9 @@ src_recurse_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_recurse_CPPFLAGS			= -DPROGRAM_NAME="\"recurse\"" $(AM_CPPFLAGS)
 src_recurse_SOURCES			= $(noinst_HEADERS) \
 					  src/recurse.c
+if ! IS_WIN32
+bin_PROGRAMS += src/recurse
+endif
 
 
 # macros for src/codetagger
