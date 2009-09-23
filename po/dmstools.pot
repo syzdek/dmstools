@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: dmstools 0.0.6\n"
+"Project-Id-Version: dmstools 0.7\n"
 "Report-Msgid-Bugs-To: david@syzdek.net\n"
-"POT-Creation-Date: 2009-08-12 18:34-0800\n"
+"POT-Creation-Date: 2009-09-23 10:39-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,13 +16,13 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/bitops.c:204 src/codetagger.c:1293 src/numconvert.c:188
+#: src/bitops.c:204 src/codetagger.c:1293 src/numconvert.c:203
 #: src/posixregex.c:236
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: src/bitops.c:207 src/codetagger.c:1296 src/numconvert.c:191
+#: src/bitops.c:207 src/codetagger.c:1296 src/numconvert.c:206
 #: src/posixregex.c:239
 #, c-format
 msgid ""
@@ -56,7 +56,7 @@ msgstr ""
 #. information if the program is passed --version on the command line.
 #. The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
 #. PACKAGE_VERSION.
-#: src/bitops.c:405 src/codetagger.c:1075 src/numconvert.c:277
+#: src/bitops.c:405 src/codetagger.c:1075 src/numconvert.c:308
 #: src/posixregex.c:379
 #, c-format
 msgid ""
@@ -126,7 +126,7 @@ msgstr ""
 msgid ": no tag definitions were found in \"%s\"\n"
 msgstr ""
 
-#: src/numconvert.c:204
+#: src/numconvert.c:219
 #, c-format
 msgid ""
 "%s: missing required argument\n"
@@ -137,22 +137,27 @@ msgstr ""
 #. strings are displayed if the program is passed `--help' on the command
 #. line. The two strings referenced are: PROGRAM_NAME, and
 #. PACKAGE_BUGREPORT
-#: src/numconvert.c:249
+#: src/numconvert.c:275
 #, c-format
 msgid ""
 "Usage: %s num1 num2 ... numX\n"
 "  -B                        enable binary output\n"
+"  -b                        assume binary notation for input\n"
 "  -D                        enable decimal output\n"
-"  -H                        enable hexadecimal output\n"
+"  -d                        assume decimal notation for input\n"
 "  -h, --help                print this help and exit\n"
 "  -O                        enable octal output\n"
+"  -o                        assume octal notation for input\n"
 "  -s                        display binary value in 8 bit blocks\n"
+"  -X                        enable hexadecimal output\n"
+"  -x                        assume hexadecimal notation for input\n"
 "  -V, --version             print version number and exit\n"
 "\n"
 "Input Notation:\n"
 "  NNNNNNNN                  input number is in decimal\n"
 "  0xNNNNNNNN                input number is in hexadecimal\n"
 "  0NNNNNNNN                 input number is in octal\n"
+"  00NNNNNNNN                input number is in binary\n"
 "\n"
 "Report bugs to <%s>.\n"
 msgstr ""
