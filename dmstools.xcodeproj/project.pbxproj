@@ -116,7 +116,7 @@
 /* Begin PBXLegacyTarget section */
 		A02133B70E0E478400336FDD /* Makefile */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "-f $(MAKEFILE) $(ACTION)";
+			buildArgumentsString = "-f $(MAKEFILE) $(CONFIGURATION)";
 			buildConfigurationList = A02133C20E0E47A700336FDD /* Build configuration list for PBXLegacyTarget "Makefile" */;
 			buildPhases = (
 			);
@@ -146,57 +146,140 @@
 /* End PBXProject section */
 
 /* Begin XCBuildConfiguration section */
-		1DEB919408733D9F0010E9CD /* Debug */ = {
+		1DEB919508733D9F0010E9CD /* all */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.5;
-			};
-			name = Debug;
-		};
-		1DEB919508733D9F0010E9CD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.5;
-			};
-			name = Release;
-		};
-		A02133B80E0E478400336FDD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CONFIGURE_FLAGS = "";
-				COPY_PHASE_STRIP = NO;
+				DEBUG = NO;
 				DISTCLEAN = NO;
-				DISTFILES = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				MAKEFILE = "Makefile-xcode";
-				PRODUCT_NAME = Makefile;
 			};
-			name = Debug;
+			name = all;
 		};
-		A02133B90E0E478400336FDD /* Release */ = {
+		A02133B90E0E478400336FDD /* all */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURE_FLAGS = "";
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DISTCLEAN = YES;
-				DISTFILES = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				MAKEFILE = "Makefile-xcode";
-				PRODUCT_NAME = Makefile;
-				ZERO_LINK = NO;
 			};
-			name = Release;
+			name = all;
+		};
+		A0751ECE106A9A8200F9D750 /* dist */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG = NO;
+				DISTCLEAN = NO;
+				MAKEFILE = "Makefile-xcode";
+			};
+			name = dist;
+		};
+		A0751ECF106A9A8200F9D750 /* dist */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = dist;
+		};
+		A0751ED0106A9A8900F9D750 /* distcheck */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG = NO;
+				DISTCLEAN = NO;
+				MAKEFILE = "Makefile-xcode";
+			};
+			name = distcheck;
+		};
+		A0751ED1106A9A8900F9D750 /* distcheck */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = distcheck;
+		};
+		A0751ED2106A9A8F00F9D750 /* distclean */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG = NO;
+				DISTCLEAN = NO;
+				MAKEFILE = "Makefile-xcode";
+			};
+			name = distclean;
+		};
+		A0751ED3106A9A8F00F9D750 /* distclean */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = distclean;
+		};
+		A0751ED4106A9A9300F9D750 /* install */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG = NO;
+				DISTCLEAN = NO;
+				MAKEFILE = "Makefile-xcode";
+			};
+			name = install;
+		};
+		A0751ED5106A9A9300F9D750 /* install */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = install;
+		};
+		A0751ED6106A9A9800F9D750 /* uninstall */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG = NO;
+				DISTCLEAN = NO;
+				MAKEFILE = "Makefile-xcode";
+			};
+			name = uninstall;
+		};
+		A0751ED7106A9A9800F9D750 /* uninstall */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = uninstall;
+		};
+		A0751ED8106A9A9F00F9D750 /* autotools */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG = NO;
+				DISTCLEAN = NO;
+				MAKEFILE = "Makefile-xcode";
+			};
+			name = autotools;
+		};
+		A0751ED9106A9A9F00F9D750 /* autotools */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = autotools;
+		};
+		A0751EEA106A9D7300F9D750 /* check */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG = NO;
+				DISTCLEAN = NO;
+				MAKEFILE = "Makefile-xcode";
+			};
+			name = check;
+		};
+		A0751EEB106A9D7300F9D750 /* check */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = check;
+		};
+		A0751EEC106A9D8700F9D750 /* clean */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG = NO;
+				DISTCLEAN = NO;
+				MAKEFILE = "Makefile-xcode";
+			};
+			name = clean;
+		};
+		A0751EED106A9D8700F9D750 /* clean */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = clean;
 		};
 /* End XCBuildConfiguration section */
 
@@ -204,20 +287,34 @@
 		1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "dmstools" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1DEB919408733D9F0010E9CD /* Debug */,
-				1DEB919508733D9F0010E9CD /* Release */,
+				A0751ED8106A9A9F00F9D750 /* autotools */,
+				1DEB919508733D9F0010E9CD /* all */,
+				A0751EEA106A9D7300F9D750 /* check */,
+				A0751EEC106A9D8700F9D750 /* clean */,
+				A0751ECE106A9A8200F9D750 /* dist */,
+				A0751ED0106A9A8900F9D750 /* distcheck */,
+				A0751ED2106A9A8F00F9D750 /* distclean */,
+				A0751ED4106A9A9300F9D750 /* install */,
+				A0751ED6106A9A9800F9D750 /* uninstall */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = all;
 		};
 		A02133C20E0E47A700336FDD /* Build configuration list for PBXLegacyTarget "Makefile" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02133B80E0E478400336FDD /* Debug */,
-				A02133B90E0E478400336FDD /* Release */,
+				A0751ED9106A9A9F00F9D750 /* autotools */,
+				A02133B90E0E478400336FDD /* all */,
+				A0751EEB106A9D7300F9D750 /* check */,
+				A0751EED106A9D8700F9D750 /* clean */,
+				A0751ECF106A9A8200F9D750 /* dist */,
+				A0751ED1106A9A8900F9D750 /* distcheck */,
+				A0751ED3106A9A8F00F9D750 /* distclean */,
+				A0751ED5106A9A9300F9D750 /* install */,
+				A0751ED7106A9A9800F9D750 /* uninstall */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = all;
 		};
 /* End XCConfigurationList section */
 	};
