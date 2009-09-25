@@ -227,6 +227,7 @@ int main(int argc, char * argv[])
       len = 0;
       if (!(base))
       {
+         base = 10;
          if (!(strncmp("00", argv[x], 2)))
             base = 2;
          else if (!(strncmp("0x", argv[x], 2)))
@@ -234,7 +235,10 @@ int main(int argc, char * argv[])
          else if (!(strncmp("0", argv[x], 1)))
             base = 8;
          else
-            base = 10;
+            for(y = 0; y < strlen(argv[x]); y++)
+               if ( ((argv[x][y] >= 'a') && (argv[x][y] <= 'z')) ||
+                    ((argv[x][y] >= 'A') && (argv[x][y] <= 'Z')) )
+                  base = 16;
       };
       num = strtoumax(argv[x], NULL, base);
       if (opt & MY_OPT_OCT) len = printf((len ? ",0%jo"    : "0%jo"),    num);
