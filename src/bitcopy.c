@@ -139,12 +139,12 @@ void my_print_data(uint8_t * data, uint32_t len);
 //              //
 //////////////////
 
-/// inserts a series of bits into a buffer at the specified offset
-/// @param[in]  dst      pointer to buffer to copy buffer
-/// @param[in]  src      source of data to insert into the dst buffer
-/// @param[in]  len      length iin bytes of the dst buffer
-/// @param[in]  offset   number of bits to offset the src in the dst
-/// @param[in]  n        number of bits to insert into the dst buffer
+/// inserts a series of bits into a buffer at the specified bit offset
+/// @param[in]  dst      pointer to buffer
+/// @param[in]  src      array of data to insert into the dst buffer
+/// @param[in]  len      length in bytes of the buffer
+/// @param[in]  offset   number of bits to offset the data in the buffer
+/// @param[in]  n        number of bits to insert into the buffer
 void bitops_copy(uint8_t * dst, uint8_t * src, uint32_t len, uint32_t offset,
    uint32_t n)
 {
@@ -157,17 +157,13 @@ void bitops_copy(uint8_t * dst, uint8_t * src, uint32_t len, uint32_t offset,
    uint32_t pos;
    uint32_t u;
 
+   // preliminary calculations to determine limits
    byte_required  = ((offset + n) & 0x07) ? 1 : 0;
    byte_required  = ((offset + n) / 0x08) + byte_required;
    byte_offset    = (offset / 0x08);
    bit_offset     = (offset & 0x07);
    byte_n         = (n / 0x08);
    bit_n          = (n & 0x07);
-   mask           = 0;
-
-   mask = 0xFF;
-   for(u = 0; u < bit_offset; u++)
-      mask = (mask << 1) & 0xFF;
 
    if (dst == src)
       return;
@@ -177,6 +173,11 @@ void bitops_copy(uint8_t * dst, uint8_t * src, uint32_t len, uint32_t offset,
    pos = 0;
    if (byte_n)
    {
+      // generates a mask used for copying bits accross bit boundaries
+      mask = 0xFF;
+      for(u = 0; u < bit_offset; u++)
+         mask = (mask << 1) & 0xFF;
+
       // copies first byte of data
       dst[byte_offset]     = ((src[0] << bit_offset) & ( mask)) |
                              ((dst[byte_offset])     & (~mask));
@@ -192,24 +193,31 @@ void bitops_copy(uint8_t * dst, uint8_t * src, uint32_t len, uint32_t offset,
 
    };
 
-   // copies remaining bits
    if ((bit_offset) || (bit_n))
    {
+      // generates a mask used to copy remaining least significant
+      // bits into the remaining least significant byte
       mask = 0x00;
       for(u = 0; u < bit_n; u++)
          mask = ((mask << 1) | 0x01) & 0xFF;
       for(u = 0; u < bit_offset; u++)
          mask = (mask << 1) & 0xFF;
 
-      dst[byte_offset+pos]   = ((src[pos] << bit_offset)       &  (mask)) |
-                               ((dst[byte_offset+pos])         & (~mask));
+      // copies remaining bits into the least significant
+      // byte (of remaining two bytes)
+      dst[byte_offset+pos]   = ((src[pos] << bit_offset) &  (mask)) |
+                               ((dst[byte_offset+pos])   & (~mask));
 
       if ((bit_offset + bit_n) > 8)
       {
+         // generates a mask used to copy remaining most significant
+         // bits into the remaining most significant byte
          mask = 0x00;
          for(u = 0; u < ((bit_n+bit_offset)%8); u++)
             mask = ((mask << 1) | 0x01) & 0xFF;
 
+         // copies remaining bits into the most significant
+         // byte (of remaining two bytes)
          u = 8-bit_offset;
          dst[byte_offset+pos+1] = ((src[pos] >> u)          &  (mask)) |
                                   ((dst[byte_offset+pos+1]) & (~mask));
