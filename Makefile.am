@@ -39,10 +39,16 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
-bin_PROGRAMS				= src/bitops src/numconvert
+bin_PROGRAMS				= src/bitcopy src/bitops src/numconvert
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
 man_MANS				= doc/codetagger.1
+
+# macros for src/bitops
+src_bitcopy_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
+src_bitcopy_CPPFLAGS			= -DPROGRAM_NAME="\"bitcopy\"" $(AM_CPPFLAGS)
+src_bitcopy_SOURCES			= $(noinst_HEADERS) \
+					  src/bitcopy.c
 
 
 # macros for src/bitops
