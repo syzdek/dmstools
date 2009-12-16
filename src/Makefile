@@ -33,8 +33,8 @@ CFLAGS		?= -W -Wall -g -O2 -DHAVE_COMMON_H=1
 LDFLAGS		?= -W -Wall -g -O2
 
 all:
-	for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
-		make $(MAKEFLAGS) $${BINARY}; \
+	@for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
+		make $(MAKEFLAGS) $${BINARY} || exit $?; \
 	done;
 
 %-install:
@@ -45,7 +45,7 @@ all:
 install: all
 	mkdir -p $(bindir)
 	for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
-		$(LIBTOOL) --mode=install install -c $${BINARY} $(bindir)/$${BINARY}; \
+		$(LIBTOOL) --mode=install install -c $${BINARY} $(bindir)/$${BINARY} || exit $?; \
 	done;
 
 %-uninstall:
@@ -54,11 +54,12 @@ install: all
 
 uninstall:
 	for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
-		$(LIBTOOL) --mode=uninstall rm -f $(bindir)/$${BINARY}; \
+		$(LIBTOOL) --mode=uninstall rm -f $(bindir)/$${BINARY} || exit $?; \
 	done;
 
 clean: 
-	for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
+	rm -f a.out
+	@for BINARY in `ls *.mak |sed -e "s/.mak$$//g"`;do \
 		make $(MAKEFLAGS) $${BINARY}-clean; \
 	done;
 
