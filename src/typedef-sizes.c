@@ -251,7 +251,8 @@ int main(int argc, char * argv[])
             return(1);
          };
          for(y = 0; data[y].name; y++)
-            if (!(err = regexec(&regex, data[y].name, 2, matches, 0)))
+            if ( (!(err = regexec(&regex, data[y].name, 2, matches, 0))) ||
+                 (!(err = regexec(&regex, data[y].include, 2, matches, 0))) )
             {
                ptr = &data[y];
                my_print_data(ptr);
