@@ -288,7 +288,7 @@ void my_print_data(struct my_data * data)
    printf("%-*s   %-*i    %-*s  %-*s\n",
       MY_NAME_WIDTH,  data->name,
       MY_SIZE_WIDTH,  data->size,
-      MY_SIGN_WIDTH,  data->is_signed == 1 ? "yes" : (data->is_signed == 0 ? "no" : ""),
+      MY_SIGN_WIDTH,  data->is_signed == 1 ? "yes" : (data->is_signed == 0 ? "no" : "n/a"),
       MY_FILE_WIDTH,  data->include ? data->include : ""
    );
    return;
