@@ -125,30 +125,6 @@ struct my_data
 };
 
 
-////////////////////////
-//                    //
-//  Global Variables  //
-//                    //
-////////////////////////
-
-const char * typedef_sizes_perl[] =
-{
-   "if (@ARGV != 1)",
-   "{",
-   "   printf(\"Usage: typedef-sizes --perl | perl - <filename>\\n\");",
-   "   exit(1);",
-   "};",
-   "open(FILE, $ARGV[0]) || die \"typedef-sizes-perl: unable to open $ARGV[0]\";",
-   "while(<FILE>)",
-   "{",
-   "   my $line = $_;",
-   "   chomp($line);",
-   "   printf(\"{ \\\"%s\\\", sizeof(%s) },\\n\", $line, $line);",
-   "};",
-   "close(FILE);",
-   NULL
-};
-
 //////////////////
 //              //
 //  Prototypes  //
@@ -238,10 +214,6 @@ int main(int argc, char * argv[])
             break;
          case 'h':
             my_usage();
-            return(0);
-         case 'p':
-            for(x = 0; typedef_sizes_perl[x]; x++)
-               printf("%s\n", typedef_sizes_perl[x]);
             return(0);
          case 'V':
             my_version();
