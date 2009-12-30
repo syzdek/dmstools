@@ -103,6 +103,12 @@
 #endif
 
 
+#define MY_NAME_WIDTH   20
+#define MY_SIZE_WIDTH   5
+#define MY_SIGN_WIDTH   8
+#define MY_FILE_WIDTH   0
+
+
 /////////////////
 //             //
 //  Structs    //
@@ -247,7 +253,12 @@ int main(int argc, char * argv[])
 
    if ((opt_index+1) < argc)
    {
-      printf("%-13s   %5s   %8s   %s\n", "name:", "size:", "signed:", "#include");
+      printf("%-*s   %*s   %*s   %*s\n",
+         MY_NAME_WIDTH,  "name:",
+         MY_SIZE_WIDTH,  "size:",
+         MY_SIGN_WIDTH,  "signed:",
+         MY_FILE_WIDTH,  "#include"
+      );
       for(x = opt_index + 1; x < argc; x++)
       {
          ptr = NULL;
@@ -265,7 +276,12 @@ int main(int argc, char * argv[])
       return(0);
    };
 
-   printf("%-13s   %5s   %8s   %s\n", "name:", "size:", "signed:", "#include");
+   printf("%-*s   %*s   %*s   %*s\n",
+      MY_NAME_WIDTH,  "name:",
+      MY_SIZE_WIDTH,  "size:",
+      MY_SIGN_WIDTH,  "signed:",
+      MY_FILE_WIDTH,  "#include"
+   );
    for(c = 0; data[c].name; c++)
       my_print_data(&data[c]);
    printf("\n");
@@ -278,11 +294,11 @@ int main(int argc, char * argv[])
 /// @param[in]  data    data to print
 void my_print_data(struct my_data * data)
 {
-   printf("%-13s   %-5i    %-8s  %-s\n",
-      data->name,
-      data->size,
-      data->is_signed ? "yes" : "no",
-      data->include ? data->include : ""
+   printf("%-*s   %-*i    %-*s  %-*s\n",
+      MY_NAME_WIDTH,  data->name,
+      MY_SIZE_WIDTH,  data->size,
+      MY_SIGN_WIDTH,  data->is_signed == 1 ? "yes" : (data->is_signed == 0 ? "no" : ""),
+      MY_FILE_WIDTH,  data->include ? data->include : ""
    );
    return;
 }
