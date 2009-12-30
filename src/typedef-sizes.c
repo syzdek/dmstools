@@ -239,7 +239,7 @@ int main(int argc, char * argv[])
          MY_NAME_WIDTH,  "name:",
          MY_SIZE_WIDTH,  "size:",
          MY_SIGN_WIDTH,  "signed:",
-         MY_FILE_WIDTH,  "#include"
+         MY_FILE_WIDTH,  "defined"
       );
       for(x = opt_index + 1; x < argc; x++)
       {
@@ -271,7 +271,7 @@ int main(int argc, char * argv[])
       MY_NAME_WIDTH,  "name:",
       MY_SIZE_WIDTH,  "size:",
       MY_SIGN_WIDTH,  "signed:",
-      MY_FILE_WIDTH,  "#include"
+      MY_FILE_WIDTH,  "defined"
    );
    for(c = 0; data[c].name; c++)
       my_print_data(&data[c]);
