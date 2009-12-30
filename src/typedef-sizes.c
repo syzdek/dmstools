@@ -234,39 +234,9 @@ int main(int argc, char * argv[])
    };
 
    if ((opt_index+1) < argc)
-   {
-      printf("%-*s   %*s   %*s   %*s\n",
-         MY_NAME_WIDTH,  "name:",
-         MY_SIZE_WIDTH,  "width:",
-         MY_SIGN_WIDTH,  "signed:",
-         MY_FILE_WIDTH,  "defined"
-      );
-      for(x = opt_index + 1; x < argc; x++)
-      {
-         ptr = NULL;
-         if ((err = regcomp(&regex, argv[x], REG_EXTENDED|REG_ICASE)))
-         {
-            regerror(err, &regex, msg, 127);
-            fprintf(stderr, PROGRAM_NAME ": %s\n", msg);
-            return(1);
-         };
-         for(y = 0; data[y].name; y++)
-            if ( (!(err = regexec(&regex, data[y].name, 2, matches, 0))) ||
-                 (!(err = regexec(&regex, data[y].include, 2, matches, 0))) )
-            {
-               ptr = &data[y];
-               my_print_data(ptr);
-            };
-         regfree(&regex);
-         if (!(ptr))
-         {
-            fprintf(stderr, PROGRAM_NAME ": data type `%s' not found\n", argv[x]);
-            return(1);
-         };
-      };
-      printf("\n");
-      return(0);
-   };
+      opt_index++;
+   else
+      argv[0] = ".*";
 
    printf("%-*s   %*s   %*s   %*s\n",
       MY_NAME_WIDTH,  "name:",
@@ -274,8 +244,30 @@ int main(int argc, char * argv[])
       MY_SIGN_WIDTH,  "signed:",
       MY_FILE_WIDTH,  "defined"
    );
-   for(c = 0; data[c].name; c++)
-      my_print_data(&data[c]);
+
+   for(x = opt_index; x < argc; x++)
+   {
+      ptr = NULL;
+      if ((err = regcomp(&regex, argv[x], REG_EXTENDED|REG_ICASE)))
+      {
+         regerror(err, &regex, msg, 127);
+         fprintf(stderr, PROGRAM_NAME ": %s\n", msg);
+         return(1);
+      };
+      for(y = 0; data[y].name; y++)
+         if ( (!(err = regexec(&regex, data[y].name, 2, matches, 0))) ||
+              (!(err = regexec(&regex, data[y].include, 2, matches, 0))) )
+         {
+            ptr = &data[y];
+            my_print_data(ptr);
+         };
+      regfree(&regex);
+      if (!(ptr))
+      {
+         fprintf(stderr, PROGRAM_NAME ": data type `%s' not found\n", argv[x]);
+         return(1);
+      };
+   };
    printf("\n");
 
    return(0);
