@@ -53,6 +53,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
+#include <regex.h>
 #include <arpa/inet.h>
 
 
@@ -181,7 +182,11 @@ int main(int argc, char * argv[])
    int                     c;
    int                     x;
    int                     y;
+   int                     err;
    int                     opt_index;
+   char                    msg[128];
+   regex_t                 regex;
+   regmatch_t              matches[2];
    struct my_data        * ptr;
    static struct my_data   data[] =
    {
@@ -264,15 +269,24 @@ int main(int argc, char * argv[])
       for(x = opt_index + 1; x < argc; x++)
       {
          ptr = NULL;
+         if ((err = regcomp(&regex, argv[x], REG_EXTENDED|REG_ICASE)))
+         {
+            regerror(err, &regex, msg, 127);
+            fprintf(stderr, PROGRAM_NAME ": %s\n", msg);
+            return(1);
+         };
          for(y = 0; data[y].name; y++)
-            if (!(strcasecmp(data[y].name, argv[x])))
+            if (!(err = regexec(&regex, data[y].name, 2, matches, 0)))
+            {
                ptr = &data[y];
+               my_print_data(ptr);
+            };
+         regfree(&regex);
          if (!(ptr))
          {
             fprintf(stderr, PROGRAM_NAME ": data type `%s' not found\n", argv[x]);
             return(1);
          };
-         my_print_data(ptr);
       };
       printf("\n");
       return(0);
