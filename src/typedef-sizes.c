@@ -281,9 +281,7 @@ int main(int argc, char * argv[])
 
    sort_order |= sort_reverse;
 
-   if (optind < argc)
-      optind++;
-   else
+   if (optind == argc)
    {
       optind--;
       argv[optind] = ".*";
