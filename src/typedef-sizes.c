@@ -237,7 +237,7 @@ int main(int argc, char * argv[])
    {
       printf("%-*s   %*s   %*s   %*s\n",
          MY_NAME_WIDTH,  "name:",
-         MY_SIZE_WIDTH,  "size:",
+         MY_SIZE_WIDTH,  "width:",
          MY_SIGN_WIDTH,  "signed:",
          MY_FILE_WIDTH,  "defined"
       );
@@ -269,7 +269,7 @@ int main(int argc, char * argv[])
 
    printf("%-*s   %*s   %*s   %*s\n",
       MY_NAME_WIDTH,  "name:",
-      MY_SIZE_WIDTH,  "size:",
+      MY_SIZE_WIDTH,  "width:",
       MY_SIGN_WIDTH,  "signed:",
       MY_FILE_WIDTH,  "defined"
    );
