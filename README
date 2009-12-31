@@ -10,7 +10,7 @@ For the latest information about this project is available from the following
 websites:
 
 	http://github.com/syzdek/dmstools/
-	http://scm.syzdek.net/scm/devel/dmstools.git
+	http://scm.syzdek.net/scm/net.syzdek/dmstools.git
 
 
 Utilities and Tools
@@ -18,16 +18,27 @@ Utilities and Tools
 
 The following utilities and tools are included in this package:
 
+	Makefile-xcode - for calling Makefiles created with Automake from
+		within Xcode using the external build target.
+
+	bitcopy - Copies a specified number of bits into a buffer at a
+		specific offset indicated and displays the output as binary.
+
 	bitops - Performs multiple calculations upon two numbers for a quick
 		reference of the affects of bitwise operators.
 
 	codetagger - Replaces the text between two tags with the text
 		contained within a tag definitions file.
 
+	numconvert - converts between binary, octal, decimal, and hexidecimal
+		based number systems.
+
 	posixregex - Attempts to match the specified regular expression
 		using POSIX regular expressions against the provided strings.
 		Useful for testing a POSIX regular expressions or using POSIX
 		regular expressions in shell scripts.
+
+	typedef-info - display information about C/C++ data types.
 
 
 Getting the source
@@ -37,14 +48,14 @@ The source code for this project is maintained using git (http://git-scm.com).
 The following instructions checkout the source code from the git repository
 and creates the autotool files:
 
-	git clone git://git.scm.syzdek.net/pub/scm/devel/dmstools.git
+	git clone git://git.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
 	cd dmstools
 	aclocal && autoconf && autoheader && automake
 
 The git repository may also be cloned using the following locations:
 
 	git://github.com/syzdek/dmstools.git
-	http://http.scm.bindlebinaries.net/pub/scm/devel/dmstools.git
+	http://http.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
 
 
 Installing From Source
@@ -54,7 +65,7 @@ Supported platforms:
 
 	* FreeBSD
 	* Slackware Linux 12.1
-	* OS X 10.5
+	* OS X 10.6
 
 Required Software:
 
