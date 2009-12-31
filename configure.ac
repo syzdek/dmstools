@@ -44,6 +44,7 @@ AC_SUBST(LIB_RELEASE_INFO, 2) # used by Win32 DLLs
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([dmstools.tags])
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 # determines host type
 AC_CANONICAL_BUILD
