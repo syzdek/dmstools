@@ -151,10 +151,10 @@ do_subst_fn = \
 
 
 # custom targets
-PHONY: git package-version-check
+PHONY: git-package-version-check
 
 git-package-version-check:
-	@if test -d $(srcdir)/.git/config;then \
+	@if test -f $(srcdir)/.git/config;then \
 		GPV=`git --git-dir=$(srcdir)/.git describe 2> /dev/null`; \
 		GPV=`echo $${GPV}|sed -e 's/-/./g' -e 's/^v//g'`; \
 		if test "x$${GPV}" != "x$(PACKAGE_VERSION)" && test "x$${GPV}" != "x";then \

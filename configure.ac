@@ -87,6 +87,9 @@ AC_PROG_LIBTOOL
 # GNU gettext support
 AM_GNU_GETTEXT([external])
 
+# sets package version based on the SCM
+AC_DMS_GIT_PACKAGE_VERSION
+
 # tests for windows platform
 case $host in
    *mingw*) win32_host='yes';;
@@ -102,7 +105,6 @@ AC_SEARCH_LIBS([regerror],  [regex],,[have_regex=no])
 AM_CONDITIONAL([HAVE_REGEX], [test x$have_regex = xyes])
 
 AC_CHECK_LIB([users],[noobs],,[AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
-AC_DMS_GIT_PACKAGE_VERSION
 
 # Creates outputs
 AC_CONFIG_FILES([Makefile po/Makefile.in])
