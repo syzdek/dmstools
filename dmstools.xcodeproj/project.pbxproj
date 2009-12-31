@@ -27,14 +27,6 @@
 		A02134D30E0E719000336FDD /* codetagger.1.in */ = {isa = PBXFileReference; explicitFileType = text.man; fileEncoding = 4; indentWidth = 8; path = codetagger.1.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A02135010E0E7C6200336FDD /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		A03242690E0E453700D5D5CA /* Makefile.am */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = Makefile.am; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
-		A04419700E0E442800D47FEA /* compile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = compile; sourceTree = "<group>"; };
-		A04419710E0E442800D47FEA /* config.guess */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config.guess; sourceTree = "<group>"; };
-		A04419720E0E442800D47FEA /* config.sub */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config.sub; sourceTree = "<group>"; };
-		A04419730E0E442800D47FEA /* depcomp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = depcomp; sourceTree = "<group>"; };
-		A04419740E0E442800D47FEA /* environment.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = environment.sh; sourceTree = "<group>"; };
-		A04419750E0E442800D47FEA /* install-sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "install-sh"; sourceTree = "<group>"; };
-		A04419760E0E442800D47FEA /* ltmain.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = ltmain.sh; sourceTree = "<group>"; };
-		A04419770E0E442800D47FEA /* missing */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = missing; sourceTree = "<group>"; };
 		A051283C10D987300013335E /* bitcopy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitcopy.c; sourceTree = "<group>"; };
 		A07BC6F10F0210CF00219629 /* bitops.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitops.c; sourceTree = "<group>"; };
 		A0AE375510EAAA3C006B1ADB /* typedef-info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "typedef-info.c"; sourceTree = "<group>"; };
@@ -58,7 +50,6 @@
 				A00422720E0E396B00B0ED60 /* doc */,
 				A02133F60E0E4CCE00336FDD /* INSTALL */,
 				A03242690E0E453700D5D5CA /* Makefile.am */,
-				A02133F70E0E4CCE00336FDD /* Makefile-xcode */,
 				A02133F80E0E4CCE00336FDD /* NEWS */,
 				A0B6D48F1033B0BD004E87EE /* po */,
 				A02133F90E0E4CCE00336FDD /* README */,
@@ -97,14 +88,7 @@
 		A004229F0E0E3CC300B0ED60 /* build-aux */ = {
 			isa = PBXGroup;
 			children = (
-				A04419700E0E442800D47FEA /* compile */,
-				A04419710E0E442800D47FEA /* config.guess */,
-				A04419720E0E442800D47FEA /* config.sub */,
-				A04419730E0E442800D47FEA /* depcomp */,
-				A04419740E0E442800D47FEA /* environment.sh */,
-				A04419750E0E442800D47FEA /* install-sh */,
-				A04419760E0E442800D47FEA /* ltmain.sh */,
-				A04419770E0E442800D47FEA /* missing */,
+				A02133F70E0E4CCE00336FDD /* Makefile-xcode */,
 			);
 			path = "build-aux";
 			sourceTree = "<group>";
@@ -157,7 +141,7 @@
 			buildSettings = {
 				DEBUG = NO;
 				DISTCLEAN = NO;
-				MAKEFILE = "Makefile-xcode";
+				MAKEFILE = "build-aux/Makefile-xcode";
 			};
 			name = all;
 		};
@@ -172,7 +156,7 @@
 			buildSettings = {
 				DEBUG = NO;
 				DISTCLEAN = NO;
-				MAKEFILE = "Makefile-xcode";
+				MAKEFILE = "build-aux/Makefile-xcode";
 			};
 			name = dist;
 		};
@@ -187,7 +171,7 @@
 			buildSettings = {
 				DEBUG = NO;
 				DISTCLEAN = NO;
-				MAKEFILE = "Makefile-xcode";
+				MAKEFILE = "build-aux/Makefile-xcode";
 			};
 			name = distcheck;
 		};
@@ -202,7 +186,7 @@
 			buildSettings = {
 				DEBUG = NO;
 				DISTCLEAN = NO;
-				MAKEFILE = "Makefile-xcode";
+				MAKEFILE = "build-aux/Makefile-xcode";
 			};
 			name = distclean;
 		};
@@ -217,7 +201,7 @@
 			buildSettings = {
 				DEBUG = NO;
 				DISTCLEAN = NO;
-				MAKEFILE = "Makefile-xcode";
+				MAKEFILE = "build-aux/Makefile-xcode";
 			};
 			name = install;
 		};
@@ -232,7 +216,7 @@
 			buildSettings = {
 				DEBUG = NO;
 				DISTCLEAN = NO;
-				MAKEFILE = "Makefile-xcode";
+				MAKEFILE = "build-aux/Makefile-xcode";
 			};
 			name = uninstall;
 		};
@@ -247,7 +231,7 @@
 			buildSettings = {
 				DEBUG = NO;
 				DISTCLEAN = NO;
-				MAKEFILE = "Makefile-xcode";
+				MAKEFILE = "build-aux/Makefile-xcode";
 			};
 			name = autotools;
 		};
@@ -262,7 +246,7 @@
 			buildSettings = {
 				DEBUG = NO;
 				DISTCLEAN = NO;
-				MAKEFILE = "Makefile-xcode";
+				MAKEFILE = "build-aux/Makefile-xcode";
 			};
 			name = check;
 		};
@@ -277,7 +261,7 @@
 			buildSettings = {
 				DEBUG = NO;
 				DISTCLEAN = NO;
-				MAKEFILE = "Makefile-xcode";
+				MAKEFILE = "build-aux/Makefile-xcode";
 			};
 			name = clean;
 		};

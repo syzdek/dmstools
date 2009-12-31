@@ -6,6 +6,7 @@
 .DS_Store
 .deps
 .dirstamp
+/INSTALL
 /Makefile
 /Makefile.in
 /build-aux/git-package-version
