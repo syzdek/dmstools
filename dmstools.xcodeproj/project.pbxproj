@@ -37,7 +37,7 @@
 		A04419770E0E442800D47FEA /* missing */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = missing; sourceTree = "<group>"; };
 		A051283C10D987300013335E /* bitcopy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitcopy.c; sourceTree = "<group>"; };
 		A07BC6F10F0210CF00219629 /* bitops.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitops.c; sourceTree = "<group>"; };
-		A0AE375510EAAA3C006B1ADB /* typedef-sizes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "typedef-sizes.c"; sourceTree = "<group>"; };
+		A0AE375510EAAA3C006B1ADB /* typedef-info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "typedef-info.c"; sourceTree = "<group>"; };
 		A0AE375A10EABCBC006B1ADB /* typedef-sizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "typedef-sizes.h"; sourceTree = "<group>"; };
 		A0B6D45D1033A3BA004E87EE /* numconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = numconvert.c; sourceTree = "<group>"; };
 		A0B6D4911033B0E0004E87EE /* POTFILES.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = POTFILES.in; sourceTree = "<group>"; };
@@ -78,7 +78,7 @@
 				A0B6D45D1033A3BA004E87EE /* numconvert.c */,
 				A004228D0E0E3C4200B0ED60 /* posixregex.c */,
 				A007E66F0EB09C51008A1261 /* recurse.c */,
-				A0AE375510EAAA3C006B1ADB /* typedef-sizes.c */,
+				A0AE375510EAAA3C006B1ADB /* typedef-info.c */,
 				A0AE375A10EABCBC006B1ADB /* typedef-sizes.h */,
 				A004228E0E0E3C4200B0ED60 /* vaportar.c */,
 			);
