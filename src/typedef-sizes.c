@@ -141,8 +141,8 @@
 #endif
 
 
-#define MY_NAME_WIDTH   20
-#define MY_SIZE_WIDTH   5
+#define MY_NAME_WIDTH   25
+#define MY_SIZE_WIDTH   8
 #define MY_SIGN_WIDTH   8
 #define MY_FILE_WIDTH   0
 
