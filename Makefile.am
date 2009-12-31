@@ -39,7 +39,7 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
-bin_PROGRAMS				= src/bitcopy src/bitops src/numconvert
+bin_PROGRAMS				= src/bitcopy src/bitops src/numconvert src/typedef-info
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
 man_MANS				= doc/codetagger.1
@@ -94,6 +94,11 @@ if ! IS_WIN32
 bin_PROGRAMS += src/recurse
 endif
 
+# macros for src/typedef-info
+src_typedef_info_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
+src_typedef_info_CPPFLAGS		= -DPROGRAM_NAME="\"typedef-info\"" $(AM_CPPFLAGS)
+src_typedef_info_SOURCES		= $(noinst_HEADERS) \
+					  src/typedef-info.c
 
 # macros for src/codetagger
 #src_vaportar_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
