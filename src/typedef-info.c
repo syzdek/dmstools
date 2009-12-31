@@ -87,6 +87,10 @@
 #include <sys/utsname.h>
 #include <sys/un.h>
 #include <sys/resource.h>
+#include <sgtty.h>
+//#include <ucontext.h>
+//#include <printf.h>
+//#include <obstack.h>
 //#include <sys/timex.h>
 //#include <malloc.h>
 //#include <utmp.h>
@@ -341,20 +345,20 @@ int main(int argc, char * argv[])
       { "struct linger",            sizeof(struct linger),           -1,  "<sys/socket.h>" },
 //      { "struct mallinfo *",        sizeof(struct mallinfo *),       -1,  "<malloc.h>" },
 //      { "struct mntent",            sizeof(struct mntent),           -1,  "<fstab.h>" },
-      { "struct netent",            0,                               -1,  "unknown" },
+      { "struct netent",            sizeof(struct netent),           -1,  "<netdb.h>" },
 //      { "struct ntptimeval",        sizeof(struct ntptimeval),       -1,  "<sys/timex.h>" },
-      { "struct obstack",           0,                               -1,  "unknown" },
-      { "struct option",            0,                               -1,  "unknown" },
+//      { "struct obstack",           sizeof(struct obstack),          -1,  "<obstack.h>" },
+      { "struct option",            sizeof(struct option),           -1,  "<getopt.h>" },
       { "struct passwd",            sizeof(struct passwd),           -1,  "<pwd.h>" },
-      { "struct printf_info",       0,                               -1,  "unknown" },
+//      { "struct printf_info",       sizeof(struct printf_info),      -1,  "<printf.h>" },
       { "struct protoent",          sizeof(struct protoent),         -1,  "<netdb.h>" },
-      { "struct random_data",       0,                               -1,  "unknown" },
-      { "struct rlimit",            0,                               -1,  "unknown" },
-      { "struct rlimit64",          0,                               -1,  "unknown" },
-      { "struct rusage",            0,                               -1,  "unknown" },
-      { "struct sched_param",       0,                               -1,  "unknown" },
-      { "struct servent",           0,                               -1,  "unknown" },
-      { "struct sgttyb",            0,                               -1,  "unknown" },
+//      { "struct random_data",       sizeof(struct random_data),      -1,  "<stdlib.h>" },
+      { "struct rlimit",            sizeof(struct rlimit),           -1,  "<sys/resource.h>" },
+//      { "struct rlimit64",          sizeof(struct rlimit64),         -1,  "<sys/resource.h>" },
+      { "struct rusage",            sizeof(struct rusage),           -1,  "<sys/resource.h>" },
+      { "struct sched_param",       sizeof(struct sched_param),      -1,  "<sched.h>" },
+      { "struct servent",           sizeof(struct servent),          -1,  "<netdb.h>" },
+      { "struct sgttyb",            sizeof(struct sgttyb),           -1,  "<sgtty.h>" },
       { "struct sigaction",         sizeof(struct sigaction),        -1,  "<signal.h>" },
       { "struct sigstack",          sizeof(struct sigstack),         -1,  "<signal.h>" },
       { "struct sigvec",            sizeof(struct sigvec),           -1,  "<signal.h>" },
@@ -376,16 +380,16 @@ int main(int argc, char * argv[])
 //      { "struct utmpx *",           sizeof(struct utmpx *),          -1,  "<utmp.h>" },
       { "struct utsname",           sizeof(struct utsname),          -1,  "<sys/utsname.h>" },
 //      { "struct vtimes",            sizeof(struct vtimes),           -1,  "<sys/resource.h>" },
-      { "tcflag_t",                 0,                               -1,  "unknown" },
+      { "tcflag_t",                 sizeof(tcflag_t),                -1,  "<termios.h>" },
       { "time_t",                   sizeof(time_t),                   0,  "<time.h>" },
-      { "ucontext_t",               0,                               -1,  "unknown" },
+//      { "ucontext_t",               sizeof(ucontext_t),              -1,  "<ucontext.h>" },
       { "uid_t",                    sizeof(uid_t),                   -1,  "<sys/types.h> <unistd.h>" },
       { "uint16_t",                 sizeof(uint16_t),                 0,  "<inttypes.h>" },
       { "uint32_t",                 sizeof(uint32_t),                 0,  "<inttypes.h>" },
       { "uint64_t",                 sizeof(uint64_t),                 0,  "<inttypes.h>" },
       { "uint8_t",                  sizeof(uint8_t),                  0,  "<inttypes.h>" },
       { "uintmax_t",                sizeof(uintmax_t),                0,  "<inttypes.h>" },
-      { "union wait",               0,                               -1,  "unknown" },
+      { "union wait",               0,                               -1,  "<sys/wait.h>" },
       { "unsigned",                 sizeof(unsigned),                 0,  "libc" },
       { "va_list",                  sizeof(va_list),                 -1,  "<stdarg.h>" },
       { "wchar_t",                  sizeof(wchar_t),                 -1,  "<stddef.h>" },
@@ -701,8 +705,8 @@ void my_print_data(struct my_data * data)
    snprintf(buff, 16, "%i", data->size);
    printf("%-*s   %*s   %*s   %-*s\n",
       MY_NAME_WIDTH,  data->name,
-      MY_SIZE_WIDTH,  data->size ? buff : "unknown",
-      MY_SIGN_WIDTH,  data->is_signed == 1 ? "yes" : (data->is_signed == 0 ? "no" : "n/a"),
+      MY_SIZE_WIDTH,  data->size ? buff : " ",
+      MY_SIGN_WIDTH,  data->is_signed == 1 ? "yes" : (data->is_signed == 0 ? "no" : " "),
       MY_FILE_WIDTH,  data->include ? data->include : ""
    );
    return;
