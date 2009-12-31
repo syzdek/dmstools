@@ -151,9 +151,22 @@ do_subst_fn = \
 
 
 # custom targets
+PHONY: git package-version-check
+
+git-package-version-check:
+	@if test -d $(srcdir)/.git/config;then \
+		GPV=`git --git-dir=$(srcdir)/.git describe 2> /dev/null`; \
+		GPV=`echo $${GPV}|sed -e 's/-/./g' -e 's/^v//g'`; \
+		if test "x$${GPV}" != "x$(PACKAGE_VERSION)" && test "x$${GPV}" != "x";then \
+			$(top_builddir)/config.status --recheck; \
+			$(top_builddir)/config.status; \
+		fi; \
+	fi
+
+$(srcdir)/acinclude.m4: git-package-version-check
+
 build-aux/git-package-version:
-	mkdir -p build-aux
-	echo $(PACKAGE_VERSION) > $(srcdir)/build-aux/git-package-version
+	$(top_builddir)/config.status --recheck
 
 doc/codetagger.1: Makefile $(srcdir)/doc/codetagger.1.in
 	@$(do_subst_fn)

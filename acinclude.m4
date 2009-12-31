@@ -22,11 +22,11 @@
 #   acinclude.m4 - custom m4 macros used by configure.ac
 #
 
-# AC_SYZDEK_GIT_PACKAGE_VERSION()
+# AC_DMS_GIT_PACKAGE_VERSION()
 # -----------------------------------
-AC_DEFUN([AC_SYZDEK_GIT_PACKAGE_VERSION],[dnl
+AC_DEFUN([AC_DMS_GIT_PACKAGE_VERSION],[dnl
 
-   if test -d ${srcdir}/.git -o -f ${srcdir}/.git;then
+   if test -f ${srcdir}/.git/config;then
       GPV=$(git describe --abbrev=7 HEAD 2>/dev/null)
       GPV=$(echo "$GPV" | sed -e 's/-/./g')
       GPV=$(echo "$GPV" | sed -e 's/^v//g')

@@ -102,7 +102,7 @@ AC_SEARCH_LIBS([regerror],  [regex],,[have_regex=no])
 AM_CONDITIONAL([HAVE_REGEX], [test x$have_regex = xyes])
 
 AC_CHECK_LIB([users],[noobs],,[AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
-AC_SYZDEK_GIT_PACKAGE_VERSION
+AC_DMS_GIT_PACKAGE_VERSION
 
 # Creates outputs
 AC_CONFIG_FILES([Makefile po/Makefile.in])
