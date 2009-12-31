@@ -3,3 +3,4 @@ src/bitops.c
 src/codetagger.c
 src/numconvert.c
 src/posixregex.c
+src/typedef-info.c

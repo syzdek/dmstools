@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: dmstools 0.7\n"
+"Project-Id-Version: dmstools 0.7.32.g409ff08\n"
 "Report-Msgid-Bugs-To: david@syzdek.net\n"
-"POT-Creation-Date: 2009-09-23 10:39-0800\n"
+"POT-Creation-Date: 2009-12-31 12:59-0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,13 +17,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/bitops.c:204 src/codetagger.c:1293 src/numconvert.c:203
-#: src/posixregex.c:236
+#: src/posixregex.c:236 src/typedef-info.c:442
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
 #: src/bitops.c:207 src/codetagger.c:1296 src/numconvert.c:206
-#: src/posixregex.c:239
+#: src/posixregex.c:239 src/typedef-info.c:445
 #, c-format
 msgid ""
 "%s: unrecognized option `--%c'\n"
@@ -56,8 +56,8 @@ msgstr ""
 #. information if the program is passed --version on the command line.
 #. The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
 #. PACKAGE_VERSION.
-#: src/bitops.c:405 src/codetagger.c:1075 src/numconvert.c:308
-#: src/posixregex.c:379
+#: src/bitops.c:405 src/codetagger.c:1075 src/numconvert.c:312
+#: src/posixregex.c:379 src/typedef-info.c:742
 #, c-format
 msgid ""
 "%s (%s) %s\n"
@@ -137,7 +137,7 @@ msgstr ""
 #. strings are displayed if the program is passed `--help' on the command
 #. line. The two strings referenced are: PROGRAM_NAME, and
 #. PACKAGE_BUGREPORT
-#: src/numconvert.c:275
+#: src/numconvert.c:279
 #, c-format
 msgid ""
 "Usage: %s num1 num2 ... numX\n"
@@ -216,6 +216,25 @@ msgid ""
 "Variables:\n"
 "  POSIXREGEX                default regular expression to use for testing "
 "strings\n"
+"\n"
+"Report bugs to <%s>.\n"
+msgstr ""
+
+#. TRANSLATORS: The following strings provide usage for command. These
+#. strings are displayed if the program is passed `--help' on the command
+#. line. The two strings referenced are: PROGRAM_NAME, and
+#. PACKAGE_BUGREPORT
+#: src/typedef-info.c:719
+#, c-format
+msgid ""
+"Usage: %s [options] [typedef]\n"
+"  -d                        sort by object definition\n"
+"  -h, --help                print this help and exit\n"
+"  -n                        sort by object name\n"
+"  -r                        reverse sort order\n"
+"  -t type                   data type to display\n"
+"  -V, --version             print verbose messages\n"
+"  -w                        sort by width of object\n"
 "\n"
 "Report bugs to <%s>.\n"
 msgstr ""
