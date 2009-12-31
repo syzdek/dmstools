@@ -52,9 +52,46 @@
 #include <getopt.h>
 #include <inttypes.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <regex.h>
 #include <arpa/inet.h>
+#include <netdb.h>
+#include <pthread.h>
+#include <dirent.h>
+#include <search.h>
+#include <ftw.h>
+#include <sys/stat.h>
+#include <termios.h>
+#include <sched.h>
+#include <unistd.h>
+#include <glob.h>
+#include <iconv.h>
+#include <setjmp.h>
+#include <wchar.h>
+#include <stddef.h>
+#include <signal.h>
+#include <aio.h>
+#include <fcntl.h>
+#include <fstab.h>
+#include <grp.h>
+#include <pwd.h>
+#include <netdb.h>
+#include <net/if.h>
+#include <sys/uio.h>
+#include <sys/time.h>
+#include <locale.h>
+#include <sys/socket.h>
+#include <stdarg.h>
+#include <utime.h>
+#include <sys/utsname.h>
+#include <sys/un.h>
+#include <sys/resource.h>
+//#include <sys/timex.h>
+//#include <malloc.h>
+//#include <utmp.h>
+//#include <argp.h>
+//#include <gconv.h>
 
 
 ///////////////////
@@ -196,33 +233,167 @@ int main(int argc, char * argv[])
    struct my_data       ** list;
    static struct my_data   data[] =
    {
-      { "char",                     sizeof(char),                     1,  NULL },
-      { "char *",                   sizeof(char *),                   0,  NULL },
-      { "double",                   sizeof(double),                   1,  NULL },
-      { "float",                    sizeof(float),                    1,  NULL },
+      { "DIR",                      sizeof(DIR),                     -1,  "<dirent.h>" },
+      { "FILE",                     sizeof(FILE),                    -1,  "<stdio.h>" },
+      { "NULL",                     sizeof(NULL),                    -1,  "<stddef.h>" },
+      { "VISIT",                    sizeof(VISIT),                   -1,  "<search.h>" },
+//      { "__ftw64_func_t",           sizeof(__ftw64_func_t),          -1,  "<ftw.h>" },
+//      { "__ftw_func_t",             sizeof(__ftw_func_t),            -1,  "<ftw.h>" },
+//      { "__nftw64_func_t",          sizeof(__nftw64_func_t),         -1,  "<ftw.h>" },
+//      { "__nftw_func_t",            sizeof(__nftw_func_t),           -1,  "<ftw.h>" },
+//      { "blkcnt64_t",               sizeof(blkcnt64_t),              -1,  "<sys/stat.h>" },
+      { "blkcnt_t",                 sizeof(blkcnt_t),                -1,  "<sys/stat.h>" },
+      { "cc_t",                     sizeof(cc_t),                    -1,  "<termios.h>" },
+      { "char *",                   sizeof(char *),                   0,  "libc" },
+      { "char",                     sizeof(char),                     1,  "libc" },
+      { "clock_t",                  sizeof(clock_t),                 -1,  "<time.h>" },
+//      { "comparison_fn_t",          sizeof(comparison_fn_t),         -1,  "<stdlib.h>" },
+//      { "cookie_close_function",    0,                               -1,  "unknown" },
+//      { "cookie_io_functions_t",    0,                               -1,  "unknown" },
+//      { "cookie_read_function",     0,                               -1,  "unknown" },
+//      { "cookie_seek_function",     0,                               -1,  "unknown" },
+//      { "cookie_write_function",    0,                               -1,  "unknown" },
+//      { "cpu_set_t",                sizeof(cpu_set_t),               -1,  "<sched.h>" },
+      { "dev_t",                    sizeof(dev_t),                   -1,  "<sys/stat.h>" },
+      { "div_t",                    sizeof(div_t),                   -1,  "<stdlib.h>" },
+      { "double",                   sizeof(double),                   1,  "libc" },
+      { "enum mcheck_status",       0,                               -1,  "<mcheck.h>" },
+      { "fd_set",                   sizeof(fd_set),                  -1,  "<sys/types.h>" },
+      { "float",                    sizeof(float),                    1,  "libc" },
+//      { "fpos64_t",                 sizeof(fpos64_t),                -1,  "<stdio.h>" },
+      { "fpos_t",                   sizeof(fpos_t),                  -1,  "<stdio.h>" },
+      { "gid_t",                    sizeof(gid_t),                   -1,  "<sys/types.h> <unistd.h>" },
+//      { "glob64_t",                 sizeof(glob64_t),                -1,  "<glob.h>" },
+      { "glob_t",                   sizeof(glob_t),                  -1,  "<glob.h>" },
+      { "iconv_t",                  sizeof(iconv_t),                 -1,  "<iconv.h>" },
+      { "imaxdiv_t",                sizeof(imaxdiv_t),               -1,  "<stdlib.h>" },
       { "in_addr_t",                sizeof(in_addr_t),                0,  "<arpa/inet.h>" },
-      { "int",                      sizeof(int),                      1,  NULL },
+      { "in_port_t",                sizeof(in_port_t),                0,  "<arpa/inet.h>" },
+      { "ino64_t",                  sizeof(ino64_t),                 -1,  "<sys/types.h>" },
+      { "ino_t",                    sizeof(ino_t),                   -1,  "<sys/types.h>" },
+      { "int",                      sizeof(int),                      1,  "libc" },
       { "int16_t",                  sizeof(int16_t),                  1,  "<inttypes.h>" },
       { "int32_t",                  sizeof(int32_t),                  1,  "<inttypes.h>" },
       { "int64_t",                  sizeof(int64_t),                  1,  "<inttypes.h>" },
       { "int8_t",                   sizeof(int8_t),                   1,  "<inttypes.h>" },
       { "intmax_t",                 sizeof(intmax_t),                 1,  "<inttypes.h>" },
-      { "long",                     sizeof(long),                     1,  NULL },
-      { "long double",              sizeof(long double),              1,  NULL },
-      { "long long",                sizeof(long long),                1,  NULL },
-      { "off_t",                    sizeof(off_t),                    0,  NULL },
-      { "regex_t",                  sizeof(regex_t),                 -1,  NULL },
-      { "regmatch_t",               sizeof(regmatch_t),              -1,  NULL },
-      { "size_t",                   sizeof(size_t),                   0,  NULL },
+      { "jmp_buf",                  sizeof(jmp_buf),                 -1,  "<setjmp.h>" },
+      { "ldiv_t",                   sizeof(ldiv_t),                  -1,  "<stdlib.h>" },
+      { "lldiv_t",                  sizeof(lldiv_t),                 -1,  "<stdlib.h>" },
+      { "long double",              sizeof(long double),              1,  "libc" },
+      { "long long",                sizeof(long long),                1,  "libc" },
+      { "long",                     sizeof(long),                     1,  "libc" },
+      { "mbstate_t",                sizeof(mbstate_t),               -1,  "<wchar.h>" },
+      { "mode_t",                   sizeof(mode_t),                  -1,  "<sys/types.h>" },
+      { "nlink_t",                  sizeof(nlink_t),                 -1,  "<sys/types.h>" },
+//      { "off64_t",                  sizeof(off64_t),                  0,  "<unistd.h>" },
+      { "off_t",                    sizeof(off_t),                    0,  "<unistd.h>" },
+      { "pid_t",                    sizeof(pid_t),                    1,  "<unistd.h> <sys/types.h>" },
+//      { "printf_arginfo_function",  0,                               -1,  "unknown" },
+//      { "printf_function",          0,                               -1,  "unknown" },
+      { "pthread_attr_t",           sizeof(pthread_attr_t),          -1,  "<pthread.h>" },
+      { "pthread_cond_t",           sizeof(pthread_cond_t),          -1,  "<pthread.h>" },
+      { "pthread_condattr_t",       sizeof(pthread_condattr_t),      -1,  "<pthread.h>" },
+      { "pthread_key_t",            sizeof(pthread_key_t),           -1,  "<pthread.h>" },
+      { "pthread_mutex_t",          sizeof(pthread_mutex_t),         -1,  "<pthread.h>" },
+      { "pthread_mutexattr_t",      sizeof(pthread_mutexattr_t),     -1,  "<pthread.h>" },
+      { "pthread_once_t",           sizeof(pthread_once_t),          -1,  "<pthread.h>" },
+      { "pthread_rwlock_t",         sizeof(pthread_rwlock_t),        -1,  "<pthread.h>" },
+      { "pthread_rwlockattr_t",     sizeof(pthread_rwlockattr_t),    -1,  "<pthread.h>" },
+      { "pthread_t",                sizeof(pthread_t),               -1,  "<pthread.h>" },
+      { "ptrdiff_t",                sizeof(ptrdiff_t),               -1,  "<stddef.h>" },
+      { "regex_t",                  sizeof(regex_t),                 -1,  "<regex.h>" },
+      { "regmatch_t",               sizeof(regmatch_t),              -1,  "<regex.h>" },
+      { "regoff_t",                 sizeof(regoff_t),                -1,  "<regex.h>" },
+      { "sa_family_t",              sizeof(sa_family_t),              0,  "<arpa/inet.h>" },
+      { "sig_atomic_t",             sizeof(sig_atomic_t),            -1,  "<signal.h>" },
+//      { "sighandler_t",             sizeof(sighandler_t),            -1,  "<signal.h>" },
+      { "sigjmp_buf",               sizeof(sigjmp_buf),              -1,  "<setjmp.h>" },
+      { "sigset_t",                 sizeof(sigset_t),                -1,  "<signal.h>" },
+      { "size_t",                   sizeof(size_t),                   0,  "<sys/types.h>" },
+      { "socklen_t",                sizeof(socklen_t),                0,  "<socket.h>" },
+      { "speed_t",                  sizeof(speed_t),                 -1,  "<termios.h>" },
+      { "ssize_t",                  sizeof(ssize_t),                  1,  "<unistd.h>" },
+      { "stack_t",                  sizeof(stack_t),                 -1,  "<signal.h>" },
+      { "struct ENTRY *",           sizeof(struct ENTRY *),          -1,  "<search.h>" },
+//      { "struct FTW",               sizeof(struct FTW),              -1,  "<ftw.h>" },
+//      { "struct __gconv_step",      sizeof(struct __gconv_step),     -1,  "<gconv.h>" },
+//      { "struct __gconv_step_data", sizeof(struct __gconv_step_data), -1,  "<gconv.h>" },
+      { "struct aiocb",             sizeof(struct aiocb),            -1,  "<aio.h>" },
+//      { "struct aiocb64",           sizeof(struct aiocb64),          -1,  "<aio.h>" },
+//      { "struct aioinit",           sizeof(struct aioinit),          -1,  "<aio.h>" },
+//      { "struct argp",              sizeof(struct argp),             -1,  "<argp.h>" },
+//      { "struct argp_child",        sizeof(struct argp_child),       -1,  "<argp.h>" },
+//      { "struct argp_option",       sizeof(struct argp_option),      -1,  "<argp.h>" },
+//      { "struct argp_state",        sizeof(struct argp_state),       -1,  "<argp.h>" },
+      { "struct dirent",            sizeof(struct dirent),           -1,  "<dirent.h>" },
+//      { "struct exit_status *",     sizeof(struct exit_status *),    -1,  "<utmp.h>" },
+      { "struct flock",             sizeof(struct flock),            -1,  "<fcntl.h>" },
+      { "struct fstab",             sizeof(struct fstab),            -1,  "<fstab.h>" },
+      { "struct group",             sizeof(struct group),            -1,  "<grp.h>" },
+      { "struct hostent",           sizeof(struct hostent),          -1,  "<netdb.h>" },
+      { "struct if_nameindex",      sizeof(struct if_nameindex),     -1,  "<net/if.h>" },
+      { "struct in6_addr",          sizeof(struct in6_addr),         -1,  "<netinet/in.h>" },
+      { "struct in_addr",           sizeof(struct in_addr),          -1,  "<netinet/in.h>" },
+      { "struct iovec",             sizeof(struct iovec),            -1,  "<sys/uio.h>" },
+      { "struct itimerval",         sizeof(struct itimerval),        -1,  "<sys/time.h>" },
+      { "struct lconv",             sizeof(struct lconv),            -1,  "<locale.h>" },
+      { "struct linger",            sizeof(struct linger),           -1,  "<sys/socket.h>" },
+//      { "struct mallinfo *",        sizeof(struct mallinfo *),       -1,  "<malloc.h>" },
+//      { "struct mntent",            sizeof(struct mntent),           -1,  "<fstab.h>" },
+      { "struct netent",            0,                               -1,  "unknown" },
+//      { "struct ntptimeval",        sizeof(struct ntptimeval),       -1,  "<sys/timex.h>" },
+      { "struct obstack",           0,                               -1,  "unknown" },
+      { "struct option",            0,                               -1,  "unknown" },
+      { "struct passwd",            sizeof(struct passwd),           -1,  "<pwd.h>" },
+      { "struct printf_info",       0,                               -1,  "unknown" },
+      { "struct protoent",          sizeof(struct protoent),         -1,  "<netdb.h>" },
+      { "struct random_data",       0,                               -1,  "unknown" },
+      { "struct rlimit",            0,                               -1,  "unknown" },
+      { "struct rlimit64",          0,                               -1,  "unknown" },
+      { "struct rusage",            0,                               -1,  "unknown" },
+      { "struct sched_param",       0,                               -1,  "unknown" },
+      { "struct servent",           0,                               -1,  "unknown" },
+      { "struct sgttyb",            0,                               -1,  "unknown" },
+      { "struct sigaction",         sizeof(struct sigaction),        -1,  "<signal.h>" },
+      { "struct sigstack",          sizeof(struct sigstack),         -1,  "<signal.h>" },
+      { "struct sigvec",            sizeof(struct sigvec),           -1,  "<signal.h>" },
+      { "struct sockaddr",          sizeof(struct sockaddr),         -1,  "<sys/socket.h>" },
       { "struct sockaddr_in",       sizeof(struct sockaddr_in),      -1,  "<netinet/in.h>" },
       { "struct sockaddr_in6",      sizeof(struct sockaddr_in6),     -1,  "<netinet/in.h>" },
+      { "struct sockaddr_un",       sizeof(struct sockaddr_un),      -1,  "<sys/un.h>" },
+      { "struct stat",              sizeof(struct stat),             -1,  "<sys/stat.h>" },
+      { "struct stat64",            sizeof(struct stat64),           -1,  "<sys/stat.h>" },
+      { "struct termios",           sizeof(struct termios),          -1,  "<termios.h>" },
+      { "struct timespec",          sizeof(struct timespec),         -1,  "<sys/time.h>" },
+      { "struct timeval",           sizeof(struct timeval),          -1,  "<sys/time.h>" },
+//      { "struct timex",             sizeof(struct timex),            -1,  "<sys/timex.h>" },
+      { "struct timezone",          sizeof(struct timezone),         -1,  "<sys/time.h>" },
+      { "struct tm",                sizeof(struct tm),               -1,  "<time.h>" },
+//      { "struct tms",               sizeof(struct tms),              -1,  "<sys/times.h>" },
+      { "struct utimbuf",           sizeof(struct utimbuf),          -1,  "<utime.h>" },
+//      { "struct utmp",              sizeof(struct utmp),             -1,  "<utmp.h>" },
+//      { "struct utmpx *",           sizeof(struct utmpx *),          -1,  "<utmp.h>" },
+      { "struct utsname",           sizeof(struct utsname),          -1,  "<sys/utsname.h>" },
+//      { "struct vtimes",            sizeof(struct vtimes),           -1,  "<sys/resource.h>" },
+      { "tcflag_t",                 0,                               -1,  "unknown" },
       { "time_t",                   sizeof(time_t),                   0,  "<time.h>" },
+      { "ucontext_t",               0,                               -1,  "unknown" },
+      { "uid_t",                    sizeof(uid_t),                   -1,  "<sys/types.h> <unistd.h>" },
       { "uint16_t",                 sizeof(uint16_t),                 0,  "<inttypes.h>" },
       { "uint32_t",                 sizeof(uint32_t),                 0,  "<inttypes.h>" },
       { "uint64_t",                 sizeof(uint64_t),                 0,  "<inttypes.h>" },
       { "uint8_t",                  sizeof(uint8_t),                  0,  "<inttypes.h>" },
       { "uintmax_t",                sizeof(uintmax_t),                0,  "<inttypes.h>" },
-      { "unsigned",                 sizeof(unsigned),                 0,  NULL  },
+      { "union wait",               0,                               -1,  "unknown" },
+      { "unsigned",                 sizeof(unsigned),                 0,  "libc" },
+      { "va_list",                  sizeof(va_list),                 -1,  "<stdarg.h>" },
+      { "wchar_t",                  sizeof(wchar_t),                 -1,  "<stddef.h>" },
+      { "wchar_t",                  sizeof(wchar_t),                 -1,  "<wchar.h>" },
+//      { "wctrans_t",                sizeof(wctrans_t),               -1,  "<wchar.h>" },
+      { "wctype_t",                 sizeof(wctype_t),                -1,  "<wchar.h>" },
+      { "wint_t",                   sizeof(wint_t),                  -1,  "<wchar.h>" },
+//      { "wordexp_t",                sizeof(wordexp_t),               -1,  "<wordexp.h>" },
       { NULL, 0, 0, NULL}
    };
 
