@@ -314,7 +314,7 @@ const char * my_uint2str(char * dst, uint32_t num)
          return(dst);
       case MY_OPT_HEX:
          snprintf(str, STR_LEN, "0x%08X", num);
-         snprintf(dst, STR_LEN, str);
+         snprintf(dst, STR_LEN, "%s", str);
          return(dst);
       case MY_OPT_OCT:
          snprintf(str, STR_LEN, "0%o", num);
