@@ -235,7 +235,7 @@ int main(int argc, char * argv[])
          else if (!(strncmp("0", argv[x], 1)))
             base = 8;
          else
-            for(y = 0; y < strlen(argv[x]); y++)
+            for(y = 0; ((uint32_t)y) < strlen(argv[x]); y++)
                if ( ((argv[x][y] >= 'a') && (argv[x][y] <= 'z')) ||
                     ((argv[x][y] >= 'A') && (argv[x][y] <= 'Z')) )
                   base = 16;
@@ -247,7 +247,7 @@ int main(int argc, char * argv[])
       if (opt & MY_OPT_BIN)
       {
          if (len) printf(",");
-         for(y = 0; y < sizeof(uintmax_t); y++)
+         for(y = 0; ((uint32_t)y) < sizeof(uintmax_t); y++)
          {
             byte = num >> (8*(sizeof(uintmax_t)-y-1));
             printf("%c%c%c%c%c%c%c%c",
