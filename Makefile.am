@@ -123,7 +123,7 @@ EXTRA_DIST				= build-aux/config.rpath \
 					  $(srcdir)/examples/example.c \
 					  $(srcdir)/examples/example.html \
 					  $(srcdir)/examples/example.txt \
-					  $(srcdir)/Makefile-xcode \
+					  $(srcdir)/build-aux/Makefile-xcode \
 					  $(srcdir)/dmstools.xcodeproj/project.pbxproj
 CLEANFILES				= \
 					  $(builddir)/a.out   $(srcdir)/a.out \
