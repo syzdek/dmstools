@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: dmstools 0.7.32.g409ff08\n"
+"Project-Id-Version: dmstools 0.8\n"
 "Report-Msgid-Bugs-To: david@syzdek.net\n"
-"POT-Creation-Date: 2009-12-31 12:59-0900\n"
+"POT-Creation-Date: 2009-12-31 14:05-0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,13 +17,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/bitops.c:204 src/codetagger.c:1293 src/numconvert.c:203
-#: src/posixregex.c:236 src/typedef-info.c:442
+#: src/posixregex.c:236 src/typedef-info.c:446
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
 #: src/bitops.c:207 src/codetagger.c:1296 src/numconvert.c:206
-#: src/posixregex.c:239 src/typedef-info.c:445
+#: src/posixregex.c:239 src/typedef-info.c:449
 #, c-format
 msgid ""
 "%s: unrecognized option `--%c'\n"
@@ -57,7 +57,7 @@ msgstr ""
 #. The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
 #. PACKAGE_VERSION.
 #: src/bitops.c:405 src/codetagger.c:1075 src/numconvert.c:312
-#: src/posixregex.c:379 src/typedef-info.c:742
+#: src/posixregex.c:379 src/typedef-info.c:746
 #, c-format
 msgid ""
 "%s (%s) %s\n"
@@ -224,7 +224,7 @@ msgstr ""
 #. strings are displayed if the program is passed `--help' on the command
 #. line. The two strings referenced are: PROGRAM_NAME, and
 #. PACKAGE_BUGREPORT
-#: src/typedef-info.c:719
+#: src/typedef-info.c:723
 #, c-format
 msgid ""
 "Usage: %s [options] [typedef]\n"
