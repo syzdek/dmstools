@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
+# Copyright (C) YEAR David M. Syzdek <david@syzdek.net>
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: dmstools 0.8\n"
+"Project-Id-Version: dmstools 0.8.1.gdc3d213\n"
 "Report-Msgid-Bugs-To: david@syzdek.net\n"
-"POT-Creation-Date: 2009-12-31 14:05-0900\n"
+"POT-Creation-Date: 2010-01-02 15:51-0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,18 +16,56 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/bitops.c:204 src/codetagger.c:1293 src/numconvert.c:203
-#: src/posixregex.c:236 src/typedef-info.c:446
+#: src/bitcopy.c:307 src/bitops.c:204 src/codetagger.c:1293
+#: src/numconvert.c:203 src/posixregex.c:236 src/typedef-info.c:446
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: src/bitops.c:207 src/codetagger.c:1296 src/numconvert.c:206
-#: src/posixregex.c:239 src/typedef-info.c:449
+#: src/bitcopy.c:310 src/bitops.c:207 src/codetagger.c:1296
+#: src/numconvert.c:206 src/posixregex.c:239 src/typedef-info.c:449
 #, c-format
 msgid ""
 "%s: unrecognized option `--%c'\n"
 "Try `%s --help' for more information.\n"
+msgstr ""
+
+#. TRANSLATORS: The following strings provide usage for command. These
+#. strings are displayed if the program is passed `--help' on the command
+#. line. The two strings referenced are: PROGRAM_NAME, and
+#. PACKAGE_BUGREPORT
+#: src/bitcopy.c:376
+#, c-format
+msgid ""
+"Usage: %s [options]\n"
+"  -B bytes                  size of buffer to use\n"
+"  -b bits                   size of buffer to use\n"
+"  -d data                   data to insert\n"
+"  -h, --help                print this help and exit\n"
+"  -L bytes                  length of data in bytes\n"
+"  -l bits                   length of data in bits\n"
+"  -O bytes                  offset in bytes to store data\n"
+"  -o bits                   offset in bits to store data\n"
+"  -V, --version             print verbose messages\n"
+"  -v, --verbose             print version number and exit\n"
+"\n"
+"Report bugs to <%s>.\n"
+msgstr ""
+
+#. TRANSLATORS: The following strings provide version and copyright
+#. information if the program is passed --version on the command line.
+#. The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
+#. PACKAGE_VERSION.
+#: src/bitcopy.c:402 src/bitops.c:405 src/codetagger.c:1075
+#: src/numconvert.c:312 src/posixregex.c:379 src/typedef-info.c:746
+#, c-format
+msgid ""
+"%s (%s) %s\n"
+"Written by David M. Syzdek.\n"
+"\n"
+"%s\n"
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
 
 #. TRANSLATORS: The following strings provide usage for command. These
@@ -50,22 +88,6 @@ msgid ""
 "  0NNNNNNNN                 input number is in octal\n"
 "\n"
 "Report bugs to <%s>.\n"
-msgstr ""
-
-#. TRANSLATORS: The following strings provide version and copyright
-#. information if the program is passed --version on the command line.
-#. The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
-#. PACKAGE_VERSION.
-#: src/bitops.c:405 src/codetagger.c:1075 src/numconvert.c:312
-#: src/posixregex.c:379 src/typedef-info.c:746
-#, c-format
-msgid ""
-"%s (%s) %s\n"
-"Written by David M. Syzdek.\n"
-"\n"
-"%s\n"
-"This is free software; see the source for copying conditions.  There is NO\n"
-"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
 
 #: src/codetagger.c:586

@@ -31,6 +31,8 @@
 		A0AE375510EAAA3C006B1ADB /* typedef-info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "typedef-info.c"; sourceTree = "<group>"; };
 		A0B6D45D1033A3BA004E87EE /* numconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = numconvert.c; sourceTree = "<group>"; };
 		A0B6D4911033B0E0004E87EE /* POTFILES.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = POTFILES.in; sourceTree = "<group>"; };
+		A0C7059E10EFEFE4002DA805 /* Makevars */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = Makevars; sourceTree = "<group>"; usesTabs = 1; };
+		A0C705A710EFF101002DA805 /* LINGUAS */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = LINGUAS; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -92,6 +94,8 @@
 		A0B6D48F1033B0BD004E87EE /* po */ = {
 			isa = PBXGroup;
 			children = (
+				A0C705A710EFF101002DA805 /* LINGUAS */,
+				A0C7059E10EFEFE4002DA805 /* Makevars */,
 				A0B6D4911033B0E0004E87EE /* POTFILES.in */,
 			);
 			path = po;
