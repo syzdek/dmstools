@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: dmstools 0.8.1.gdc3d213\n"
+"Project-Id-Version: dmstools 0.9\n"
 "Report-Msgid-Bugs-To: david@syzdek.net\n"
-"POT-Creation-Date: 2010-01-02 15:51-0900\n"
+"POT-Creation-Date: 2010-01-06 14:37-0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,18 +16,58 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/bitcopy.c:307 src/bitops.c:204 src/codetagger.c:1293
+#: src/bindump.c:191 src/bitcopy.c:307 src/bitops.c:204 src/codetagger.c:1293
 #: src/numconvert.c:203 src/posixregex.c:236 src/typedef-info.c:446
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: src/bitcopy.c:310 src/bitops.c:207 src/codetagger.c:1296
+#: src/bindump.c:194 src/bitcopy.c:310 src/bitops.c:207 src/codetagger.c:1296
 #: src/numconvert.c:206 src/posixregex.c:239 src/typedef-info.c:449
 #, c-format
 msgid ""
 "%s: unrecognized option `--%c'\n"
 "Try `%s --help' for more information.\n"
+msgstr ""
+
+#: src/bindump.c:209 src/numconvert.c:219
+#, c-format
+msgid ""
+"%s: missing required argument\n"
+"Try `%s --help' for more information.\n"
+msgstr ""
+
+#. TRANSLATORS: The following strings provide usage for command. These
+#. strings are displayed if the program is passed `--help' on the command
+#. line. The two strings referenced are: PROGRAM_NAME, and
+#. PACKAGE_BUGREPORT
+#: src/bindump.c:318
+#, c-format
+msgid ""
+"Usage: %s [options] file\n"
+"  -h, --help                print this help and exit\n"
+"  -l bytes                  length of data to display\n"
+"  -o bytes                  offset to start reading data\n"
+"  -V, --version             print verbose messages\n"
+"  -v, --verbose             print version number and exit\n"
+"\n"
+"Report bugs to <%s>.\n"
+msgstr ""
+
+#. TRANSLATORS: The following strings provide version and copyright
+#. information if the program is passed --version on the command line.
+#. The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
+#. PACKAGE_VERSION.
+#: src/bindump.c:339 src/bitcopy.c:402 src/bitops.c:405 src/codetagger.c:1075
+#: src/numconvert.c:312 src/posixregex.c:379 src/typedef-info.c:746
+#, c-format
+msgid ""
+"%s (%s) %s\n"
+"Written by David M. Syzdek.\n"
+"\n"
+"%s\n"
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
 
 #. TRANSLATORS: The following strings provide usage for command. These
@@ -50,22 +90,6 @@ msgid ""
 "  -v, --verbose             print version number and exit\n"
 "\n"
 "Report bugs to <%s>.\n"
-msgstr ""
-
-#. TRANSLATORS: The following strings provide version and copyright
-#. information if the program is passed --version on the command line.
-#. The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
-#. PACKAGE_VERSION.
-#: src/bitcopy.c:402 src/bitops.c:405 src/codetagger.c:1075
-#: src/numconvert.c:312 src/posixregex.c:379 src/typedef-info.c:746
-#, c-format
-msgid ""
-"%s (%s) %s\n"
-"Written by David M. Syzdek.\n"
-"\n"
-"%s\n"
-"This is free software; see the source for copying conditions.  There is NO\n"
-"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 msgstr ""
 
 #. TRANSLATORS: The following strings provide usage for command. These
@@ -146,13 +170,6 @@ msgstr ""
 #: src/codetagger.c:1340
 #, c-format
 msgid ": no tag definitions were found in \"%s\"\n"
-msgstr ""
-
-#: src/numconvert.c:219
-#, c-format
-msgid ""
-"%s: missing required argument\n"
-"Try `%s --help' for more information.\n"
 msgstr ""
 
 #. TRANSLATORS: The following strings provide usage for command. These
