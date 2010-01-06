@@ -39,10 +39,16 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
-bin_PROGRAMS				= src/bitcopy src/bitops src/numconvert src/typedef-info
+bin_PROGRAMS				= src/bindump src/bitcopy src/bitops src/numconvert src/typedef-info
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
 man_MANS				= doc/codetagger.1
+
+# macros for src/bindump
+src_bindump_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
+src_bindump_CPPFLAGS			= -DPROGRAM_NAME="\"bindump\"" $(AM_CPPFLAGS)
+src_bindump_SOURCES			= $(noinst_HEADERS) \
+					  src/bindump.c
 
 # macros for src/bitops
 src_bitcopy_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile

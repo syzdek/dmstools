@@ -1,4 +1,5 @@
 # List of source files which contain translatable strings.
+src/bindump.c
 src/bitcopy.c
 src/bitops.c
 src/codetagger.c
