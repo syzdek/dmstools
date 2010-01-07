@@ -139,16 +139,16 @@ int main(int argc, char * argv[])
 {
    int         c;
    int         opt_index;
-   int         fd;
-   char        buff[9];
+   int         fd1;
+   char        buff1[9];
    size_t      offset;
    size_t      s;
-   size_t      pos;
+   size_t      pos1;
    size_t      len;
-   ssize_t     code;
-   uint8_t     data;
+   ssize_t     code1;
+   uint8_t     data1;
    uint32_t    verbose;
-   const char * file;
+   const char * file1;
 
    // getopt options
    static char   short_opt[] = "hl:o:vV";
@@ -163,7 +163,7 @@ int main(int argc, char * argv[])
    len      = 0;
    offset   = 0;
    verbose  = 0;
-   file     = "-";
+   file1    = "-";
    
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -201,9 +201,9 @@ int main(int argc, char * argv[])
 
    // determines file to process (or STDIN)
    if ((optind+1) == argc)
-      file = argv[optind];
+      file1 = argv[optind];
    else if (optind == argc)
-      file = "-";
+      file1 = "-";
    else
    {
       fprintf(stderr, _("%s: missing required argument\n"
@@ -218,15 +218,15 @@ int main(int argc, char * argv[])
       printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
 
    // open file for reading or set to STDIN
-   if (!(strcmp(file, "-")))
+   if (!(strcmp(file1, "-")))
    {
       if (verbose > 2)
          printf("using stdin...\n");
-      fd = STDIN_FILENO;
+      fd1 = STDIN_FILENO;
    } else {
       if (verbose > 2)
-         printf("opening %s...\n", file);
-      if ((fd = open(file, O_RDONLY)) == -1)
+         printf("opening %s...\n", file1);
+      if ((fd1 = open(file1, O_RDONLY)) == -1)
       {
          perror(PROGRAM_NAME ": open()");
          return(1);
@@ -234,22 +234,22 @@ int main(int argc, char * argv[])
    };
 
    // mark the starting position
-   pos = 0;
+   pos1 = 0;
 
    // move to the specified offset
-   if (fd != STDIN_FILENO)
+   if (fd1 != STDIN_FILENO)
    {
       if ((verbose > 2) && (offset))
          printf("offsetting by %zi bytes...\n", offset);
-      if ((lseek(fd, (off_t)offset, SEEK_SET) == -1))
+      if ((lseek(fd1, (off_t)offset, SEEK_SET) == -1))
       {
          perror(PROGRAM_NAME ": lseek()");
          if (verbose)
             printf("closing file...\n");
-         close(fd);
+         close(fd1);
          return(1);
       };
-      pos += offset;
+      pos1 += offset;
    } else if (offset) {
       fprintf(stderr, PROGRAM_NAME ": unable to specify an offset with STDIN\n");
       return(1);
@@ -259,49 +259,49 @@ int main(int argc, char * argv[])
    if (verbose > 2)
       printf("reading data...\n");
    printf("offset     00       01       02       03       04       05       06       07 \n");
-   if (pos % 8)
+   if (pos1 % 8)
    {
-      printf("0%04zo0:", (pos/8));
-      for(s = 0; s < (pos % 8); s++)
+      printf("0%04zo0:", (pos1/8));
+      for(s = 0; s < (pos1 % 8); s++)
          printf("         ");
    };
 
    // read data from file handle
-   while((code = read(fd, &data, 1)) > 0)
+   while((code1 = read(fd1, &data1, 1)) > 0)
    {
-      if ((pos % 8) == 0)
-         printf("0%04zo0:", (pos/8));
-      printf(" %s", my_byte2str(data, buff)); 
-      pos += code;
-      if (!(pos % 8))
+      if ((pos1 % 8) == 0)
+         printf("0%04zo0:", (pos1/8));
+      printf(" %s", my_byte2str(data1, buff1));
+      pos1 += code1;
+      if (!(pos1 % 8))
          printf("\n");
-      if ( ((pos-offset) >= len) && (len))
+      if ( ((pos1-offset) >= len) && (len))
          break;
-      if ( (!(pos % 8)) && (!(pos % (8 * 23))) )
+      if ( (!(pos1 % 8)) && (!(pos1 % (8 * 23))) )
          printf("offset     00       01       02       03       04       05       06       07 \n");
    };
-   if (pos % 8)
+   if (pos1 % 8)
       printf("\n");
-   if (code == -1)
+   if (code1 == -1)
    {
       perror(PROGRAM_NAME ": read()");
       if (verbose > 2)
          printf("closing file...\n");
       if (verbose > 0)
-         printf("read %zu bytes\n", (pos-offset));
-      close(fd);
+         printf("read %zu bytes\n", (pos1-offset));
+      close(fd1);
       return(1);
    };
 
    // close file and finish up
-   if (fd != STDIN_FILENO)
+   if (fd1 != STDIN_FILENO)
    {
       if (verbose > 2)
          printf("closing file...\n");
-      close(fd);
+      close(fd1);
    };
    if (verbose > 0)
-      printf("read %zu bytes\n", (pos-offset));
+      printf("read %zu bytes\n", (pos1-offset));
    printf("\n");
 
    return(0);
