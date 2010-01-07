@@ -106,6 +106,32 @@
 #define PARAMS(protos) protos
 #endif
 
+/////////////////
+//             //
+//  Datatypes  //
+//             //
+/////////////////
+
+/// contains the state information for a file.
+typedef struct bindump_file BinDumpFile;
+
+
+/////////////////
+//             //
+//  Structs    //
+//             //
+/////////////////
+
+/// contains the state information for a file.
+struct bindump_file
+{
+   int           fd;          ///< file handle of open file
+   size_t        pos;         ///< current position within the file
+   ssize_t       code;        ///< return code of last file operation
+   const char  * filename;    ///< name of the file
+   char          data[8];     ///< buffer for storing data for processing
+};
+
 
 //////////////////
 //              //
@@ -139,18 +165,14 @@ int main(int argc, char * argv[])
 {
    int         c;
    int         opt_index;
-   int         fd1;
    char        buff1[9];
    size_t      offset;
    size_t      offset_mod;
    size_t      offset_div;
    size_t      s;
-   size_t      pos1;
    size_t      len;
-   ssize_t     code1;
-   uint8_t     data1[8];
    uint32_t    verbose;
-   const char * file1;
+   BinDumpFile  file1;
 
    // getopt options
    static char   short_opt[] = "hl:o:vV";
@@ -167,6 +189,7 @@ int main(int argc, char * argv[])
    offset_mod  = 0;
    offset_div  = 0;
    verbose  = 0;
+   memset(&file1, 0, sizeof(BinDumpFile));
    
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -205,12 +228,12 @@ int main(int argc, char * argv[])
    };
 
    // determines file to process (or STDIN)
-   file1    = NULL;
+   file1.filename = NULL;
    switch(argc - optind)
    {
       case 1:
          if ((strcmp(argv[optind+0], "-")))
-            file1 = argv[optind+0];
+            file1.filename = argv[optind+0];
          break;
       case 0:
          break;
@@ -221,7 +244,7 @@ int main(int argc, char * argv[])
          );
          return(1);
    };
-   if ( (!(file1)) && (offset) )
+   if ( (!(file1.filename)) && (offset) )
    {
       fprintf(stderr, PROGRAM_NAME ": unable to specify an offset with STDIN\n");
       return(1);
@@ -232,15 +255,15 @@ int main(int argc, char * argv[])
       printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
 
    // open file for reading or set to STDIN
-   fd1 = STDIN_FILENO;
-   if (!(file1))
+   file1.fd = STDIN_FILENO;
+   if (!(file1.filename))
       if (verbose > 2)
          printf("using stdin...\n");
-   if (file1)
+   if (file1.filename)
    {
       if (verbose > 2)
-         printf("opening %s...\n", file1);
-      if ((fd1 = open(file1, O_RDONLY)) == -1)
+         printf("opening %s...\n", file1.filename);
+      if ((file1.fd = open(file1.filename, O_RDONLY)) == -1)
       {
          perror(PROGRAM_NAME ": open()");
          return(1);
@@ -248,85 +271,85 @@ int main(int argc, char * argv[])
    };
 
    // mark the starting position
-   pos1 = 0;
+   file1.pos = 0;
 
    // move to the specified offset
    if (offset)
    {
       if (verbose > 2)
          printf("offsetting by %zi bytes...\n", offset);
-      if ((lseek(fd1, (off_t)offset, SEEK_SET) == -1))
+      if ((lseek(file1.fd, (off_t)offset, SEEK_SET) == -1))
       {
          perror(PROGRAM_NAME ": lseek()");
          if (verbose)
             printf("closing file...\n");
-         close(fd1);
+         close(file1.fd);
          return(1);
       };
-      pos1 += offset;
+      file1.pos += offset;
    };
 
    // fill in white space so the offset markings align with the position in the file
    if (verbose > 2)
       printf("reading data...\n");
    printf("offset     00       01       02       03       04       05       06       07 \n");
-   if (pos1 % 8)
+   if (file1.pos % 8)
    {
-      printf("0%04zo0:", (pos1/8));
-      for(s = 0; s < (pos1 % 8); s++)
+      printf("0%04zo0:", (file1.pos/8));
+      for(s = 0; s < (file1.pos % 8); s++)
          printf("         ");
-      if ((code1 = read(fd1, data1, 8)) == -1)
+      if ((file1.code = read(file1.fd, file1.data, 8)) == -1)
       {
          perror(PROGRAM_NAME ": read()");
          if (verbose > 2)
             printf("closing file...\n");
          if (verbose > 0)
-            printf("read %zu bytes\n", (pos1-offset));
-         close(fd1);
+            printf("read %zu bytes\n", (file1.pos-offset));
+         close(file1.fd);
          return(1);
       };
-      for(s = offset_mod; ((s < 8) && ((s-offset_mod) < ((size_t)code1))); s++)
-         printf(" %s", my_byte2str(data1[s], buff1));
-      pos1 += code1;
+      for(s = offset_mod; ((s < 8) && ((s-offset_mod) < ((size_t)file1.code))); s++)
+         printf(" %s", my_byte2str(file1.data[s], buff1));
+      file1.pos += file1.code;
    };
 
    // read data from file handle
-   while((code1 = read(fd1, data1, 8)) > 0)
+   while((file1.code = read(file1.fd, file1.data, 8)) > 0)
    {
-      if ((pos1 % 8) == 0)
-         printf("0%04zo0:", (pos1/8));
-      for(s = 0; ((s < 8) && (s < ((size_t)code1))); s++)
-         printf(" %s", my_byte2str(data1[s], buff1));
-      pos1 += code1;
-      if (!(pos1 % 8))
+      if ((file1.pos % 8) == 0)
+         printf("0%04zo0:", (file1.pos/8));
+      for(s = 0; ((s < 8) && (s < ((size_t)file1.code))); s++)
+         printf(" %s", my_byte2str(file1.data[s], buff1));
+      file1.pos += file1.code;
+      if (!(file1.pos % 8))
          printf("\n");
-      if ( ((pos1-offset) >= len) && (len))
+      if ( ((file1.pos-offset) >= len) && (len))
          break;
-      if ( (!(pos1 % 8)) && (!(pos1 % (8 * 23))) )
+      if ( (!(file1.pos % 8)) && (!(file1.pos % (8 * 23))) )
          printf("offset     00       01       02       03       04       05       06       07 \n");
    };
-   if (pos1 % 8)
+   if (file1.pos % 8)
       printf("\n");
-   if (code1 == -1)
+   if (file1.code == -1)
    {
       perror(PROGRAM_NAME ": read()");
       if (verbose > 2)
          printf("closing file...\n");
       if (verbose > 0)
-         printf("read %zu bytes\n", (pos1-offset));
-      close(fd1);
+         printf("read %zu bytes\n", (file1.pos-offset));
+      close(file1.fd);
       return(1);
    };
 
    // close file and finish up
-   if (fd1 != STDIN_FILENO)
+   if (file1.fd != STDIN_FILENO)
    {
       if (verbose > 2)
          printf("closing file...\n");
-      close(fd1);
+      close(file1.fd);
    };
    if (verbose > 0)
-      printf("read %zu bytes\n", (pos1-offset));
+      printf("read %zu bytes\n", (file1.pos-offset));
    printf("\n");
 
    return(0);
