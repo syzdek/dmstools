@@ -373,7 +373,9 @@ void my_version(void)
 }
 
 
-// displays a byte in binary notation
+/// displays a byte in binary notation
+/// @param[in]  data    8 bits to translate into an ASCII string buffer
+/// @param[out] buff    ASCII string buffer to hold the result
 char * my_byte2str(uint8_t data, char * buff)
 {
    uint32_t b;
