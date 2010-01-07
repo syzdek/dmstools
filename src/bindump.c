@@ -351,7 +351,7 @@ int main(int argc, char * argv[])
 /// @param[in]  verbose    verbose level of messages to display
 int my_close(BinDumpFile * file, uint32_t verbose)
 {
-   if (file->fd == STDIN_FILENO)
+   if (!(file->filename))
       return(0);
    if (verbose > 2)
       printf("closing file %s...\n", file->filename);
