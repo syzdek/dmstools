@@ -142,6 +142,9 @@ struct bindump_file
 // main statement
 int main PARAMS((int argc, char * argv[]));
 
+// closes a file
+int my_close PARAMS((BinDumpFile * file, uint32_t verbose));
+
 //displays usage information
 void my_usage PARAMS((void));
 
@@ -281,9 +284,7 @@ int main(int argc, char * argv[])
       if ((lseek(file1.fd, (off_t)offset, SEEK_SET) == -1))
       {
          perror(PROGRAM_NAME ": lseek()");
-         if (verbose)
-            printf("closing file...\n");
-         close(file1.fd);
+         my_close(&file1, verbose);
          return(1);
       };
       file1.pos += offset;
@@ -301,11 +302,9 @@ int main(int argc, char * argv[])
       if ((file1.code = read(file1.fd, file1.data, 8)) == -1)
       {
          perror(PROGRAM_NAME ": read()");
-         if (verbose > 2)
-            printf("closing file...\n");
+         my_close(&file1, verbose);
          if (verbose > 0)
             printf("read %zu bytes\n", (file1.pos-offset));
-         close(file1.fd);
          return(1);
       };
       for(s = offset_mod; ((s < 8) && ((s-offset_mod) < ((size_t)file1.code))); s++)
@@ -333,26 +332,32 @@ int main(int argc, char * argv[])
    if (file1.code == -1)
    {
       perror(PROGRAM_NAME ": read()");
-      if (verbose > 2)
-         printf("closing file...\n");
+      my_close(&file1, verbose);
       if (verbose > 0)
          printf("read %zu bytes\n", (file1.pos-offset));
-      close(file1.fd);
       return(1);
    };
 
    // close file and finish up
-   if (file1.fd != STDIN_FILENO)
-   {
-      if (verbose > 2)
-         printf("closing file...\n");
-      close(file1.fd);
-   };
+   my_close(&file1, verbose);
    if (verbose > 0)
       printf("read %zu bytes\n", (file1.pos-offset));
    printf("\n");
 
    return(0);
+}
+
+
+/// closes a file
+/// @param[in]  file       file to use for operations
+/// @param[in]  verbose    verbose level of messages to display
+int my_close(BinDumpFile * file, uint32_t verbose)
+{
+   if (file->fd == STDIN_FILENO)
+      return(0);
+   if (verbose > 2)
+      printf("closing file %s...\n", file->filename);
+   return(close(file->fd));
 }
 
 
