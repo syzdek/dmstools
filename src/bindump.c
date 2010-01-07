@@ -114,16 +114,16 @@
 //////////////////
 
 // main statement
-int main(int argc, char * argv[]);
+int main PARAMS((int argc, char * argv[]));
 
 //displays usage information
-void my_usage();
+void my_usage PARAMS((void));
 
 // displays version information
-void my_version(void);
+void my_version PARAMS((void));
 
 // displays data in binary notation
-char * my_byte2str(uint8_t data, char * buff);
+char * my_byte2str PARAMS((uint8_t data, char * buff));
 
 
 /////////////////
