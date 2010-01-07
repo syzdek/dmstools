@@ -142,11 +142,13 @@ int main(int argc, char * argv[])
    int         fd1;
    char        buff1[9];
    size_t      offset;
+   size_t      offset_mod;
+   size_t      offset_div;
    size_t      s;
    size_t      pos1;
    size_t      len;
    ssize_t     code1;
-   uint8_t     data1;
+   uint8_t     data1[8];
    uint32_t    verbose;
    const char * file1;
 
@@ -162,6 +164,8 @@ int main(int argc, char * argv[])
 
    len      = 0;
    offset   = 0;
+   offset_mod  = 0;
+   offset_div  = 0;
    verbose  = 0;
    
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
@@ -179,6 +183,8 @@ int main(int argc, char * argv[])
             break;
          case 'o':
             offset = strtoul(optarg, NULL, 0);
+            offset_div = (offset / 8);
+            offset_mod = (offset - (offset_div * 8));
             break;
          case 'V':
             my_version();
@@ -269,14 +275,28 @@ int main(int argc, char * argv[])
       printf("0%04zo0:", (pos1/8));
       for(s = 0; s < (pos1 % 8); s++)
          printf("         ");
+      if ((code1 = read(fd1, data1, 8)) == -1)
+      {
+         perror(PROGRAM_NAME ": read()");
+         if (verbose > 2)
+            printf("closing file...\n");
+         if (verbose > 0)
+            printf("read %zu bytes\n", (pos1-offset));
+         close(fd1);
+         return(1);
+      };
+      for(s = offset_mod; ((s < 8) && ((s-offset_mod) < ((size_t)code1))); s++)
+         printf(" %s", my_byte2str(data1[s], buff1));
+      pos1 += code1;
    };
 
    // read data from file handle
-   while((code1 = read(fd1, &data1, 1)) > 0)
+   while((code1 = read(fd1, data1, 8)) > 0)
    {
       if ((pos1 % 8) == 0)
          printf("0%04zo0:", (pos1/8));
-      printf(" %s", my_byte2str(data1, buff1));
+      for(s = 0; ((s < 8) && (s < ((size_t)code1))); s++)
+         printf(" %s", my_byte2str(data1[s], buff1));
       pos1 += code1;
       if (!(pos1 % 8))
          printf("\n");
