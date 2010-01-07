@@ -145,6 +145,9 @@ int main PARAMS((int argc, char * argv[]));
 // closes a file
 int my_close PARAMS((BinDumpFile * file, uint32_t verbose));
 
+// preforms lseek on file
+int my_lseek PARAMS((BinDumpFile * file, size_t offset, uint32_t verbose));
+
 //displays usage information
 void my_usage PARAMS((void));
 
@@ -281,13 +284,8 @@ int main(int argc, char * argv[])
    {
       if (verbose > 2)
          printf("offsetting by %zi bytes...\n", offset);
-      if ((lseek(file1.fd, (off_t)offset, SEEK_SET) == -1))
-      {
-         perror(PROGRAM_NAME ": lseek()");
-         my_close(&file1, verbose);
+      if ((my_lseek(&file1, offset, verbose) == -1))
          return(1);
-      };
-      file1.pos += offset;
    };
 
    // fill in white space so the offset markings align with the position in the file
@@ -358,6 +356,23 @@ int my_close(BinDumpFile * file, uint32_t verbose)
    if (verbose > 2)
       printf("closing file %s...\n", file->filename);
    return(close(file->fd));
+}
+
+
+/// preforms lseek on file
+/// @param[in]  file       file to use for operations
+/// @param[in]  offset     offset
+/// @param[in]  verbose    verbose level of messages to display
+int my_lseek(BinDumpFile * file, size_t offset, uint32_t verbose)
+{
+   if ((lseek(file->fd, (off_t)offset, SEEK_SET) == -1))
+   {
+      perror(PROGRAM_NAME ": lseek()");
+      my_close(file, verbose);
+      return(-1);
+   };
+   file->pos += offset;
+   return(0);
 }
 
 
