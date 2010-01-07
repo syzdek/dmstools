@@ -245,9 +245,9 @@ int main(int argc, char * argv[])
    pos1 = 0;
 
    // move to the specified offset
-   if (fd1 != STDIN_FILENO)
+   if (offset)
    {
-      if ((verbose > 2) && (offset))
+      if (verbose > 2)
          printf("offsetting by %zi bytes...\n", offset);
       if ((lseek(fd1, (off_t)offset, SEEK_SET) == -1))
       {
@@ -258,9 +258,6 @@ int main(int argc, char * argv[])
          return(1);
       };
       pos1 += offset;
-   } else if (offset) {
-      fprintf(stderr, PROGRAM_NAME ": unable to specify an offset with STDIN\n");
-      return(1);
    };
 
    // fill in white space so the offset markings align with the position in the file
