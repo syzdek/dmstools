@@ -163,7 +163,6 @@ int main(int argc, char * argv[])
    len      = 0;
    offset   = 0;
    verbose  = 0;
-   file1    = "-";
    
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -200,16 +199,25 @@ int main(int argc, char * argv[])
    };
 
    // determines file to process (or STDIN)
-   if ((optind+1) == argc)
-      file1 = argv[optind];
-   else if (optind == argc)
-      file1 = "-";
-   else
+   file1    = NULL;
+   switch(argc - optind)
    {
-      fprintf(stderr, _("%s: missing required argument\n"
-            "Try `%s --help' for more information.\n"
-         ),  PROGRAM_NAME, PROGRAM_NAME
-      );
+      case 1:
+         if ((strcmp(argv[optind+0], "-")))
+            file1 = argv[optind+0];
+         break;
+      case 0:
+         break;
+      default:
+         fprintf(stderr, _("%s: missing required argument\n"
+               "Try `%s --help' for more information.\n"
+            ),  PROGRAM_NAME, PROGRAM_NAME
+         );
+         return(1);
+   };
+   if ( (!(file1)) && (offset) )
+   {
+      fprintf(stderr, PROGRAM_NAME ": unable to specify an offset with STDIN\n");
       return(1);
    };
 
@@ -218,12 +226,12 @@ int main(int argc, char * argv[])
       printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
 
    // open file for reading or set to STDIN
-   if (!(strcmp(file1, "-")))
-   {
+   fd1 = STDIN_FILENO;
+   if (!(file1))
       if (verbose > 2)
          printf("using stdin...\n");
-      fd1 = STDIN_FILENO;
-   } else {
+   if (file1)
+   {
       if (verbose > 2)
          printf("opening %s...\n", file1);
       if ((fd1 = open(file1, O_RDONLY)) == -1)
