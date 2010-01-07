@@ -126,11 +126,11 @@ void my_version(void);
 char * my_byte2str(uint8_t data, char * buff);
 
 
-//////////////////
-//              //
-//  Prototypes  //
-//              //
-//////////////////
+/////////////////
+//             //
+//  Functions  //
+//             //
+/////////////////
 
 /// main statement
 /// @param[in] argc   number of arguments
