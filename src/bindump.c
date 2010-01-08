@@ -126,7 +126,9 @@ typedef struct bindump_file BinDumpFile;
 struct bindump_file
 {
    int           fd;          ///< file handle of open file
+   int           eof;         ///< toggledupon reaching the end-of-file
    size_t        pos;         ///< current position within the file
+   size_t        read;        ///< number of bytes read
    ssize_t       code;        ///< return code of last file operation
    const char  * filename;    ///< name of the file
    char          data[8];     ///< buffer for storing data for processing
@@ -147,6 +149,14 @@ int my_close PARAMS((BinDumpFile * file, uint32_t verbose));
 
 // preforms lseek on file
 int my_lseek PARAMS((BinDumpFile * file, size_t offset, uint32_t verbose));
+
+// displays one line 8 byte chunk of data
+size_t my_print_dump PARAMS((BinDumpFile * file, size_t offset, size_t len,
+   uint32_t opts));
+
+// performs read upon file
+int my_read PARAMS((BinDumpFile * file, size_t offset, size_t len,
+   uint32_t verbose));
 
 //displays usage information
 void my_usage PARAMS((void));
@@ -171,12 +181,11 @@ int main(int argc, char * argv[])
 {
    int         c;
    int         opt_index;
-   char        buff1[9];
    size_t      offset;
    size_t      offset_mod;
    size_t      offset_div;
-   size_t      s;
    size_t      len;
+   size_t      line;
    uint32_t    verbose;
    BinDumpFile  file1;
 
@@ -234,7 +243,6 @@ int main(int argc, char * argv[])
    };
 
    // determines file to process (or STDIN)
-   file1.filename = NULL;
    switch(argc - optind)
    {
       case 1:
@@ -276,9 +284,6 @@ int main(int argc, char * argv[])
       };
    };
 
-   // mark the starting position
-   file1.pos = 0;
-
    // move to the specified offset
    if (offset)
    {
@@ -288,58 +293,33 @@ int main(int argc, char * argv[])
          return(1);
    };
 
+   line = 0;
+
    // fill in white space so the offset markings align with the position in the file
    if (verbose > 2)
       printf("reading data...\n");
    printf("offset     00       01       02       03       04       05       06       07 \n");
-   if (file1.pos % 8)
+   if (offset_mod)
    {
-      printf("0%04zo0:", (file1.pos/8));
-      for(s = 0; s < (file1.pos % 8); s++)
-         printf("         ");
-      if ((file1.code = read(file1.fd, file1.data, 8)) == -1)
-      {
-         perror(PROGRAM_NAME ": read()");
-         my_close(&file1, verbose);
-         if (verbose > 0)
-            printf("read %zu bytes\n", (file1.pos-offset));
+      if ((my_read(&file1, offset_mod, len, verbose) == -1))
          return(1);
-      };
-      for(s = offset_mod; ((s < 8) && ((s-offset_mod) < ((size_t)file1.code))); s++)
-         printf(" %s", my_byte2str(file1.data[s], buff1));
-      file1.pos += file1.code;
+      line += my_print_dump(&file1, offset_mod, len, 0);
    };
 
    // read data from file handle
-   while((file1.code = read(file1.fd, file1.data, 8)) > 0)
+   while(!(file1.eof))
    {
-      if ((file1.pos % 8) == 0)
-         printf("0%04zo0:", (file1.pos/8));
-      for(s = 0; ((s < 8) && (s < ((size_t)file1.code))); s++)
-         printf(" %s", my_byte2str(file1.data[s], buff1));
-      file1.pos += file1.code;
-      if (!(file1.pos % 8))
-         printf("\n");
-      if ( ((file1.pos-offset) >= len) && (len))
-         break;
-      if ( (!(file1.pos % 8)) && (!(file1.pos % (8 * 23))) )
+      if ((my_read(&file1, 0, len, verbose) == -1))
+         return(1);
+      line += my_print_dump(&file1, 0, (len - (file1.pos-offset)), 0);
+      if (!(line %  23))
          printf("offset     00       01       02       03       04       05       06       07 \n");
-   };
-   if (file1.pos % 8)
-      printf("\n");
-   if (file1.code == -1)
-   {
-      perror(PROGRAM_NAME ": read()");
-      my_close(&file1, verbose);
-      if (verbose > 0)
-         printf("read %zu bytes\n", (file1.pos-offset));
-      return(1);
    };
 
    // close file and finish up
    my_close(&file1, verbose);
    if (verbose > 0)
-      printf("read %zu bytes\n", (file1.pos-offset));
+      printf("read %zu bytes\n", (file1.read));
    printf("\n");
 
    return(0);
@@ -373,6 +353,81 @@ int my_lseek(BinDumpFile * file, size_t offset, uint32_t verbose)
    };
    file->pos += offset;
    return(0);
+}
+
+
+/// displays one line 8 byte chunk of data
+/// @param[in]  file       file to use for operations
+/// @param[in]  offset     offset
+/// @param[in]  len        len
+/// @param[in]  verbose    verbose level of messages to display
+/// @param[in]  opts       output options
+size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
+   uint32_t opts)
+{
+   char   buff[9];
+   size_t s;
+   size_t max;
+
+   if (opts)
+      return(0);
+
+   if (file->code < 1)
+      return(0);
+
+   // prints line offset
+   printf("0%04zo0:", (file->pos/8));
+
+   // prints spaces
+   for(s = 0; s < offset; s++)
+      printf("         ");
+
+   // prints each byte
+   len = len ? (len - (file->pos-offset)) : 8;
+   max = (len > ((size_t)file->code)) ? (size_t)file->code : len;
+   for(s = 0; s < max; s++)
+         printf(" %s", my_byte2str(file->data[s], buff));
+   printf("\n");
+
+   file->pos += max;
+
+   return(1);
+}
+
+
+/// performs read upon file
+/// @param[in]  file       file to use for operations
+/// @param[in]  offset     offset
+/// @param[in]  len        len
+int my_read(BinDumpFile * file, size_t offset, size_t len, uint32_t verbose)
+{
+   size_t max;
+
+   file->code = 0;
+
+   max = 8 - offset;
+   if (len)
+      max = ((len - file->read) < max) ? len - file->read : max;
+
+   if ((file->code = read(file->fd, file->data, max)) == -1)
+   {
+      perror(PROGRAM_NAME ": read()");
+      my_close(file, verbose);
+      if (verbose > 0)
+         printf("read %zu bytes\n", (file->read));
+      return(1);
+   };
+
+   if (file->code < 1)
+      file->eof = 1;
+   else
+      file->read += file->code;
+
+   if (len)
+      if (file->read > len)
+         file->eof = 1;
+
+   return(file->code);
 }
 
 
