@@ -150,6 +150,9 @@ int my_close PARAMS((BinDumpFile * file, uint32_t verbose));
 // preforms lseek on file
 int my_lseek PARAMS((BinDumpFile * file, size_t offset, uint32_t verbose));
 
+// opens a file
+int my_open PARAMS((BinDumpFile * file, uint32_t verbose));
+
 // displays one line 8 byte chunk of data
 size_t my_print_dump PARAMS((BinDumpFile * file, size_t offset, size_t len,
    uint32_t opts));
@@ -248,22 +251,12 @@ int main(int argc, char * argv[])
    switch(argc - optind)
    {
       case 2:
-         if (!(strcmp(argv[optind+1], "-")))
-         {
-            fprintf(stderr, PROGRAM_NAME ": unable to diff stdin\n");
-            return(1);
-         };
          file2.filename = argv[optind+1];
       case 1:
-         if ((strcmp(argv[optind+0], "-")))
-            file1.filename = argv[optind+0];
-         else if (file2.filename)
-         {
-            fprintf(stderr, PROGRAM_NAME ": unable to diff stdin\n");
-            return(1);
-         };
+         file1.filename = argv[optind+0];
          break;
       case 0:
+         file1.filename = "-";
          break;
       default:
          fprintf(stderr, _("%s: missing required argument\n"
@@ -271,11 +264,6 @@ int main(int argc, char * argv[])
             ),  PROGRAM_NAME, PROGRAM_NAME
          );
          return(1);
-   };
-   if ( (!(file1.filename)) && (offset) )
-   {
-      fprintf(stderr, PROGRAM_NAME ": unable to specify an offset with STDIN\n");
-      return(1);
    };
    if ((file1.filename) && (file2.filename))
       if (!(strcmp(file1.filename, file2.filename)))
@@ -286,30 +274,37 @@ int main(int argc, char * argv[])
       printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
 
    // open file for reading or set to STDIN
-   file1.fd = STDIN_FILENO;
-   file2.fd = -1;
-   if (!(file1.filename))
-      if (verbose > 2)
-         printf("using stdin...\n");
-   if (file1.filename)
+   if ((my_open(&file1, verbose) == -1))
+      return(my_close(&file2, verbose));
+   if ((my_open(&file2, verbose) == -1))
+      return(my_close(&file1, verbose));
+
+   // checks file handles for user errors
+   if (file2.fd == STDIN_FILENO)
    {
-      if (verbose > 2)
-         printf("opening %s...\n", file1.filename);
-      if ((file1.fd = open(file1.filename, O_RDONLY)) == -1)
+      fprintf(stderr, PROGRAM_NAME ": unable to diff stdin\n");
+      my_close(&file1, verbose);
+      my_close(&file2, verbose);
+      return(1);
+   };
+   if (file1.fd == STDIN_FILENO)
+   {
+      if (offset)
       {
-         perror(PROGRAM_NAME ": open()");
+         fprintf(stderr, PROGRAM_NAME ": unable to specify an offset with stdin\n");
+         my_close(&file1, verbose);
+         my_close(&file2, verbose);
          return(1);
       };
-   };
-   if (file2.filename)
-   {
-      if (verbose > 2)
-         printf("opening %s...\n", file2.filename);
-      if ((file2.fd = open(file2.filename, O_RDONLY)) == -1)
+      if (file2.fd != -1)
       {
-         perror(PROGRAM_NAME ": open()");
-         return(my_close(&file1, verbose));
+         fprintf(stderr, PROGRAM_NAME ": unable to diff stdin\n");
+         my_close(&file1, verbose);
+         my_close(&file2, verbose);
+         return(1);
       };
+      if (verbose > 2)
+         printf("using stdin...\n");
    };
 
    // move to the specified offset
@@ -366,8 +361,10 @@ int main(int argc, char * argv[])
 /// @param[in]  verbose    verbose level of messages to display
 int my_close(BinDumpFile * file, uint32_t verbose)
 {
+   if (!(file->filename))
+      return(1);
    if ( (file->fd == -1) || (file->fd == STDIN_FILENO) )
-      return(0);
+      return(1);
    if (verbose > 2)
       printf("closing file %s...\n", file->filename);
    close(file->fd);
@@ -390,6 +387,34 @@ int my_lseek(BinDumpFile * file, size_t offset, uint32_t verbose)
       return(-1);
    };
    file->pos += offset;
+   return(0);
+}
+
+
+/// opens a file
+/// @param[in]  file       file to use for operations
+/// @param[in]  verbose    verbose level of messages to display
+int my_open(BinDumpFile * file, uint32_t verbose)
+{
+   file->fd = -1;
+
+   if (!(file->filename))
+      return(0);
+   if (!(strcmp(file->filename, "-")))
+   {
+      file->fd = STDIN_FILENO;
+      return(0);
+   };
+
+   if (verbose > 2)
+      printf("opening %s...\n", file->filename);
+
+   if ((file->fd = open(file->filename, O_RDONLY)) == -1)
+   {
+      perror(PROGRAM_NAME ": open()");
+      return(1);
+   };
+
    return(0);
 }
 
