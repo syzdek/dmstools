@@ -21,6 +21,10 @@ The following utilities and tools are included in this package:
 	Makefile-xcode - for calling Makefiles created with Automake from
 		within Xcode using the external build target.
 
+	bindump - displays the contents of a file in binary notation or
+		displays the difference between two files in binary notation
+		if two files are specified.
+
 	bitcopy - Copies a specified number of bits into a buffer at a
 		specific offset indicated and displays the output as binary.
 
