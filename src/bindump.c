@@ -385,7 +385,8 @@ int my_lseek(BinDumpFile * file, size_t offset, uint32_t verbose)
    if ((lseek(file->fd, (off_t)offset, SEEK_SET) == -1))
    {
       perror(PROGRAM_NAME ": lseek()");
-      return(my_close(file, verbose));
+      my_close(file, verbose);
+      return(-1);
    };
    file->pos += offset;
    return(0);
@@ -480,7 +481,8 @@ int my_read(BinDumpFile * file, size_t offset, size_t len, uint32_t verbose)
    if ((file->code = read(file->fd, file->data, max)) == -1)
    {
       perror(PROGRAM_NAME ": read()");
-      return(my_close(file, verbose));
+      my_close(file, verbose);
+      return(-1);
    };
 
    if (file->code < 1)
