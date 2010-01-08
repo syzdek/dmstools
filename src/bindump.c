@@ -188,6 +188,7 @@ int main(int argc, char * argv[])
    size_t      line;
    uint32_t    verbose;
    BinDumpFile  file1;
+   BinDumpFile  file2;
 
    // getopt options
    static char   short_opt[] = "hl:o:vV";
@@ -205,6 +206,7 @@ int main(int argc, char * argv[])
    offset_div  = 0;
    verbose  = 0;
    memset(&file1, 0, sizeof(BinDumpFile));
+   memset(&file2, 0, sizeof(BinDumpFile));
    
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -245,9 +247,21 @@ int main(int argc, char * argv[])
    // determines file to process (or STDIN)
    switch(argc - optind)
    {
+      case 2:
+         if (!(strcmp(argv[optind+1], "-")))
+         {
+            fprintf(stderr, PROGRAM_NAME ": unable to diff stdin\n");
+            return(1);
+         };
+         file2.filename = argv[optind+1];
       case 1:
          if ((strcmp(argv[optind+0], "-")))
             file1.filename = argv[optind+0];
+         else if (file2.filename)
+         {
+            fprintf(stderr, PROGRAM_NAME ": unable to diff stdin\n");
+            return(1);
+         };
          break;
       case 0:
          break;
@@ -263,6 +277,9 @@ int main(int argc, char * argv[])
       fprintf(stderr, PROGRAM_NAME ": unable to specify an offset with STDIN\n");
       return(1);
    };
+   if ((file1.filename) && (file2.filename))
+      if (!(strcmp(file1.filename, file2.filename)))
+         file2.filename = NULL;
 
    // show them who we are
    if (verbose > 1)
@@ -270,6 +287,7 @@ int main(int argc, char * argv[])
 
    // open file for reading or set to STDIN
    file1.fd = STDIN_FILENO;
+   file2.fd = -1;
    if (!(file1.filename))
       if (verbose > 2)
          printf("using stdin...\n");
@@ -283,6 +301,16 @@ int main(int argc, char * argv[])
          return(1);
       };
    };
+   if (file2.filename)
+   {
+      if (verbose > 2)
+         printf("opening %s...\n", file2.filename);
+      if ((file2.fd = open(file2.filename, O_RDONLY)) == -1)
+      {
+         perror(PROGRAM_NAME ": open()");
+         return(my_close(&file1, verbose));
+      };
+   };
 
    // move to the specified offset
    if (offset)
@@ -290,7 +318,9 @@ int main(int argc, char * argv[])
       if (verbose > 2)
          printf("offsetting by %zi bytes...\n", offset);
       if ((my_lseek(&file1, offset, verbose) == -1))
-         return(1);
+         return(my_close(&file2, verbose));
+      if ((my_lseek(&file2, offset, verbose) == -1))
+         return(my_close(&file1, verbose));
    };
 
    line = 0;
@@ -302,15 +332,19 @@ int main(int argc, char * argv[])
    if (offset_mod)
    {
       if ((my_read(&file1, offset_mod, len, verbose) == -1))
-         return(1);
+         return(my_close(&file2, verbose));
+      if ((my_read(&file2, offset_mod, len, verbose) == -1))
+         return(my_close(&file1, verbose));
       line += my_print_dump(&file1, offset_mod, len, 0);
    };
 
    // read data from file handle
-   while(!(file1.eof))
+   while ( (!(file1.eof)) && (!(file2.eof)) )
    {
       if ((my_read(&file1, 0, len, verbose) == -1))
-         return(1);
+         return(my_close(&file2, verbose));
+      if ((my_read(&file2, 0, len, verbose) == -1))
+         return(my_close(&file1, verbose));
       line += my_print_dump(&file1, 0, (len - (file1.pos-offset)), 0);
       if (!(line %  23))
          printf("offset     00       01       02       03       04       05       06       07 \n");
@@ -318,6 +352,7 @@ int main(int argc, char * argv[])
 
    // close file and finish up
    my_close(&file1, verbose);
+   my_close(&file2, verbose);
    if (verbose > 0)
       printf("read %zu bytes\n", (file1.read));
    printf("\n");
