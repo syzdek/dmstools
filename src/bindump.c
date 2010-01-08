@@ -335,7 +335,8 @@ int my_close(BinDumpFile * file, uint32_t verbose)
       return(0);
    if (verbose > 2)
       printf("closing file %s...\n", file->filename);
-   return(close(file->fd));
+   close(file->fd);
+   return(1);
 }
 
 
