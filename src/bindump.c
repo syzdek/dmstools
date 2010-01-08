@@ -348,8 +348,6 @@ int main(int argc, char * argv[])
    // close file and finish up
    my_close(&file1, verbose);
    my_close(&file2, verbose);
-   if (verbose > 0)
-      printf("read %zu bytes\n", (file1.read));
    printf("\n");
 
    return(0);
@@ -361,10 +359,15 @@ int main(int argc, char * argv[])
 /// @param[in]  verbose    verbose level of messages to display
 int my_close(BinDumpFile * file, uint32_t verbose)
 {
-   if (!(file->filename))
+   if (file->fd == -1)
       return(1);
-   if ( (file->fd == -1) || (file->fd == STDIN_FILENO) )
+
+   if (verbose > 0)
+      printf("read %zu bytes from %s\n", file->read, file->filename);
+
+   if (file->fd == STDIN_FILENO)
       return(1);
+
    if (verbose > 2)
       printf("closing file %s...\n", file->filename);
    close(file->fd);
@@ -402,6 +405,7 @@ int my_open(BinDumpFile * file, uint32_t verbose)
       return(0);
    if (!(strcmp(file->filename, "-")))
    {
+      file->filename = "<stdin>";
       file->fd = STDIN_FILENO;
       return(0);
    };
@@ -479,8 +483,6 @@ int my_read(BinDumpFile * file, size_t offset, size_t len, uint32_t verbose)
    {
       perror(PROGRAM_NAME ": read()");
       my_close(file, verbose);
-      if (verbose > 0)
-         printf("read %zu bytes\n", (file->read));
       return(1);
    };
 
