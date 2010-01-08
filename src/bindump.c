@@ -204,6 +204,7 @@ int main(int argc, char * argv[])
    };
 
    len      = 0;
+   line        = 0;
    offset   = 0;
    offset_mod  = 0;
    offset_div  = 0;
@@ -317,8 +318,6 @@ int main(int argc, char * argv[])
       if ((my_lseek(&file2, offset, verbose) == -1))
          return(my_close(&file1, verbose));
    };
-
-   line = 0;
 
    // fill in white space so the offset markings align with the position in the file
    if (verbose > 2)
