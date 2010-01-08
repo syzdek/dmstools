@@ -417,7 +417,10 @@ int my_open(BinDumpFile * file, uint32_t verbose)
    file->fd = -1;
 
    if (!(file->filename))
+   {
+      file->eof = 1;
       return(0);
+   };
    if (!(strcmp(file->filename, "-")))
    {
       file->filename = "<stdin>";
