@@ -331,7 +331,7 @@ int main(int argc, char * argv[])
 /// @param[in]  verbose    verbose level of messages to display
 int my_close(BinDumpFile * file, uint32_t verbose)
 {
-   if (!(file->filename))
+   if ( (file->fd == -1) || (file->fd == STDIN_FILENO) )
       return(0);
    if (verbose > 2)
       printf("closing file %s...\n", file->filename);
@@ -346,6 +346,8 @@ int my_close(BinDumpFile * file, uint32_t verbose)
 /// @param[in]  verbose    verbose level of messages to display
 int my_lseek(BinDumpFile * file, size_t offset, uint32_t verbose)
 {
+   if ( (file->fd == -1) || (file->fd == STDIN_FILENO) )
+      return(0);
    if ((lseek(file->fd, (off_t)offset, SEEK_SET) == -1))
    {
       perror(PROGRAM_NAME ": lseek()");
@@ -403,6 +405,9 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
 int my_read(BinDumpFile * file, size_t offset, size_t len, uint32_t verbose)
 {
    size_t max;
+
+   if (file->fd == -1)
+      return(0);
 
    file->code = 0;
 
