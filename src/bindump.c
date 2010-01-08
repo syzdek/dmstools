@@ -153,6 +153,10 @@ int my_lseek PARAMS((BinDumpFile * file, size_t offset, uint32_t verbose));
 // opens a file
 int my_open PARAMS((BinDumpFile * file, uint32_t verbose));
 
+// displays the diff between two files
+size_t my_print_diff PARAMS((BinDumpFile * file1, BinDumpFile * file2,
+   size_t offset, size_t len, uint32_t opts));
+
 // displays one line 8 byte chunk of data
 size_t my_print_dump PARAMS((BinDumpFile * file, size_t offset, size_t len,
    uint32_t opts));
@@ -322,6 +326,8 @@ int main(int argc, char * argv[])
    // fill in white space so the offset markings align with the position in the file
    if (verbose > 2)
       printf("reading data...\n");
+   if (file2.filename)
+      printf("  ");
    printf("offset     00       01       02       03       04       05       06       07 \n");
    if (offset_mod)
    {
@@ -329,19 +335,29 @@ int main(int argc, char * argv[])
          return(my_close(&file2, verbose));
       if ((my_read(&file2, offset_mod, len, verbose) == -1))
          return(my_close(&file1, verbose));
-      line += my_print_dump(&file1, offset_mod, len, 0);
+      if (file2.filename)
+         line += my_print_diff(&file1, &file2, offset_mod, len, 0);
+      else
+         line += my_print_dump(&file1, offset_mod, len, 0);
    };
 
    // read data from file handle
-   while ( (!(file1.eof)) && (!(file2.eof)) )
+   while ( (!(file1.eof)) || (!(file2.eof)) )
    {
       if ((my_read(&file1, 0, len, verbose) == -1))
          return(my_close(&file2, verbose));
       if ((my_read(&file2, 0, len, verbose) == -1))
          return(my_close(&file1, verbose));
-      line += my_print_dump(&file1, 0, (len - (file1.pos-offset)), 0);
-      if (!(line %  23))
+      if (file2.filename)
+         line += my_print_diff(&file1, &file2, 0, (len - (file1.pos-offset)), 0);
+      else
+         line += my_print_dump(&file1, 0, (len - (file1.pos-offset)), 0);
+      if (!(line %  22))
+      {
+         if (file2.filename)
+            printf("  ");
          printf("offset     00       01       02       03       04       05       06       07 \n");
+      };
    };
 
    // close file and finish up
@@ -419,6 +435,65 @@ int my_open(BinDumpFile * file, uint32_t verbose)
    };
 
    return(0);
+}
+
+
+/// displays the diff between two files
+/// @param[in]  file1      first file to use for operations
+/// @param[in]  file2      second file to use for operations
+/// @param[in]  offset     offset
+/// @param[in]  len        len
+/// @param[in]  verbose    verbose level of messages to display
+/// @param[in]  opts       output options
+size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
+   size_t len, uint32_t opts)
+{
+   char   buff[9];
+   size_t s;
+   size_t max;
+   size_t line;
+
+   line = 0;
+
+   if (opts)
+      return(0);
+
+   // prints line offset
+   if (file1->code > 0)
+   {
+      printf("< 0%04zo0:", (file1->pos/8));
+      for(s = 0; s < offset; s++)
+         printf("         ");
+
+      len = len ? (len - (file1->pos-offset)) : 8;
+      max = (len > ((size_t)file1->code)) ? (size_t)file1->code : len;
+      for(s = 0; s < max; s++)
+            printf(" %s", my_byte2str(file1->data[s], buff));
+      printf("\n");
+
+      file1->pos += max;
+
+      line++;
+   };
+
+   if (file2->code > 0)
+   {
+      printf("> 0%04zo0:", (file2->pos/8));
+      for(s = 0; s < offset; s++)
+         printf("         ");
+
+      len = len ? (len - (file2->pos-offset)) : 8;
+      max = (len > ((size_t)file2->code)) ? (size_t)file2->code : len;
+      for(s = 0; s < max; s++)
+            printf(" %s", my_byte2str(file2->data[s], buff));
+      printf("\n");
+
+      file2->pos += max;
+
+      line++;
+   };
+
+   return(line);
 }
 
 
