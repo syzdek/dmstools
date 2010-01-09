@@ -349,9 +349,9 @@ int main(int argc, char * argv[])
       if ((my_read(&file2, 0, len, verbose) == -1))
          return(my_close(&file1, verbose));
       if (file2.filename)
-         line += my_print_diff(&file1, &file2, 0, (len - (file1.pos-offset)), 0);
+         line += my_print_diff(&file1, &file2, 0, len, 0);
       else
-         line += my_print_dump(&file1, 0, (len - (file1.pos-offset)), 0);
+         line += my_print_dump(&file1, 0, len, 0);
       if (!(line %  22))
       {
          if (file2.filename)
