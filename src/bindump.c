@@ -207,12 +207,12 @@ int main(int argc, char * argv[])
       {NULL,            0,           0, 0  }
    };
 
-   len      = 0;
-   line        = 0;
-   offset   = 0;
-   offset_mod  = 0;
-   offset_div  = 0;
-   verbose  = 0;
+   len          = 0;
+   line         = 0;
+   offset       = 0;
+   offset_mod   = 0;
+   offset_div   = 0;
+   verbose      = 0;
    memset(&file1, 0, sizeof(BinDumpFile));
    memset(&file2, 0, sizeof(BinDumpFile));
    
