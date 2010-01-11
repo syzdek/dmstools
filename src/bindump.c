@@ -622,7 +622,7 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
    // prints line offset
    if (opts & MY_OPT_XTERM)
       printf("%s", MY_TERM_BOLD);
-   printf("< 0%04zo0:", (file->pos/8));
+   printf("0%04zo0:", (file->pos/8));
    if (opts & MY_OPT_XTERM)
       printf("%s", MY_TERM_RESET);
 
