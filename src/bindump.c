@@ -502,6 +502,9 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    max1 = my_max(file1->code, len);
    max2 = my_max(file2->code, len);
 
+   file1->pos += max1;
+   file2->pos += max2;
+
    if ( (!(max1)) && (!(max2)) )
       return(0);
 
@@ -578,8 +581,6 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
 
       printf("\n");
 
-      file1->pos += max1;
-
       line++;
    };
 
@@ -625,8 +626,6 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
       };
 
       printf("\n");
-
-      file2->pos += max2;
 
       line++;
    };
