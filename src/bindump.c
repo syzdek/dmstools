@@ -221,6 +221,12 @@ int main(int argc, char * argv[])
       {NULL,            0,           0, 0  }
    };
 
+#ifdef HAVE_GETTEXT
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, LOCALEDIR);
+   textdomain (PACKAGE);
+#endif
+
    len          = 0;
    opts         = (MY_OPT_XTERM | MY_OPT_ALL);
    line         = 0;
