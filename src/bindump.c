@@ -203,6 +203,7 @@ int main(int argc, char * argv[])
    size_t      offset_div;
    size_t      len;
    size_t      line;
+   size_t      line_add;
    uint32_t    verbose;
    BinDumpFile  file1;
    BinDumpFile  file2;
@@ -370,10 +371,11 @@ int main(int argc, char * argv[])
       if ((my_read(&file2, 0, len, verbose) == -1))
          return(my_close(&file1, verbose));
       if (file2.filename)
-         line += my_print_diff(&file1, &file2, 0, len, opts);
+         line_add = my_print_diff(&file1, &file2, 0, len, opts);
       else
-         line += my_print_dump(&file1, 0, len, opts);
-      if (!(line %  22))
+         line_add = my_print_dump(&file1, 0, len, opts);
+      line += line_add;
+      if ( (!(line %  22)) && (line_add) )
       {
          if (file2.filename)
             printf("  ");
