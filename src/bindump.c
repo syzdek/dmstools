@@ -160,7 +160,7 @@ int my_close PARAMS((BinDumpFile * file, uint32_t verbose));
 int my_lseek PARAMS((BinDumpFile * file, size_t offset, uint32_t verbose));
 
 // determines the max number of bytes to dislpay
-size_t my_max PARAMS((size_t pos, size_t code, size_t len, size_t offset));
+size_t my_max PARAMS((size_t pos, ssize_t code, size_t len, size_t offset));
 
 // opens a file
 int my_open PARAMS((BinDumpFile * file, uint32_t verbose));
@@ -436,11 +436,13 @@ int my_lseek(BinDumpFile * file, size_t offset, uint32_t verbose)
 /// @param[in]  code       code
 /// @param[in]  len        len
 /// @param[in]  offset     offset
-size_t my_max(size_t pos, size_t code, size_t len, size_t offset)
+size_t my_max(size_t pos, ssize_t code, size_t len, size_t offset)
 {
    size_t max;
+   if (code < 1)
+      return(0);
    len = len ? (len - (pos-offset)) : 8;
-   max = (len > code) ? code : len;
+   max = (len > (size_t)code) ? (size_t)code : len;
    return(max);
 }
 
@@ -497,13 +499,8 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    uint8_t diff2[9];
 
    line = 0;
-   max1 = 0;
-   max2 = 0;
-
-   if (file1->code > 0)
-      max1 = my_max(file1->pos, (size_t)file1->code, len, offset);
-   if (file2->code > 0)
-      max2 = my_max(file2->pos, (size_t)file2->code, len, offset);
+   max1 = my_max(file1->pos, file1->code, len, offset);
+   max2 = my_max(file2->pos, file2->code, len, offset);
 
    if ( (!(max1)) && (!(max2)) )
       return(0);
@@ -645,7 +642,9 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
    size_t s;
    size_t max;
 
-   if (file->code < 1)
+   max = my_max(file->pos, file->code, len, offset);
+
+   if (!(max))
       return(0);
 
    // prints line offset
@@ -658,7 +657,6 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
       printf("         ");
 
    // prints each byte
-   max = my_max(file->pos, (size_t)file->code, len, offset);
    for(s = 0; s < max; s++)
          printf(" %s", my_byte2str(file->data[s], buff));
    for(s = max; s < 8; s++)
