@@ -159,6 +159,9 @@ int my_close PARAMS((BinDumpFile * file, uint32_t verbose));
 // preforms lseek on file
 int my_lseek PARAMS((BinDumpFile * file, size_t offset, uint32_t verbose));
 
+// determines the max number of bytes to dislpay
+size_t my_max PARAMS((size_t pos, size_t code, size_t len, size_t offset));
+
 // opens a file
 int my_open PARAMS((BinDumpFile * file, uint32_t verbose));
 
@@ -428,6 +431,20 @@ int my_lseek(BinDumpFile * file, size_t offset, uint32_t verbose)
 }
 
 
+/// determines the max number of bytes to dislpay
+/// @param[in]  pos        pos
+/// @param[in]  code       code
+/// @param[in]  len        len
+/// @param[in]  offset     offset
+size_t my_max(size_t pos, size_t code, size_t len, size_t offset)
+{
+   size_t max;
+   len = len ? (len - (pos-offset)) : 8;
+   max = (len > code) ? code : len;
+   return(max);
+}
+
+
 /// opens a file
 /// @param[in]  file       file to use for operations
 /// @param[in]  verbose    verbose level of messages to display
@@ -474,8 +491,6 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    size_t  s;
    size_t  max1;
    size_t  max2;
-   size_t  len1;
-   size_t  len2;
    size_t  line;
    uint8_t diff;
    uint8_t diff1[9];
@@ -486,15 +501,9 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    max2 = 0;
 
    if (file1->code > 0)
-   {
-      len1 = len ? (len - (file1->pos-offset)) : 8;
-      max1 = (len1 > ((size_t)file1->code)) ? (size_t)file1->code : len1;
-   };
+      max1 = my_max(file1->pos, (size_t)file1->code, len, offset);
    if (file2->code > 0)
-   {
-      len2 = len ? (len - (file2->pos-offset)) : 8;
-      max2 = (len2 > ((size_t)file2->code)) ? (size_t)file2->code : len2;
-   };
+      max2 = my_max(file2->pos, (size_t)file2->code, len, offset);
 
    if ( (!(max1)) && (!(max2)) )
       return(0);
@@ -649,8 +658,7 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
       printf("         ");
 
    // prints each byte
-   len = len ? (len - (file->pos-offset)) : 8;
-   max = (len > ((size_t)file->code)) ? (size_t)file->code : len;
+   max = my_max(file->pos, (size_t)file->code, len, offset);
    for(s = 0; s < max; s++)
          printf(" %s", my_byte2str(file->data[s], buff));
    for(s = max; s < 8; s++)
