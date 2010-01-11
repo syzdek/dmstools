@@ -208,7 +208,7 @@ int main(int argc, char * argv[])
    BinDumpFile  file2;
 
    // getopt options
-   static char   short_opt[] = "ahl:o:vVXx";
+   static char   short_opt[] = "dhl:o:vVx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -218,7 +218,7 @@ int main(int argc, char * argv[])
    };
 
    len          = 0;
-   opts         = 0;
+   opts         = (MY_OPT_XTERM | MY_OPT_ALL);
    line         = 0;
    offset       = 0;
    offset_mod   = 0;
@@ -234,8 +234,8 @@ int main(int argc, char * argv[])
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
             break;
-         case 'a':
-            opts |= MY_OPT_ALL;
+         case 'd':
+            opts = opts & (~MY_OPT_ALL);
             break;
          case 'h':
             my_usage();
@@ -255,10 +255,7 @@ int main(int argc, char * argv[])
             verbose++;
             break;
          case 'x':
-            opts |= MY_OPT_NOXTERM;
-            break;
-         case 'X':
-            opts |= MY_OPT_XTERM;
+            opts = opts & (~MY_OPT_XTERM);
             break;
          case '?':
             fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
@@ -689,13 +686,12 @@ void my_usage()
    // line. The two strings referenced are: PROGRAM_NAME, and
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s [options] file\n"
-         "  -a                        print all data when displaying a line\n"
+         "  -d                        print only differing data\n"
          "  -h, --help                print this help and exit\n"
          "  -l bytes                  length of data to display\n"
          "  -o bytes                  offset to start reading data\n"
          "  -V, --version             print verbose messages\n"
          "  -v, --verbose             print version number and exit\n"
-         "  -X                        enable Xterm output\n"
          "  -x                        disables Xterm output\n"
          "\n"
          "Report bugs to <%s>.\n"
