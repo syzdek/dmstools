@@ -346,7 +346,7 @@ int main(int argc, char * argv[])
       printf("reading data...\n");
    if (file2.filename)
       printf("  ");
-   printf("%soffset     00       01       02       03       04       05       06       07%s\n", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""), ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
+   printf("%soffset     00       01       02       03       04       05       06       07     01234567%s\n", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""), ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
    if (offset_mod)
    {
       if ((my_read(&file1, offset_mod, len, verbose) == -1))
@@ -375,7 +375,7 @@ int main(int argc, char * argv[])
       {
          if (file2.filename)
             printf("  ");
-         printf("%soffset     00       01       02       03       04       05       06       07%s\n", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""), ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
+         printf("%soffset     00       01       02       03       04       05       06       07     01234567%s\n", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""), ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
       };
    };
 
@@ -531,11 +531,9 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    // prints line offset
    if ((max1) && (diff1[8]))
    {
-      if (opts & MY_OPT_XTERM)
-         printf("%s", MY_TERM_BOLD);
-      printf("< 0%04zo0:", (file1->pos/8));
-      if (opts & MY_OPT_XTERM)
-         printf("%s", MY_TERM_RESET);
+      printf("%s< 0%04zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
+                               (file1->pos/8),
+                               ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
 
       for(s = 0; s < offset; s++)
          printf("         ");
@@ -544,15 +542,31 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
       {
          if (diff1[s])
          {
-            if (opts & MY_OPT_XTERM)
-               printf("%s", MY_TERM_DIFF);
-            printf(" %s", my_byte2str(file1->data[s], buff));
-            if (opts & MY_OPT_XTERM)
-               printf("%s", MY_TERM_RESET);
+            printf(" %s%s%s", ((opts & MY_OPT_XTERM) ? MY_TERM_DIFF : ""),
+                              my_byte2str(file1->data[s], buff),
+                              ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
          } else {
             printf(" %s", (opts & MY_OPT_ALL) ? my_byte2str(file1->data[s], buff) : "        ");
          };
       };
+      for(s = max1; s < 8; s++)
+         printf("         ");
+
+      printf("  ");
+      for(s = 0; s < offset; s++)
+         printf(" ");
+      for(s = 0; s < max1; s++)
+      {
+         if ( (diff1[s]) && (opts & MY_OPT_XTERM) )
+            printf("%s", MY_TERM_DIFF);
+         if ( (file1->data[s] >= 0x21) && (file1->data[s] <= 0x7e) )
+            printf("%c", file1->data[s]);
+         else
+            printf(".");
+         if ( (diff1[s]) && (opts & MY_OPT_XTERM) )
+            printf("%s", MY_TERM_RESET);
+      };
+
       printf("\n");
 
       file1->pos += max1;
@@ -562,11 +576,9 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
 
    if ((max2) && (diff2[8]))
    {
-      if (opts & MY_OPT_XTERM)
-         printf("%s", MY_TERM_BOLD);
-      printf("> 0%04zo0:", (file2->pos/8));
-      if (opts & MY_OPT_XTERM)
-         printf("%s", MY_TERM_RESET);
+      printf("%s> 0%04zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
+                               (file2->pos/8),
+                               ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
 
       for(s = 0; s < offset; s++)
          printf("         ");
@@ -575,15 +587,31 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
       {
          if (diff2[s])
          {
-            if (opts & MY_OPT_XTERM)
-               printf("%s", MY_TERM_DIFF);
-            printf(" %s", my_byte2str(file2->data[s], buff));
-            if (opts & MY_OPT_XTERM)
-               printf("%s", MY_TERM_RESET);
+            printf(" %s%s%s", ((opts & MY_OPT_XTERM) ? MY_TERM_DIFF : ""),
+                              my_byte2str(file2->data[s], buff),
+                              ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
          } else {
             printf(" %s", (opts & MY_OPT_ALL) ? my_byte2str(file2->data[s], buff) : "        ");
          };
       };
+      for(s = max2; s < 8; s++)
+         printf("         ");
+
+      printf("  ");
+      for(s = 0; s < offset; s++)
+         printf(" ");
+      for(s = 0; s < max2; s++)
+      {
+         if ( (diff2[s]) && (opts & MY_OPT_XTERM) )
+            printf("%s", MY_TERM_DIFF);
+         if ( (file2->data[s] >= 0x21) && (file2->data[s] <= 0x7e) )
+            printf("%c", file2->data[s]);
+         else
+            printf(".");
+         if ( (diff2[s]) && (opts & MY_OPT_XTERM) )
+            printf("%s", MY_TERM_RESET);
+      };
+
       printf("\n");
 
       file2->pos += max2;
@@ -612,11 +640,9 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
       return(0);
 
    // prints line offset
-   if (opts & MY_OPT_XTERM)
-      printf("%s", MY_TERM_BOLD);
-   printf("0%04zo0:", (file->pos/8));
-   if (opts & MY_OPT_XTERM)
-      printf("%s", MY_TERM_RESET);
+   printf("%s0%04zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
+                          (file->pos/8),
+                          ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
 
    // prints spaces
    for(s = 0; s < offset; s++)
@@ -627,6 +653,21 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
    max = (len > ((size_t)file->code)) ? (size_t)file->code : len;
    for(s = 0; s < max; s++)
          printf(" %s", my_byte2str(file->data[s], buff));
+   for(s = max; s < 8; s++)
+      printf("         ");
+
+   // prints summary
+   printf("  ");
+   for(s = 0; s < offset; s++)
+      printf(" ");
+   for(s = 0; s < max; s++)
+   {
+      if ( (file->data[s] >= 0x21) && (file->data[s] <= 0x7e) )
+         printf("%c", file->data[s]);
+      else
+         printf(".");
+   };
+
    printf("\n");
 
    file->pos += max;
