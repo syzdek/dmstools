@@ -160,7 +160,7 @@ int my_close PARAMS((BinDumpFile * file, uint32_t verbose));
 int my_lseek PARAMS((BinDumpFile * file, size_t offset, uint32_t verbose));
 
 // determines the max number of bytes to dislpay
-size_t my_max PARAMS((size_t pos, ssize_t code, size_t len, size_t offset));
+size_t my_max PARAMS((ssize_t code, size_t len));
 
 // opens a file
 int my_open PARAMS((BinDumpFile * file, uint32_t verbose));
@@ -250,7 +250,7 @@ int main(int argc, char * argv[])
          case 'o':
             offset = strtoul(optarg, NULL, 0);
             offset_div = (offset / 8);
-            offset_mod = (offset - (offset_div * 8));
+            offset_mod = (offset % 8);
             break;
          case 'V':
             my_version();
@@ -436,12 +436,12 @@ int my_lseek(BinDumpFile * file, size_t offset, uint32_t verbose)
 /// @param[in]  code       code
 /// @param[in]  len        len
 /// @param[in]  offset     offset
-size_t my_max(size_t pos, ssize_t code, size_t len, size_t offset)
+size_t my_max(ssize_t code, size_t len)
 {
    size_t max;
    if (code < 1)
       return(0);
-   len = len ? (len - (pos-offset)) : 8;
+   len = len ? len : 8;
    max = (len > (size_t)code) ? (size_t)code : len;
    return(max);
 }
@@ -499,8 +499,8 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    uint8_t diff2[9];
 
    line = 0;
-   max1 = my_max(file1->pos, file1->code, len, offset);
-   max2 = my_max(file2->pos, file2->code, len, offset);
+   max1 = my_max(file1->code, len);
+   max2 = my_max(file2->code, len);
 
    if ( (!(max1)) && (!(max2)) )
       return(0);
@@ -520,11 +520,11 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
             diff2[s] = 1;
             diff2[8] = 1;
          };
-      } else if ((s < max2) && (s >= max1)) {
+      } else if (s < max2) {
          diff = 1;
          diff2[s] = 1;
          diff2[8] = 1;
-      } else if ((s < max1) && (s >= max2)) {
+      } else if (s < max1) {
          diff = 1;
          diff1[s] = 1;
          diff1[8] = 1;
@@ -541,9 +541,11 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
                                (file1->pos/8),
                                ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
 
+      // print leading spaces for offset
       for(s = 0; s < offset; s++)
          printf("         ");
 
+      // print each byte
       for(s = 0; s < max1; s++)
       {
          if (diff1[s])
@@ -555,9 +557,10 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
             printf(" %s", (opts & MY_OPT_ALL) ? my_byte2str(file1->data[s], buff) : "        ");
          };
       };
-      for(s = max1; s < 8; s++)
+      for(s = max1+offset; s < 8; s++)
          printf("         ");
 
+      // prints summary
       printf("  ");
       for(s = 0; s < offset; s++)
          printf(" ");
@@ -586,9 +589,11 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
                                (file2->pos/8),
                                ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
 
+      // print leading spaces for offset
       for(s = 0; s < offset; s++)
          printf("         ");
 
+      // print each byte
       for(s = 0; s < max2; s++)
       {
          if (diff2[s])
@@ -600,9 +605,10 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
             printf(" %s", (opts & MY_OPT_ALL) ? my_byte2str(file2->data[s], buff) : "        ");
          };
       };
-      for(s = max2; s < 8; s++)
+      for(s = max2+offset; s < 8; s++)
          printf("         ");
 
+      // prints summary
       printf("  ");
       for(s = 0; s < offset; s++)
          printf(" ");
@@ -642,7 +648,7 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
    size_t s;
    size_t max;
 
-   max = my_max(file->pos, file->code, len, offset);
+   max = my_max(file->code, len);
 
    if (!(max))
       return(0);
@@ -659,7 +665,7 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
    // prints each byte
    for(s = 0; s < max; s++)
          printf(" %s", my_byte2str(file->data[s], buff));
-   for(s = max; s < 8; s++)
+   for(s = max+offset; s < 8; s++)
       printf("         ");
 
    // prints summary
