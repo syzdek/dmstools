@@ -346,11 +346,7 @@ int main(int argc, char * argv[])
       printf("reading data...\n");
    if (file2.filename)
       printf("  ");
-   if (opts & MY_OPT_XTERM)
-      printf("%s", MY_TERM_BOLD);
-   printf("offset     00       01       02       03       04       05       06       07 \n");
-   if (opts & MY_OPT_XTERM)
-      printf("%s", MY_TERM_RESET);
+   printf("%soffset     00       01       02       03       04       05       06       07%s\n", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""), ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
    if (offset_mod)
    {
       if ((my_read(&file1, offset_mod, len, verbose) == -1))
@@ -379,11 +375,7 @@ int main(int argc, char * argv[])
       {
          if (file2.filename)
             printf("  ");
-         if (opts & MY_OPT_XTERM)
-            printf("%s", MY_TERM_BOLD);
-         printf("offset     00       01       02       03       04       05       06       07 \n");
-         if (opts & MY_OPT_XTERM)
-            printf("%s", MY_TERM_RESET);
+         printf("%soffset     00       01       02       03       04       05       06       07%s\n", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""), ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
       };
    };
 
