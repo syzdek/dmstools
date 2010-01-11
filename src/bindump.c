@@ -106,6 +106,15 @@
 #define PARAMS(protos) protos
 #endif
 
+#define MY_TERM_RESET      "\x1b[0m"
+#define MY_TERM_BOLD       "\x1b[1m"
+#define MY_TERM_DIFF       "\x1b[31m"
+
+#define MY_OPT_ALL         0x01
+#define MY_OPT_XTERM       0x02
+#define MY_OPT_NOXTERM     0x04
+
+
 /////////////////
 //             //
 //  Datatypes  //
@@ -187,6 +196,7 @@ char * my_byte2str PARAMS((uint8_t data, char * buff));
 int main(int argc, char * argv[])
 {
    int         c;
+   int         opts;
    int         opt_index;
    size_t      offset;
    size_t      offset_mod;
@@ -198,7 +208,7 @@ int main(int argc, char * argv[])
    BinDumpFile  file2;
 
    // getopt options
-   static char   short_opt[] = "hl:o:vV";
+   static char   short_opt[] = "ahl:o:vVXx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -208,6 +218,7 @@ int main(int argc, char * argv[])
    };
 
    len          = 0;
+   opts         = 0;
    line         = 0;
    offset       = 0;
    offset_mod   = 0;
@@ -222,6 +233,9 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
+            break;
+         case 'a':
+            opts |= MY_OPT_ALL;
             break;
          case 'h':
             my_usage();
@@ -239,6 +253,12 @@ int main(int argc, char * argv[])
             return(0);
          case 'v':
             verbose++;
+            break;
+         case 'x':
+            opts |= MY_OPT_NOXTERM;
+            break;
+         case 'X':
+            opts |= MY_OPT_XTERM;
             break;
          case '?':
             fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
@@ -328,7 +348,11 @@ int main(int argc, char * argv[])
       printf("reading data...\n");
    if (file2.filename)
       printf("  ");
+   if (opts & MY_OPT_XTERM)
+      printf("%s", MY_TERM_BOLD);
    printf("offset     00       01       02       03       04       05       06       07 \n");
+   if (opts & MY_OPT_XTERM)
+      printf("%s", MY_TERM_RESET);
    if (offset_mod)
    {
       if ((my_read(&file1, offset_mod, len, verbose) == -1))
@@ -336,9 +360,9 @@ int main(int argc, char * argv[])
       if ((my_read(&file2, offset_mod, len, verbose) == -1))
          return(my_close(&file1, verbose));
       if (file2.filename)
-         line += my_print_diff(&file1, &file2, offset_mod, len, 0);
+         line += my_print_diff(&file1, &file2, offset_mod, len, opts);
       else
-         line += my_print_dump(&file1, offset_mod, len, 0);
+         line += my_print_dump(&file1, offset_mod, len, opts);
    };
 
    // read data from file handle
@@ -349,14 +373,18 @@ int main(int argc, char * argv[])
       if ((my_read(&file2, 0, len, verbose) == -1))
          return(my_close(&file1, verbose));
       if (file2.filename)
-         line += my_print_diff(&file1, &file2, 0, len, 0);
+         line += my_print_diff(&file1, &file2, 0, len, opts);
       else
-         line += my_print_dump(&file1, 0, len, 0);
+         line += my_print_dump(&file1, 0, len, opts);
       if (!(line %  22))
       {
          if (file2.filename)
             printf("  ");
+         if (opts & MY_OPT_XTERM)
+            printf("%s", MY_TERM_BOLD);
          printf("offset     00       01       02       03       04       05       06       07 \n");
+         if (opts & MY_OPT_XTERM)
+            printf("%s", MY_TERM_RESET);
       };
    };
 
@@ -463,12 +491,9 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    uint8_t diff2[9];
 
    line = 0;
-
-   if (opts)
-      return(0);
-
    max1 = 0;
    max2 = 0;
+
    if (file1->code > 0)
    {
       len1 = len ? (len - (file1->pos-offset)) : 8;
@@ -515,16 +540,27 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    // prints line offset
    if ((max1) && (diff1[8]))
    {
+      if (opts & MY_OPT_XTERM)
+         printf("%s", MY_TERM_BOLD);
       printf("< 0%04zo0:", (file1->pos/8));
+      if (opts & MY_OPT_XTERM)
+         printf("%s", MY_TERM_RESET);
+
       for(s = 0; s < offset; s++)
          printf("         ");
 
       for(s = 0; s < max1; s++)
       {
-         printf(" %s", (!(diff1[s])) ?
-                        "        " :
-                        my_byte2str(file1->data[s], buff)
-         );
+         if (diff1[s])
+         {
+            if (opts & MY_OPT_XTERM)
+               printf("%s", MY_TERM_DIFF);
+            printf(" %s", my_byte2str(file1->data[s], buff));
+            if (opts & MY_OPT_XTERM)
+               printf("%s", MY_TERM_RESET);
+         } else {
+            printf(" %s", (opts & MY_OPT_ALL) ? my_byte2str(file1->data[s], buff) : "        ");
+         };
       };
       printf("\n");
 
@@ -535,16 +571,27 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
 
    if ((max2) && (diff2[8]))
    {
+      if (opts & MY_OPT_XTERM)
+         printf("%s", MY_TERM_BOLD);
       printf("> 0%04zo0:", (file2->pos/8));
+      if (opts & MY_OPT_XTERM)
+         printf("%s", MY_TERM_RESET);
+
       for(s = 0; s < offset; s++)
          printf("         ");
 
       for(s = 0; s < max2; s++)
       {
-         printf(" %s", (!(diff2[s])) ?
-                        "        " :
-                        my_byte2str(file2->data[s], buff)
-         );
+         if (diff2[s])
+         {
+            if (opts & MY_OPT_XTERM)
+               printf("%s", MY_TERM_DIFF);
+            printf(" %s", my_byte2str(file2->data[s], buff));
+            if (opts & MY_OPT_XTERM)
+               printf("%s", MY_TERM_RESET);
+         } else {
+            printf(" %s", (opts & MY_OPT_ALL) ? my_byte2str(file2->data[s], buff) : "        ");
+         };
       };
       printf("\n");
 
@@ -570,14 +617,15 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
    size_t s;
    size_t max;
 
-   if (opts)
-      return(0);
-
    if (file->code < 1)
       return(0);
 
    // prints line offset
-   printf("0%04zo0:", (file->pos/8));
+   if (opts & MY_OPT_XTERM)
+      printf("%s", MY_TERM_BOLD);
+   printf("< 0%04zo0:", (file->pos/8));
+   if (opts & MY_OPT_XTERM)
+      printf("%s", MY_TERM_RESET);
 
    // prints spaces
    for(s = 0; s < offset; s++)
@@ -641,11 +689,14 @@ void my_usage()
    // line. The two strings referenced are: PROGRAM_NAME, and
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s [options] file\n"
+         "  -a                        print all data when displaying a line\n"
          "  -h, --help                print this help and exit\n"
          "  -l bytes                  length of data to display\n"
          "  -o bytes                  offset to start reading data\n"
          "  -V, --version             print verbose messages\n"
          "  -v, --verbose             print version number and exit\n"
+         "  -X                        enable Xterm output\n"
+         "  -x                        disables Xterm output\n"
          "\n"
          "Report bugs to <%s>.\n"
       ), PROGRAM_NAME, PACKAGE_BUGREPORT
