@@ -451,47 +451,104 @@ int my_open(BinDumpFile * file, uint32_t verbose)
 size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    size_t len, uint32_t opts)
 {
-   char   buff[9];
-   size_t s;
-   size_t max;
-   size_t line;
+   char    buff[9];
+   size_t  s;
+   size_t  max1;
+   size_t  max2;
+   size_t  len1;
+   size_t  len2;
+   size_t  line;
+   uint8_t diff;
+   uint8_t diff1[9];
+   uint8_t diff2[9];
 
    line = 0;
 
    if (opts)
       return(0);
 
-   // prints line offset
+   max1 = 0;
+   max2 = 0;
    if (file1->code > 0)
+   {
+      len1 = len ? (len - (file1->pos-offset)) : 8;
+      max1 = (len1 > ((size_t)file1->code)) ? (size_t)file1->code : len1;
+   };
+   if (file2->code > 0)
+   {
+      len2 = len ? (len - (file2->pos-offset)) : 8;
+      max2 = (len2 > ((size_t)file2->code)) ? (size_t)file2->code : len2;
+   };
+
+   if ( (!(max1)) && (!(max2)) )
+      return(0);
+
+   diff = 0;
+   memset(diff1, 0, 9);
+   memset(diff2, 0, 9);
+   for(s = 0; s < (8-offset); s++)
+   {
+      if ( (s < max1) && (s < max2) )
+      {
+         if (file1->data[s] != file2->data[s])
+         {
+            diff = 1;
+            diff1[s] = 1;
+            diff1[8] = 1;
+            diff2[s] = 1;
+            diff2[8] = 1;
+         };
+      } else if (s < max2) {
+         diff = 1;
+         diff2[s] = 1;
+         diff2[8] = 1;
+      } else {
+         diff = 1;
+         diff1[s] = 1;
+         diff1[8] = 1;
+      };
+   };
+
+   if (!(diff))
+      return(0);
+
+   // prints line offset
+   if ((max1) && (diff1[8]))
    {
       printf("< 0%04zo0:", (file1->pos/8));
       for(s = 0; s < offset; s++)
          printf("         ");
 
-      len = len ? (len - (file1->pos-offset)) : 8;
-      max = (len > ((size_t)file1->code)) ? (size_t)file1->code : len;
-      for(s = 0; s < max; s++)
-            printf(" %s", my_byte2str(file1->data[s], buff));
+      for(s = 0; s < max1; s++)
+      {
+         printf(" %s", (!(diff1[s])) ?
+                        "        " :
+                        my_byte2str(file1->data[s], buff)
+         );
+      };
       printf("\n");
 
-      file1->pos += max;
+      file1->pos += max1;
 
       line++;
    };
 
-   if (file2->code > 0)
+   if ((max2) && (diff2[8]))
    {
       printf("> 0%04zo0:", (file2->pos/8));
       for(s = 0; s < offset; s++)
          printf("         ");
 
-      len = len ? (len - (file2->pos-offset)) : 8;
-      max = (len > ((size_t)file2->code)) ? (size_t)file2->code : len;
-      for(s = 0; s < max; s++)
-            printf(" %s", my_byte2str(file2->data[s], buff));
+      for(s = 0; s < max2; s++)
+      {
+         printf(" %s", (!(diff2[s])) ?
+                        "        " :
+                        my_byte2str(file2->data[s], buff)
+         );
+      };
       printf("\n");
 
-      file2->pos += max;
+      file2->pos += max2;
 
       line++;
    };
