@@ -33,14 +33,14 @@ AM_LDFLAGS				= @LTLIBINTL@
 AM_CFLAGS				= -O2 -W -Wall -Werror
 AM_CXXFLAGS				= -O2 -W -Wall -Werror
 AM_OBJCFLAGS				= -O2 -W -Wall -Werror
-AM_CPPFLAGS				= -O2 -W -Wall -Werror -DHAVE_COMMON_H=1 -I$(top_srcdir)/include
+AM_CPPFLAGS				= -O2 -W -Wall -Werror -DHAVE_COMMON_H=1 -I$(top_builddir)/include -I$(top_srcdir)/include
 ACLOCAL_AMFLAGS				= -I m4
 DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
 bin_PROGRAMS				= src/bindump src/bitcopy src/bitops src/dmsversion src/numconvert src/typedef-info
-include_HEADERS				= include/dms.h
+include_HEADERS				= include/dms.h include/dmsversion.h
 lib_LTLIBRARIES				= lib/libdms.la
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
@@ -57,6 +57,7 @@ lib_libdms_la_LDFLAGS			= -rpath '$(libdir)' \
 					  -pthread \
 					  -export-symbols $(srcdir)/lib/libdms.sym
 lib_libdms_la_SOURCES			= include/dms.h \
+					  include/dmsversion.h \
 					  lib/libdms.h \
 					  lib/libdms_version.c \
 					  lib/libdms_version.h
@@ -141,10 +142,12 @@ src_typedef_info_SOURCES		= $(noinst_HEADERS) \
 
 
 # lists
+BUILT_SOURCES				= include/dmsversion.h
 TESTS					=
 XFAIL_TESTS				=
 EXTRA_DIST				= build-aux/config.rpath \
 					  build-aux/git-package-version \
+					  include/dmsversion.h.in \
 					  include/gettext.h \
 					  lib/libdms.sym \
 					  $(srcdir)/dmstools.tags \
@@ -164,6 +167,7 @@ CLEANFILES				= \
 					  $(builddir)/*/a.out $(srcdir)/*/a.out \
 					  config.h.in~ $(srcdir)/config.h.in~ \
 					  $(man_MANS) \
+					  include/dmsversion.h \
 					  @PACKAGE_TARNAME@-*.tar.* \
 					  @PACKAGE_TARNAME@-*.zip
 
@@ -176,12 +180,22 @@ do_subst = sed \
 	-e 's,[@]PACKAGE_TARNAME[@],@PACKAGE_TARNAME@,g' \
 	-e 's,[@]PACKAGE_BUGREPORT[@],@PACKAGE_BUGREPORT@,g' \
 	-e 's|[@]PACKAGE_COPYRIGHT[@]|@PACKAGE_COPYRIGHT@|g' \
+	-e 's,[@]LIB_VERSION_CURRENT[@],@LIB_VERSION_CURRENT@,g' \
+	-e 's,[@]LIB_VERSION_REVISION[@],@LIB_VERSION_REVISION@,g' \
+	-e 's,[@]LIB_VERSION_AGE[@],@LIB_VERSION_AGE@,g' \
+	-e 's,[@]LIB_VERSION_INFO[@],@LIB_VERSION_INFO@,g' \
+	-e 's,[@]LIB_RELEASE_INFO[@],@LIB_RELEASE_INFO@,g' \
 	-e 's,[@]RELEASE_MONTH[@],@RELEASE_MONTH@,g'
 do_subst_fn = \
 		echo "do_subst < ${@}.in > ${@}"; \
 		mkdir -p `dirname ${@}` || exit 1; \
 		${do_subst} < $(srcdir)/${@}.in > ${@} || exit 1; \
 		chmod 0755 ${@}
+do_subst_dt = \
+		echo "do_subst < ${@}.in > ${@}"; \
+		mkdir -p `dirname ${@}` || exit 1; \
+		${do_subst} < $(srcdir)/${@}.in > ${@} || exit 1; \
+		chmod 0644 ${@}
 
 
 # custom targets
@@ -203,7 +217,11 @@ build-aux/git-package-version:
 	$(top_builddir)/config.status --recheck
 
 doc/codetagger.1: Makefile $(srcdir)/doc/codetagger.1.in
-	@$(do_subst_fn)
+	@$(do_subst_dt)
+
+include/dmsversion.h: Makefile $(srcdir)/include/dmsversion.h.in
+	$(mkdir_p) include
+	@$(do_subst_dt)
 
 license-tags: $(srcdir)/dmstools.tags $(builddir)/src/codetagger
 	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/AUTHORS

@@ -106,6 +106,7 @@
 ///////////////
 
 #include <inttypes.h>
+#include <dmsversion.h>
 
 
 ///////////////////
@@ -133,6 +134,24 @@
 //              //
 //////////////////
 BEGIN_C_DECLS
+
+// returns the binary GNU Libtool LIB_VERSION_INFO value
+DMS_F(int) dms_lib_version PARAMS((void));
+
+// returns the GNU Libtool LIB_VERSION_AGE value
+DMS_F(int) dms_lib_version_age PARAMS((void));
+
+// checks for library binary compatability
+DMS_F(int) dms_lib_version_check PARAMS((int version));
+
+// returns the GNU Libtool LIB_VERSION_CURRENT value
+DMS_F(int) dms_lib_version_current PARAMS((void));
+
+// returns the GNU Libtool LIB_VERSION_INFO string
+DMS_F(const char *) dms_lib_version_info PARAMS((void));
+
+// returns the GNU Libtool LIB_VERSION_REVISION value
+DMS_F(int) dms_lib_version_revision PARAMS((void));
 
 // returns version info string for library
 DMS_F(const char *) dms_version PARAMS((void));

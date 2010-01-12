@@ -30,9 +30,11 @@
 		A07BC6F10F0210CF00219629 /* bitops.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitops.c; sourceTree = "<group>"; };
 		A08B43A010FCD1580091D7C8 /* dms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dms.h; sourceTree = "<group>"; };
 		A08B43A310FCD1670091D7C8 /* libdms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libdms.h; sourceTree = "<group>"; };
-		A08B43A410FCD1670091D7C8 /* libdms.sym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libdms.sym; sourceTree = "<group>"; };
+		A08B43A410FCD1670091D7C8 /* libdms.sym */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = libdms.sym; sourceTree = "<group>"; };
 		A08B43A710FCD1670091D7C8 /* libdms_version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libdms_version.c; sourceTree = "<group>"; };
 		A08B43A810FCD1670091D7C8 /* libdms_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libdms_version.h; sourceTree = "<group>"; };
+		A08B43AD10FCD73F0091D7C8 /* dmsversion.h.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.c; fileEncoding = 4; path = dmsversion.h.in; sourceTree = "<group>"; };
+		A08B43D110FD0B280091D7C8 /* dmsversion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dmsversion.c; sourceTree = "<group>"; };
 		A0AE375510EAAA3C006B1ADB /* typedef-info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "typedef-info.c"; sourceTree = "<group>"; };
 		A0AF031210F540EB00CBC28C /* bindump.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bindump.c; sourceTree = "<group>"; };
 		A0B6D45D1033A3BA004E87EE /* numconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = numconvert.c; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 				A07BC6F10F0210CF00219629 /* bitops.c */,
 				A004228B0E0E3C4200B0ED60 /* codetagger.c */,
 				A004228C0E0E3C4200B0ED60 /* common.h */,
+				A08B43D110FD0B280091D7C8 /* dmsversion.c */,
 				A0B6D45D1033A3BA004E87EE /* numconvert.c */,
 				A004228D0E0E3C4200B0ED60 /* posixregex.c */,
 				A007E66F0EB09C51008A1261 /* recurse.c */,
@@ -104,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				A08B43A010FCD1580091D7C8 /* dms.h */,
+				A08B43AD10FCD73F0091D7C8 /* dmsversion.h.in */,
 			);
 			path = include;
 			sourceTree = "<group>";

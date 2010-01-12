@@ -38,8 +38,11 @@ AC_DEFINE_UNQUOTED(PACKAGE_COPYRIGHT, ["$PACKAGE_COPYRIGHT"], ["Copyright info"]
 #    Age        -- How many seqential past API versions is supported by
 #                  this implementation
 # Format => Current:Revision:Age
-AC_SUBST(LIB_VERSION_INFO, 2:1:1)
-AC_SUBST(LIB_RELEASE_INFO, 2) # used by Win32 DLLs
+AC_SUBST([LIB_VERSION_CURRENT],  [0])
+AC_SUBST([LIB_VERSION_REVISION], [0])
+AC_SUBST([LIB_VERSION_AGE],      [0])
+AC_SUBST([LIB_VERSION_INFO], [${LIB_VERSION_CURRENT}:${LIB_VERSION_REVISION}:${LIB_VERSION_AGE}])
+AC_SUBST([LIB_RELEASE_INFO], [${LIB_VERSION_CURRENT}]) # used by Win32 DLLs
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([dmstools.tags])

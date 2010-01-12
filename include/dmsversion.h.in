@@ -1,0 +1,48 @@
+/*
+ *  DMS Tools and Utilities
+ *  Copyright (C) 2010 David M. Syzdek <david@syzdek.net>.
+ *
+ *  @SYZDEK_LICENSE_HEADER_START@
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License Version 2 as
+ *  published by the Free Software Foundation.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ *
+ *  @SYZDEK_LICENSE_HEADER_END@
+ */
+/**
+ *  @file lib/dms.h defines API for libdms.la
+ */
+#ifndef _DMSVERSION_H
+#define _DMSVERSION_H 1
+
+///////////////////
+//               //
+//  Definitions  //
+//               //
+///////////////////
+
+// Module Version Info (similar to libtool's library version)
+//    Current    -- the current version number of this API
+//    Revision   -- the software revision of this API version
+//    Age        -- How many seqential past API versions is supported by
+//                  this API version
+#define DMS_LIB_VERSION_CURRENT   @LIB_VERSION_CURRENT@
+#define DMS_LIB_VERSION_REVISION  @LIB_VERSION_REVISION@
+#define DMS_LIB_VERSION_AGE       @LIB_VERSION_AGE@
+#define DMS_LIB_VERSION_INFO      "@LIB_VERSION_INFO@"
+#define DMS_LIB_VERSION  ( ((@LIB_VERSION_CURRENT@  & 0xFFFF) << 16) | \
+                           ((@LIB_VERSION_REVISION@ & 0xFF)   << 8) | \
+                            (@LIB_VERSION_AGE@      & 0xFF) )
+
+
+#endif /* end of header file */

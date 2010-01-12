@@ -123,7 +123,15 @@ int main(int argc, char * argv[])
 {
    if (argc == -1)
       printf("%s\n", argv[0]);
-   printf("%s\n", dms_version());
+   printf(_("%s (%s) %s\n"
+          "%s\n"
+          "Written by David M. Syzdek\n"
+          "\n"
+          "Copyright (C) 2010 David M. Syzdek\n"
+          "This is free software; see the source for copying conditions.  There is NO\n"
+          "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, dms_version()
+   );
    return(0);
 }
 
