@@ -28,6 +28,11 @@
 		A03242690E0E453700D5D5CA /* Makefile.am */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = Makefile.am; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A051283C10D987300013335E /* bitcopy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitcopy.c; sourceTree = "<group>"; };
 		A07BC6F10F0210CF00219629 /* bitops.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitops.c; sourceTree = "<group>"; };
+		A08B43A010FCD1580091D7C8 /* dms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dms.h; sourceTree = "<group>"; };
+		A08B43A310FCD1670091D7C8 /* libdms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libdms.h; sourceTree = "<group>"; };
+		A08B43A410FCD1670091D7C8 /* libdms.sym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libdms.sym; sourceTree = "<group>"; };
+		A08B43A710FCD1670091D7C8 /* libdms_version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libdms_version.c; sourceTree = "<group>"; };
+		A08B43A810FCD1670091D7C8 /* libdms_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libdms_version.h; sourceTree = "<group>"; };
 		A0AE375510EAAA3C006B1ADB /* typedef-info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "typedef-info.c"; sourceTree = "<group>"; };
 		A0AF031210F540EB00CBC28C /* bindump.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bindump.c; sourceTree = "<group>"; };
 		A0B6D45D1033A3BA004E87EE /* numconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = numconvert.c; sourceTree = "<group>"; };
@@ -49,7 +54,9 @@
 				A02133F50E0E4CCE00336FDD /* COPYING.DOC */,
 				A02133FA0E0E4CCE00336FDD /* dmstools.tags */,
 				A00422720E0E396B00B0ED60 /* doc */,
+				A08B439F10FCD1580091D7C8 /* include */,
 				A02133F60E0E4CCE00336FDD /* INSTALL */,
+				A08B43A210FCD1670091D7C8 /* lib */,
 				A03242690E0E453700D5D5CA /* Makefile.am */,
 				A02133F80E0E4CCE00336FDD /* NEWS */,
 				A0B6D48F1033B0BD004E87EE /* po */,
@@ -91,6 +98,25 @@
 				A02133F70E0E4CCE00336FDD /* Makefile-xcode */,
 			);
 			path = "build-aux";
+			sourceTree = "<group>";
+		};
+		A08B439F10FCD1580091D7C8 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				A08B43A010FCD1580091D7C8 /* dms.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		A08B43A210FCD1670091D7C8 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				A08B43A310FCD1670091D7C8 /* libdms.h */,
+				A08B43A410FCD1670091D7C8 /* libdms.sym */,
+				A08B43A710FCD1670091D7C8 /* libdms_version.c */,
+				A08B43A810FCD1670091D7C8 /* libdms_version.h */,
+			);
+			path = lib;
 			sourceTree = "<group>";
 		};
 		A0B6D48F1033B0BD004E87EE /* po */ = {
