@@ -1,0 +1,42 @@
+#
+#   DMS Tools and Utilities
+#   Copyright (C) 2010 David M. Syzdek <david@syzdek.net>.
+#
+#   @SYZDEK_LICENSE_HEADER_START@
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License Version 2 as
+#   published by the Free Software Foundation.
+# 
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+#
+#   @SYZDEK_LICENSE_HEADER_END@
+#
+#   lib/libdms.sym - list of symbols to export in libdms.la
+#
+#   Build:
+#      CFLAGS="-g -O2 -W -Wall -Werror -I../include"
+#      LDFLAGS="-g -O2 -export-symbols libdms.sym -rpath /usr/local/lib"
+#      export CFLAGS LDFLAGS
+#
+#      libtool --mode=compile gcc ${CFLAGS}  -c libdms_version.c
+#      libtool --mode=link    gcc ${LDFLAGS} -o libdms.la libdms_version.lo
+#
+#   Install:
+#      libtool --mode=install install -c libotadm.la /usr/local/lib/libacs-utils.la
+#
+#   Uninstall:
+#      libtool --mode=uninstall rm -f /usr/local/lib/libdms.la
+#
+#   Clean:
+#      libtool --mode=clean rm -f libdms.la libdms_version.lo
+#
+dms_version
+# end of symbol export file

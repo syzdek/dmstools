@@ -39,16 +39,35 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
-bin_PROGRAMS				= src/bindump src/bitcopy src/bitops src/numconvert src/typedef-info
+bin_PROGRAMS				= src/bindump src/bitcopy src/bitops src/dmsversion src/numconvert src/typedef-info
+include_HEADERS				= include/dms.h
+lib_LTLIBRARIES				= lib/libdms.la
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
 man_MANS				= doc/codetagger.1
+
+
+# macros for lib/libotadm.la
+lib_libdms_la_DEPENDENCIES		= Makefile lib/libdms.sym
+lib_libdms_la_CFLAGS			= $(AM_CFLAGS)
+lib_libdms_la_LIBADD			= $(AM_LIBS)
+lib_libdms_la_LDFLAGS			= -rpath '$(libdir)' \
+					  -version-info $(LIB_VERSION_INFO) \
+					  $(AM_LDFLAGS) \
+					  -pthread \
+					  -export-symbols $(srcdir)/lib/libdms.sym
+lib_libdms_la_SOURCES			= include/dms.h \
+					  lib/libdms.h \
+					  lib/libdms_version.c \
+					  lib/libdms_version.h
+
 
 # macros for src/bindump
 src_bindump_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_bindump_CPPFLAGS			= -DPROGRAM_NAME="\"bindump\"" $(AM_CPPFLAGS)
 src_bindump_SOURCES			= $(noinst_HEADERS) \
 					  src/bindump.c
+
 
 # macros for src/bitops
 src_bitcopy_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
@@ -72,6 +91,14 @@ src_codetagger_SOURCES			= $(noinst_HEADERS) \
 if ! IS_WIN32
 bin_PROGRAMS += src/codetagger
 endif
+
+
+# macros for src/dmsversion
+src_dmsversion_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
+src_dmsversion_CPPFLAGS			= -DPROGRAM_NAME="\"dmsversion\"" $(AM_CPPFLAGS)
+src_dmsversion_LDADD			= $(AM_LDADD) lib/libdms.la
+src_dmsversion_SOURCES			= $(noinst_HEADERS) \
+					  src/dmsversion.c
 
 
 # macros for src/numconvert
@@ -119,6 +146,7 @@ XFAIL_TESTS				=
 EXTRA_DIST				= build-aux/config.rpath \
 					  build-aux/git-package-version \
 					  include/gettext.h \
+					  lib/libdms.sym \
 					  $(srcdir)/dmstools.tags \
 					  $(srcdir)/doc/Doxyfile \
 					  $(srcdir)/doc/codetagger.1.in \
