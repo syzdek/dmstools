@@ -113,6 +113,7 @@
 #define MY_OPT_ALL         0x01
 #define MY_OPT_XTERM       0x02
 #define MY_OPT_NOXTERM     0x04
+#define MY_OPT_REVERSEBIT  0x08
 
 
 /////////////////
@@ -184,7 +185,7 @@ void my_usage PARAMS((void));
 void my_version PARAMS((void));
 
 // displays data in binary notation
-char * my_byte2str PARAMS((uint8_t data, char * buff));
+char * my_byte2str PARAMS((uint8_t data, char * buff, int opts));
 
 
 /////////////////
@@ -212,7 +213,7 @@ int main(int argc, char * argv[])
    BinDumpFile  file2;
 
    // getopt options
-   static char   short_opt[] = "dhl:o:vVx";
+   static char   short_opt[] = "dhl:o:rvVx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -257,6 +258,9 @@ int main(int argc, char * argv[])
             offset = strtoul(optarg, NULL, 0);
             offset_div = (offset / 8);
             offset_mod = (offset % 8);
+            break;
+         case 'r':
+            opts = opts | MY_OPT_REVERSEBIT;
             break;
          case 'V':
             my_version();
@@ -560,10 +564,10 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
          if (diff1[s])
          {
             printf(" %s%s%s", ((opts & MY_OPT_XTERM) ? MY_TERM_DIFF : ""),
-                              my_byte2str(file1->data[s], buff),
+                              my_byte2str(file1->data[s], buff, opts),
                               ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
          } else {
-            printf(" %s", (opts & MY_OPT_ALL) ? my_byte2str(file1->data[s], buff) : "        ");
+            printf(" %s", (opts & MY_OPT_ALL) ? my_byte2str(file1->data[s], buff, opts) : "        ");
          };
       };
       for(s = max1+offset; s < 8; s++)
@@ -606,10 +610,10 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
          if (diff2[s])
          {
             printf(" %s%s%s", ((opts & MY_OPT_XTERM) ? MY_TERM_DIFF : ""),
-                              my_byte2str(file2->data[s], buff),
+                              my_byte2str(file2->data[s], buff, opts),
                               ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
          } else {
-            printf(" %s", (opts & MY_OPT_ALL) ? my_byte2str(file2->data[s], buff) : "        ");
+            printf(" %s", (opts & MY_OPT_ALL) ? my_byte2str(file2->data[s], buff, opts) : "        ");
          };
       };
       for(s = max2+offset; s < 8; s++)
@@ -669,7 +673,7 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
 
    // prints each byte
    for(s = 0; s < max; s++)
-         printf(" %s", my_byte2str(file->data[s], buff));
+         printf(" %s", my_byte2str(file->data[s], buff, opts));
    for(s = max+offset; s < 8; s++)
       printf("         ");
 
@@ -742,6 +746,7 @@ void my_usage()
          "  -h, --help                print this help and exit\n"
          "  -l bytes                  length of data to display\n"
          "  -o bytes                  offset to start reading data\n"
+         "  -r                        display in reverse bit order\n"
          "  -V, --version             print verbose messages\n"
          "  -v, --verbose             print version number and exit\n"
          "  -x                        disables Xterm output\n"
@@ -775,11 +780,16 @@ void my_version(void)
 /// displays a byte in binary notation
 /// @param[in]  data    8 bits to translate into an ASCII string buffer
 /// @param[out] buff    ASCII string buffer to hold the result
-char * my_byte2str(uint8_t data, char * buff)
+/// @param[in]  opts    output options
+char * my_byte2str(uint8_t data, char * buff, int opts)
 {
    uint32_t b;
-   for(b = 0; b < 8; b++)
-      buff[b] = (data & (0x01 << b)) ? '1' : '0';
+   if (opts & MY_OPT_REVERSEBIT)
+      for(b = 0; b < 8; b++)
+         buff[b] = (data & (0x01 << (7-b))) ? '1' : '0';
+   if (!(opts & MY_OPT_REVERSEBIT))
+      for(b = 0; b < 8; b++)
+         buff[b] = (data & (0x01 << b)) ? '1' : '0';
    buff[b] = '\0';
    return(buff);
 }
