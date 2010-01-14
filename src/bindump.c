@@ -551,7 +551,7 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    if ((max1) && (diff1[8]))
    {
       printf("%s< 0%04zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
-                               (file1->pos/8),
+                               ((file1->pos-max1)/8),
                                ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
 
       // print leading spaces for offset
@@ -597,7 +597,7 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    if ((max2) && (diff2[8]))
    {
       printf("%s> 0%04zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
-                               (file2->pos/8),
+                               ((file2->pos-max2)/8),
                                ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
 
       // print leading spaces for offset
