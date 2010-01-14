@@ -265,12 +265,12 @@ int main(int argc, char * argv[])
             if ( (num >> (y*8)) & 0xFF )
                max = (y+1);
       };
-      if (opt & MY_OPT_OCT) len = printf((len ? ",0%jo"    : "0%jo"),    num);
-      if (opt & MY_OPT_DEC) len = printf((len ? ",%ju"     : "%ju"),     num);
-      if (opt & MY_OPT_HEX) len = printf((len ? ",0x%0*jX" : "0x%0*jX"), (unsigned)(max*2), num);
+      if (opt & MY_OPT_OCT) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0%jo"    : ",0%jo")    : "0%jo"),    num);
+      if (opt & MY_OPT_DEC) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", %ju"     : ",%ju")     : "%ju"),     num);
+      if (opt & MY_OPT_HEX) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0x%0*jX" : ",0x%0*jX") : "0x%0*jX"), (unsigned)(max*2), num);
       if (opt & MY_OPT_BIN)
       {
-         if (len) printf(",");
+         if (len) printf((opt & MY_OPT_SPACE) ? ", " : ",");
          for(y = 0; ((uint32_t)y) < max; y++)
          {
             if (opt & MY_OPT_LEBYTE)
