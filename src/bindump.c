@@ -784,10 +784,10 @@ void my_version(void)
 char * my_byte2str(uint8_t data, char * buff, int opts)
 {
    uint32_t b;
-   if (opts & MY_OPT_REVERSEBIT)
+   if (!(opts & MY_OPT_REVERSEBIT))
       for(b = 0; b < 8; b++)
          buff[b] = (data & (0x01 << (7-b))) ? '1' : '0';
-   if (!(opts & MY_OPT_REVERSEBIT))
+   if ((opts & MY_OPT_REVERSEBIT))
       for(b = 0; b < 8; b++)
          buff[b] = (data & (0x01 << b)) ? '1' : '0';
    buff[b] = '\0';
