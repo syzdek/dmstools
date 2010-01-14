@@ -105,6 +105,7 @@
 #define MY_OPT_SPACE 0x10
 #define MY_OPT_LEBYTE   0x20  ///< print binary in little endian byte order
 #define MY_OPT_LEBIT    0x40  ///< print binary in little endian bit order
+#define MY_OPT_LIMIT    0x80  ///< print hex and binary with least amount of digits
 
 #define MY_TOGGLE(value, bit) ( (value&bit) ? (value&(~bit)) : (value|bit))
 
@@ -146,10 +147,11 @@ int main(int argc, char * argv[])
    intmax_t  z;
    uintmax_t len;
    uintmax_t num;
+   uintmax_t max;
    uintmax_t byte;
 
    // getopt options
-   static char   short_opt[] = "aBbDdhOoRrsVXx";
+   static char   short_opt[] = "aBbDdhlOoRrsVXx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -185,6 +187,9 @@ int main(int argc, char * argv[])
          case 'h':
             my_usage();
             return(0);
+         case 'l':
+            opt |= MY_OPT_LIMIT;
+            break;
          case 'O':
             opt |= MY_OPT_OCT;
             break;
@@ -252,18 +257,26 @@ int main(int argc, char * argv[])
                   base = 16;
       };
       num = strtoumax(argv[x], NULL, base);
+      max = sizeof(intmax_t);
+      if (opt & MY_OPT_LIMIT)
+      {
+         max = 1;
+         for(y = 0; y < (intmax_t)sizeof(intmax_t); y++)
+            if ( (num >> (y*8)) & 0xFF )
+               max = (y+1);
+      };
       if (opt & MY_OPT_OCT) len = printf((len ? ",0%jo"    : "0%jo"),    num);
       if (opt & MY_OPT_DEC) len = printf((len ? ",%ju"     : "%ju"),     num);
-      if (opt & MY_OPT_HEX) len = printf((len ? ",0x%0*jX" : "0x%0*jX"), (unsigned)(sizeof(uintmax_t)*2), num);
+      if (opt & MY_OPT_HEX) len = printf((len ? ",0x%0*jX" : "0x%0*jX"), (unsigned)(max*2), num);
       if (opt & MY_OPT_BIN)
       {
          if (len) printf(",");
-         for(y = 0; ((uint32_t)y) < sizeof(uintmax_t); y++)
+         for(y = 0; ((uint32_t)y) < max; y++)
          {
             if (opt & MY_OPT_LEBYTE)
                byte = num >> (8*y);
             else
-               byte = num >> (8*(sizeof(uintmax_t)-y-1));
+               byte = num >> (8*(max-y-1));
             if (opt & MY_OPT_LEBIT)
                for(z = 0; z < 8; z++)
                   buff[z] = (byte & (0x01 << z)) ? '1' : '0';
@@ -295,6 +308,7 @@ void my_usage()
          "  -D                        enable decimal output\n"
          "  -d                        assume decimal notation for input\n"
          "  -h, --help                print this help and exit\n"
+         "  -l                        print minimum number of bytes in hex and binary\n"
          "  -O                        enable octal output\n"
          "  -o                        assume octal notation for input\n"
          "  -R                        display binary in little endian byte order\n"
