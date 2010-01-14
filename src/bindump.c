@@ -537,10 +537,14 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
          diff = 1;
          diff2[s] = 1;
          diff2[8] = 1;
+         if (max1)
+            diff1[8] = 1;
       } else if (s < max1) {
          diff = 1;
          diff1[s] = 1;
          diff1[8] = 1;
+         if (max2)
+            diff2[8] = 1;
       };
    };
 
