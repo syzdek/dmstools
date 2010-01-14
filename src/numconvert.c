@@ -103,6 +103,8 @@
 #define MY_OPT_HEX   0x04
 #define MY_OPT_OCT   0x08
 #define MY_OPT_SPACE 0x10
+#define MY_OPT_LEBYTE   0x20  ///< print binary in little endian byte order
+#define MY_OPT_LEBIT    0x40  ///< print binary in little endian bit order
 
 #define MY_TOGGLE(value, bit) ( (value&bit) ? (value&(~bit)) : (value|bit))
 
@@ -137,15 +139,17 @@ int main(int argc, char * argv[])
    int       c;
    int       base;
    int       opt_index;
+   char      buff[9];
    int32_t   opt;
    intmax_t  x;
    intmax_t  y;
+   intmax_t  z;
    uintmax_t len;
    uintmax_t num;
    uintmax_t byte;
 
    // getopt options
-   static char   short_opt[] = "aBbDdhOosVXx";
+   static char   short_opt[] = "aBbDdhOoRrsVXx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -186,6 +190,13 @@ int main(int argc, char * argv[])
             break;
          case 'o':
             base = 8;
+            break;
+         case 'R':
+            opt |= MY_OPT_LEBYTE;
+            break;
+         case 'r':
+            opt |= MY_OPT_LEBYTE;
+            opt |= MY_OPT_LEBIT;
             break;
          case 's':
             opt = MY_TOGGLE(opt, MY_OPT_SPACE);
@@ -249,16 +260,18 @@ int main(int argc, char * argv[])
          if (len) printf(",");
          for(y = 0; ((uint32_t)y) < sizeof(uintmax_t); y++)
          {
-            byte = num >> (8*(sizeof(uintmax_t)-y-1));
-            printf("%c%c%c%c%c%c%c%c",
-                  (byte & 0x80) ? '1' : '0',
-                  (byte & 0x40) ? '1' : '0',
-                  (byte & 0x20) ? '1' : '0',
-                  (byte & 0x10) ? '1' : '0',
-                  (byte & 0x08) ? '1' : '0',
-                  (byte & 0x04) ? '1' : '0',
-                  (byte & 0x02) ? '1' : '0',
-                  (byte & 0x01) ? '1' : '0');
+            if (opt & MY_OPT_LEBYTE)
+               byte = num >> (8*y);
+            else
+               byte = num >> (8*(sizeof(uintmax_t)-y-1));
+            if (opt & MY_OPT_LEBIT)
+               for(z = 0; z < 8; z++)
+                  buff[z] = (byte & (0x01 << z)) ? '1' : '0';
+            if (!(opt & MY_OPT_LEBIT))
+               for(z = 0; z < 8; z++)
+                  buff[z] = (byte & (0x01 << (7-z))) ? '1' : '0';
+            buff[z] = '\0';
+            printf("%s", buff);
             if (opt & MY_OPT_SPACE) printf(" ");
          };
       };
@@ -284,6 +297,8 @@ void my_usage()
          "  -h, --help                print this help and exit\n"
          "  -O                        enable octal output\n"
          "  -o                        assume octal notation for input\n"
+         "  -R                        display binary in little endian byte order\n"
+         "  -r                        display binary in little endian bit nad byte order\n"
          "  -s                        display binary value in 8 bit blocks\n"
          "  -X                        enable hexadecimal output\n"
          "  -x                        assume hexadecimal notation for input\n"
