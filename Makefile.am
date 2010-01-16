@@ -134,12 +134,6 @@ src_typedef_info_CPPFLAGS		= -DPROGRAM_NAME="\"typedef-info\"" $(AM_CPPFLAGS)
 src_typedef_info_SOURCES		= $(noinst_HEADERS) \
 					  src/typedef-info.c
 
-# macros for src/codetagger
-#src_vaportar_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
-#src_vaportar_CPPFLAGS			= -DPROGRAM_NAME="\"vaportar\"" $(AM_CPPFLAGS)
-#src_vaportar_SOURCES			= $(noinst_HEADERS) \
-#					  src/vaportar.c
-
 
 # lists
 BUILT_SOURCES				= include/dmsversion.h
