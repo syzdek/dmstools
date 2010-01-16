@@ -44,7 +44,7 @@ include_HEADERS				= include/dms.h include/dmsversion.h
 lib_LTLIBRARIES				= lib/libdms.la
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
-man_MANS				= doc/codetagger.1
+man_MANS				= doc/bindump.1 doc/codetagger.1
 
 
 # macros for lib/libotadm.la
@@ -212,6 +212,9 @@ git-package-version-check:
 	fi
 
 $(srcdir)/acinclude.m4: git-package-version-check
+
+doc/bindump.1: Makefile $(srcdir)/doc/bindump.1.in
+	@$(do_subst_dt)
 
 build-aux/git-package-version:
 	$(top_builddir)/config.status --recheck

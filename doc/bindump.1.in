@@ -1,0 +1,64 @@
+.\"
+.\" DMS Tools and Utilities
+.\" Copyright (C) 2010 David M. Syzdek <david@syzdek.net>
+.\"
+.\" @SYZDEK_COPYRIGHT_HEADER_START@
+.\"
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.2
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\"
+.\" @SYZDEK_COPYRIGHT_HEADER_END@
+.\"
+.\" doc/bindump.1.in - man page for codetagger
+.\"
+.TH "BINDUMP" "1" "@RELEASE_MONTH@" "@PACKAGE_TARNAME@ @PACKAGE_VERSION@" "User Commands"
+.SH NAME
+bindump \- displays the contents of a file in binary notation
+.SH SYNOPSIS
+\fBbindump\fR [\fB-drx\fR] [\fB-l\fR \fIn\fR] [\fB-o\fR \fIn\fR] [\fB--verbose\fR | \fB-v\fR] \fIFILE1\fR [\fIFILE2\fR] 
+.sp
+\fBbindump\fR [\fB--help\fR | \fB-h\fR] [\fB--version\fR | \fB-V\fR]
+
+.SH DESCRIPTION
+The \fBbindump\fR utility is a filter which displays the specified file, or the
+standard input if no files are specified, using binary representation of the
+data.  If two files are specified, only the 64 bit chunks which are different
+between the two files are displayed.
+
+.SH OPTIONS
+.TP
+\fB-d\fR
+Display only the bytes which do not match when comparing two files.
+.TP
+\fB\-h\fR, \fB--help\fR
+Displays usage information and exits.
+.TP
+\fB-l\fR \fIn\fR
+Only process \fIn\fR bytes of data.
+.TP
+\fB-o\fR \fIn\fR
+Move to the \fIn\fR byte of file before reading data.
+.TP
+\fB-r\fR
+Display bits in little endian bit order (default is big endian bit order)
+.TP
+\fB\-V\fR, \fB--version\fR
+displays version number and exits.
+.TP
+\fB\-v\fR, \fB--verbose\fR
+Enable verbose output.
+.TP
+\fB-x\fR
+Disable xterm output.
+
+.SH "REPORTING BUGS"
+Report bugs to David M. Syzdek <@PACKAGE_BUGREPORT@>.
+
+.SH "SEE ALSO"
+.BR codetagger (1),
+.BR numconvert (1)
+.\" end of man page
