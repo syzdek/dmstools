@@ -44,7 +44,7 @@ include_HEADERS				= include/dms.h include/dmsversion.h
 lib_LTLIBRARIES				= lib/libdms.la
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
-man_MANS				= doc/bindump.1 doc/codetagger.1
+man_MANS				= doc/bindump.1 doc/codetagger.1 doc/numconvert.1
 
 
 # macros for lib/libotadm.la
@@ -214,6 +214,9 @@ build-aux/git-package-version:
 	$(top_builddir)/config.status --recheck
 
 doc/codetagger.1: Makefile $(srcdir)/doc/codetagger.1.in
+	@$(do_subst_dt)
+
+doc/numconvert.1: Makefile $(srcdir)/doc/numconvert.1.in
 	@$(do_subst_dt)
 
 include/dmsversion.h: Makefile $(srcdir)/include/dmsversion.h.in

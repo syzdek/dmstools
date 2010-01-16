@@ -92,6 +92,7 @@
 			children = (
 				A02135010E0E7C6200336FDD /* Doxyfile */,
 				A02134D30E0E719000336FDD /* codetagger.1.in */,
+				A01FEF0411013417005CD0F8 /* numconvert.1.in */,
 			);
 			path = doc;
 			sourceTree = "<group>";
