@@ -141,6 +141,8 @@ TESTS					=
 XFAIL_TESTS				=
 EXTRA_DIST				= build-aux/config.rpath \
 					  build-aux/git-package-version \
+					  doc/bindump.1.in \
+					  doc/numconvert.1.in \
 					  include/dmsversion.h.in \
 					  include/gettext.h \
 					  lib/libdms.sym \
