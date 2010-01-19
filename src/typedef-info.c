@@ -205,7 +205,7 @@ int my_cmp_by_width_r(void * ptr1, void * ptr2);
 void my_print_data(struct my_data * data);
 
 //displays usage information
-void my_usage();
+void my_usage(void);
 
 // displays version information
 void my_version(void);
@@ -459,7 +459,7 @@ int main(int argc, char * argv[])
    if (optind == argc)
    {
       optind--;
-      argv[optind] = ".*";
+      argv[optind] = strdup(".*");
    };
 
    for(x = optind; x < argc; x++)
@@ -467,13 +467,13 @@ int main(int argc, char * argv[])
       ptr = NULL;
       if ((err = regcomp(&regex, argv[x], REG_EXTENDED|REG_ICASE)))
       {
-         regerror(err, &regex, msg, 127);
+         regerror(err, &regex, msg, (size_t)127);
          fprintf(stderr, PROGRAM_NAME ": %s\n", msg);
          return(1);
       };
       for(y = 0; data[y].name; y++)
-         if ( (!(err = regexec(&regex, data[y].name, 2, matches, 0))) ||
-              (!(err = regexec(&regex, data[y].include, 2, matches, 0))) )
+         if ( (!(err = regexec(&regex, data[y].name, (size_t)2, matches, 0))) ||
+              (!(err = regexec(&regex, data[y].include, (size_t)2, matches, 0))) )
          {
             list_count++;
             if (!(ptr = realloc(list, sizeof(struct my_data)*list_count)))
@@ -497,25 +497,25 @@ int main(int argc, char * argv[])
    switch(sort_order)
    {
       case MY_SORT_NAME:
-         qsort(list, list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name);
+         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name);
          break;
       case MY_SORT_NAME_R:
-         qsort(list, list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name_r);
+         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name_r);
          break;
       case MY_SORT_WIDTH:
-         qsort(list, list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_width);
+         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_width);
          break;
       case MY_SORT_WIDTH_R:
-         qsort(list, list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_width_r);
+         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_width_r);
          break;
       case MY_SORT_INCLUDE:
-         qsort(list, list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_define);
+         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_define);
          break;
       case MY_SORT_INCLUDE_R:
-         qsort(list, list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_define_r);
+         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_define_r);
          break;
       default:
-         qsort(list, list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name);
+         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name);
          break;
    };
 
@@ -702,7 +702,7 @@ int my_cmp_by_width_r(void * ptr1, void * ptr2)
 void my_print_data(struct my_data * data)
 {
    char buff[16];
-   snprintf(buff, 16, "%i", data->size);
+   snprintf(buff, (size_t)16, "%i", data->size);
    printf("%-*s   %*s   %*s   %-*s\n",
       MY_NAME_WIDTH,  data->name,
       MY_SIZE_WIDTH,  data->size ? buff : " ",
