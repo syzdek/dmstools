@@ -244,11 +244,11 @@ int main(int argc, char * argv[])
       if (!(base))
       {
          base = 10;
-         if (!(strncmp("00", argv[x], 2)))
+         if (!(strncmp("00", argv[x], (size_t)2)))
             base = 2;
-         else if (!(strncmp("0x", argv[x], 2)))
+         else if (!(strncmp("0x", argv[x], (size_t)2)))
             base = 16;
-         else if (!(strncmp("0", argv[x], 1)))
+         else if (!(strncmp("0", argv[x], (size_t)1)))
             base = 8;
          else
             for(y = 0; ((uint32_t)y) < strlen(argv[x]); y++)
