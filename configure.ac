@@ -90,6 +90,9 @@ AC_PROG_LIBTOOL
 # GNU gettext support
 AM_GNU_GETTEXT([external])
 
+# custom configure options
+AC_DMS_ENABLE_WARNINGS
+
 # sets package version based on the SCM
 AC_DMS_GIT_PACKAGE_VERSION
 

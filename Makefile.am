@@ -30,7 +30,7 @@ DIST_SUBDIRS				= po
 # Global flags
 AM_LIBS					= @LTLIBINTL@
 AM_LDFLAGS				= @LTLIBINTL@
-AM_CFLAGS				= -O2 -W -Wall -Werror
+AM_CFLAGS				= -O2 -W -Wall -Werror $(CFLAGS_WARNINGS)
 AM_CXXFLAGS				= -O2 -W -Wall -Werror
 AM_OBJCFLAGS				= -O2 -W -Wall -Werror
 AM_CPPFLAGS				= -O2 -W -Wall -Werror -DHAVE_COMMON_H=1 -I$(top_builddir)/include -I$(top_srcdir)/include
