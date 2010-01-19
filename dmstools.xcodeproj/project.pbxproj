@@ -32,6 +32,8 @@
 		A03242690E0E453700D5D5CA /* Makefile.am */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = Makefile.am; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A051283C10D987300013335E /* bitcopy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitcopy.c; sourceTree = "<group>"; };
 		A07BC6F10F0210CF00219629 /* bitops.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitops.c; sourceTree = "<group>"; };
+		A081550411054BF3006932F1 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		A081550511054BF3006932F1 /* dmstools_gcc.m4 */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = dmstools_gcc.m4; sourceTree = "<group>"; };
 		A08B43A010FCD1580091D7C8 /* dms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dms.h; sourceTree = "<group>"; };
 		A08B43A310FCD1670091D7C8 /* libdms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libdms.h; sourceTree = "<group>"; };
 		A08B43A410FCD1670091D7C8 /* libdms.sym */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = libdms.sym; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 				A02133F60E0E4CCE00336FDD /* INSTALL */,
 				A08B43A210FCD1670091D7C8 /* lib */,
 				A03242690E0E453700D5D5CA /* Makefile.am */,
+				A081550311054BF3006932F1 /* m4 */,
 				A02133F80E0E4CCE00336FDD /* NEWS */,
 				A0B6D48F1033B0BD004E87EE /* po */,
 				A02133F90E0E4CCE00336FDD /* README */,
@@ -109,6 +112,15 @@
 				A02133F70E0E4CCE00336FDD /* Makefile-xcode */,
 			);
 			path = "build-aux";
+			sourceTree = "<group>";
+		};
+		A081550311054BF3006932F1 /* m4 */ = {
+			isa = PBXGroup;
+			children = (
+				A081550411054BF3006932F1 /* .gitignore */,
+				A081550511054BF3006932F1 /* dmstools_gcc.m4 */,
+			);
+			path = m4;
 			sourceTree = "<group>";
 		};
 		A08B439F10FCD1580091D7C8 /* include */ = {
