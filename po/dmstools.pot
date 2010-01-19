@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: dmstools 0.9\n"
+"Project-Id-Version: dmstools 1.0\n"
 "Report-Msgid-Bugs-To: david@syzdek.net\n"
-"POT-Creation-Date: 2010-01-06 14:37-0900\n"
+"POT-Creation-Date: 2010-01-18 20:02-0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,21 +16,21 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/bindump.c:191 src/bitcopy.c:307 src/bitops.c:204 src/codetagger.c:1293
-#: src/numconvert.c:203 src/posixregex.c:236 src/typedef-info.c:446
+#: src/bindump.c:275 src/bitcopy.c:307 src/bitops.c:204 src/codetagger.c:1293
+#: src/numconvert.c:219 src/posixregex.c:236 src/typedef-info.c:446
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: src/bindump.c:194 src/bitcopy.c:310 src/bitops.c:207 src/codetagger.c:1296
-#: src/numconvert.c:206 src/posixregex.c:239 src/typedef-info.c:449
+#: src/bindump.c:278 src/bitcopy.c:310 src/bitops.c:207 src/codetagger.c:1296
+#: src/numconvert.c:222 src/posixregex.c:239 src/typedef-info.c:449
 #, c-format
 msgid ""
 "%s: unrecognized option `--%c'\n"
 "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: src/bindump.c:209 src/numconvert.c:219
+#: src/bindump.c:298 src/numconvert.c:235
 #, c-format
 msgid ""
 "%s: missing required argument\n"
@@ -41,15 +41,18 @@ msgstr ""
 #. strings are displayed if the program is passed `--help' on the command
 #. line. The two strings referenced are: PROGRAM_NAME, and
 #. PACKAGE_BUGREPORT
-#: src/bindump.c:318
+#: src/bindump.c:748
 #, c-format
 msgid ""
 "Usage: %s [options] file\n"
+"  -d                        print only differing data\n"
 "  -h, --help                print this help and exit\n"
 "  -l bytes                  length of data to display\n"
 "  -o bytes                  offset to start reading data\n"
+"  -r                        display in reverse bit order\n"
 "  -V, --version             print verbose messages\n"
 "  -v, --verbose             print version number and exit\n"
+"  -x                        disables Xterm output\n"
 "\n"
 "Report bugs to <%s>.\n"
 msgstr ""
@@ -58,8 +61,8 @@ msgstr ""
 #. information if the program is passed --version on the command line.
 #. The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
 #. PACKAGE_VERSION.
-#: src/bindump.c:339 src/bitcopy.c:402 src/bitops.c:405 src/codetagger.c:1075
-#: src/numconvert.c:312 src/posixregex.c:379 src/typedef-info.c:746
+#: src/bindump.c:772 src/bitcopy.c:402 src/bitops.c:405 src/codetagger.c:1075
+#: src/numconvert.c:341 src/posixregex.c:379 src/typedef-info.c:746
 #, c-format
 msgid ""
 "%s (%s) %s\n"
@@ -102,8 +105,8 @@ msgid ""
 "Usage: %s [options] num1 num2\n"
 "  -B                        display output in binary notation\n"
 "  -D                        display output in decimal notation\n"
-"  -H                        display output in hexadecimal notation\n"
 "  -O                        display output in octal notation\n"
+"  -X                        display output in hexadecimal notation\n"
 "\n"
 "Input Notation:\n"
 "  00NNNNNNNN                input number is in binary\n"
@@ -172,11 +175,23 @@ msgstr ""
 msgid ": no tag definitions were found in \"%s\"\n"
 msgstr ""
 
+#: src/dmsversion.c:126
+#, c-format
+msgid ""
+"%s (%s) %s\n"
+"%s\n"
+"Written by David M. Syzdek\n"
+"\n"
+"Copyright (C) 2010 David M. Syzdek\n"
+"This is free software; see the source for copying conditions.  There is NO\n"
+"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+msgstr ""
+
 #. TRANSLATORS: The following strings provide usage for command. These
 #. strings are displayed if the program is passed `--help' on the command
 #. line. The two strings referenced are: PROGRAM_NAME, and
 #. PACKAGE_BUGREPORT
-#: src/numconvert.c:279
+#: src/numconvert.c:305
 #, c-format
 msgid ""
 "Usage: %s num1 num2 ... numX\n"
@@ -185,8 +200,12 @@ msgid ""
 "  -D                        enable decimal output\n"
 "  -d                        assume decimal notation for input\n"
 "  -h, --help                print this help and exit\n"
+"  -l                        print minimum number of bytes in hex and binary\n"
 "  -O                        enable octal output\n"
 "  -o                        assume octal notation for input\n"
+"  -R                        display binary in little endian byte order\n"
+"  -r                        display binary in little endian bit nad byte "
+"order\n"
 "  -s                        display binary value in 8 bit blocks\n"
 "  -X                        enable hexadecimal output\n"
 "  -x                        assume hexadecimal notation for input\n"
