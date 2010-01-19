@@ -118,16 +118,16 @@ void bitops_copy(uint8_t * dst, uint8_t * src, uint32_t len, uint32_t offset,
 int main(int argc, char * argv[]);
 
 // determines endianness of platform
-int32_t my_make_littleendian(int32_t data);
+int32_t my_make_littleendian(uint32_t data);
 
 //displays usage information
-void my_usage();
+void my_usage(void);
 
 // displays version information
 void my_version(void);
 
 // displays data in binary notation
-char * my_byte2str(uint8_t data, char * buff, uint32_t len);
+char * my_byte2str(uint32_t data, char * buff, uint32_t len);
 
 // displays data in binary notation
 void my_print_data(uint8_t * data, uint32_t len);
@@ -328,12 +328,12 @@ int main(int argc, char * argv[])
 
    if (verbose)
       printf("allocating memory...\n");
-   if (!(buff = malloc(buff_len)))
+   if (!(buff = malloc((size_t)buff_len)))
    {
       perror("malloc()");
       return(1);
    };
-   memset(buff, 0x00, buff_len);
+   memset(buff, 0x00, (size_t)buff_len);
 
    data = my_make_littleendian(data);
 
@@ -354,7 +354,7 @@ int main(int argc, char * argv[])
 
 
 // determines endianness of platform
-int32_t my_make_littleendian(int32_t data)
+int32_t my_make_littleendian(uint32_t data)
 {
    int32_t i = 0x00FF;
    if ( (*(uint8_t *)&i) != 0 )
@@ -412,7 +412,7 @@ void my_version(void)
 
 
 // displays a byte in binary notation
-char * my_byte2str(uint8_t data, char * buff, uint32_t len)
+char * my_byte2str(uint32_t data, char * buff, uint32_t len)
 {
    uint32_t b;
    if ( (!(buff)) || (!(len)) )
