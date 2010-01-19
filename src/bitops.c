@@ -165,7 +165,7 @@ int main(int argc, char * argv[])
    uint32_t var2;
 
    // getopt options
-   static char   short_opt[] = "BDhHOV";
+   static char   short_opt[] = "BDhOVX";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -191,15 +191,15 @@ int main(int argc, char * argv[])
          case 'h':
             my_usage();
             return(0);
-         case 'H':
-            opts = MY_OPT_HEX;
-            break;
          case 'O':
             opts = MY_OPT_OCT;
             break;
          case 'V':
             my_version();
             return(0);
+         case 'X':
+            opts = MY_OPT_HEX;
+            break;
          case '?':
             fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
             return(1);
@@ -379,8 +379,8 @@ void my_usage()
    printf(_("Usage: %s [options] num1 num2\n"
          "  -B                        display output in binary notation\n"
          "  -D                        display output in decimal notation\n"
-         "  -H                        display output in hexadecimal notation\n"
          "  -O                        display output in octal notation\n"
+         "  -X                        display output in hexadecimal notation\n"
          "\n"
          "Input Notation:\n"
          "  00NNNNNNNN                input number is in binary\n"
