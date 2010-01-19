@@ -79,6 +79,7 @@ Process input strings as hexadecimal numerals.
 Report bugs to David M. Syzdek <@PACKAGE_BUGREPORT@>.
 
 .SH "SEE ALSO"
+.BR bitops (1),
 .BR codetagger (1),
 .BR numconvert (1)
 .\" end of man page

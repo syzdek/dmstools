@@ -1,0 +1,63 @@
+.\"
+.\" DMS Tools and Utilities
+.\" Copyright (C) 2010 David M. Syzdek <david@syzdek.net>
+.\"
+.\" @SYZDEK_COPYRIGHT_HEADER_START@
+.\"
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.2
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\"
+.\" @SYZDEK_COPYRIGHT_HEADER_END@
+.\"
+.\" doc/bitops.1.in - man page for bitops
+.\"
+.TH "BITOPS" "1" "@RELEASE_MONTH@" "@PACKAGE_TARNAME@ @PACKAGE_VERSION@" "User Commands"
+.SH NAME
+bitops \- displays the result of two values after performing bitwise operations
+.SH SYNOPSIS
+\fBbitops\fR [\fB-BDOX\fR] \fInumber1 number2\fR
+.sp
+\fBbitops\fR [\fB--help\fR | \fB-h\fR] [\fB--version\fR | \fB-V\fR]
+
+.SH DESCRIPTION
+The \fBbitops\fR utility is a filter which displays the result of two values 
+after using bitwise operations.  The operations performed are Arithmetic left
+shift, Arithmetic right shift, AND, OR, Inclusive OR, and negation. Input
+strings which are prefixed with \fI0x\fR are assumed to be hexidecimal
+numerals.  Input strings which are prefixed with a single `\fI0\fR' character
+are assumed to be octal numerals.  Input strings which are prefixed with
+`\fI00\fR' are assumed to be binary numerals.  All other strings are assumed
+to be in decimal numerals.
+
+.SH OPTIONS
+.TP
+\fB-B\fR
+Display the values as binary numerals.
+.TP
+\fB-D\fR
+Display the values as decimal numerals.
+.TP
+\fB\-h\fR, \fB--help\fR
+Displays usage information and exits.
+.TP
+\fB-O\fR
+Display the values as octal numerals.
+.TP
+\fB\-V\fR, \fB--version\fR
+displays version number and exits.
+.TP
+\fB-X\fR
+Display the values as hexadecimal numerals.
+
+.SH "REPORTING BUGS"
+Report bugs to David M. Syzdek <@PACKAGE_BUGREPORT@>.
+
+.SH "SEE ALSO"
+.BR bindump (1),
+.BR codetagger (1),
+.BR numconvert (1)
+.\" end of man page

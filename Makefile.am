@@ -44,7 +44,7 @@ include_HEADERS				= include/dms.h include/dmsversion.h
 lib_LTLIBRARIES				= lib/libdms.la
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
-man_MANS				= doc/bindump.1 doc/codetagger.1 doc/numconvert.1
+man_MANS				= doc/bitops.1 doc/bindump.1 doc/codetagger.1 doc/numconvert.1
 
 
 # macros for lib/libotadm.la
@@ -142,6 +142,7 @@ XFAIL_TESTS				=
 EXTRA_DIST				= build-aux/config.rpath \
 					  build-aux/git-package-version \
 					  doc/bindump.1.in \
+					  doc/bitops.1.in \
 					  doc/numconvert.1.in \
 					  include/dmsversion.h.in \
 					  include/gettext.h \
@@ -208,6 +209,9 @@ git-package-version-check:
 	fi
 
 $(srcdir)/acinclude.m4: git-package-version-check
+
+doc/bitops.1: Makefile $(srcdir)/doc/bitops.1.in
+	@$(do_subst_dt)
 
 doc/bindump.1: Makefile $(srcdir)/doc/bindump.1.in
 	@$(do_subst_dt)
