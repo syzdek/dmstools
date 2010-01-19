@@ -1,0 +1,66 @@
+.\"
+.\" DMS Tools and Utilities
+.\" Copyright (C) 2010 David M. Syzdek <david@syzdek.net>
+.\"
+.\" @SYZDEK_COPYRIGHT_HEADER_START@
+.\"
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.2
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\"
+.\" @SYZDEK_COPYRIGHT_HEADER_END@
+.\"
+.\" doc/posixregex.1.in - man page for posixregex
+.\"
+.TH "POSIXREGEX" "1" "@RELEASE_MONTH@" "@PACKAGE_TARNAME@ @PACKAGE_VERSION@" "User Commands"
+.SH NAME
+posixregex \- displays the result of two values after performing bitwise operations
+.SH SYNOPSIS
+\fBposixregex\fR [-r \fIregex\fR] \fIstring1 string2 ... stringN\fR
+.sp
+\fBposixregex\fR [\fB--help\fR | \fB-h\fR] [\fB--posixregex\fR | \fB-p\fR] [\fB--version\fR | \fB-V\fR]
+
+.SH DESCRIPTION
+The \fBposixregex\fR utility tests a regular expression against the specified
+strings and displays the matched segments of the strings.
+
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB--help\fR
+Displays usage information and exits.
+.TP
+\fB\-p\fR, \fB--posixregex\fR
+Print regular expression special patterns.
+.TP
+\fB\-q\fR, \fB--quiet\fR, \fB--silent\fR
+displays verbose messages.
+.TP
+\fB\-r\fR
+regular expression to use for testing strings
+.TP
+\fB\-V\fR, \fB--version\fR
+displays version number and exits.
+.TP
+\fB\-v\fR, \fB--verbose\fR
+do not print messages.
+
+.SH "ENVIRONMENT VARIABLES"
+.TP
+\fBPOSIXREGEX\fR
+default regular expression to use for testing strings
+
+.SH "DIAGNOSTICS"
+Normally, exit status is 0 if the strings match the regular expression and
+1 otherwise.
+
+.SH "REPORTING BUGS"
+Report bugs to David M. Syzdek <@PACKAGE_BUGREPORT@>.
+
+.SH "SEE ALSO"
+.BR bindump (1),
+.BR codetagger (1),
+.BR numconvert (1)
+.\" end of man page

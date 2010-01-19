@@ -145,6 +145,7 @@ Report bugs to <@PACKAGE_BUGREPORT@>.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .SH "SEE ALSO"
+.BR posixregex (1),
 .BR sed (1),
 .BR COPYING.tags
 .\" end of man page

@@ -14,6 +14,7 @@
 		A01FEF0211013417005CD0F8 /* bindump.1.in */ = {isa = PBXFileReference; explicitFileType = text.man; fileEncoding = 4; path = bindump.1.in; sourceTree = "<group>"; };
 		A01FEF0311013417005CD0F8 /* bitops.1.in */ = {isa = PBXFileReference; explicitFileType = text.man; fileEncoding = 4; path = bitops.1.in; sourceTree = "<group>"; };
 		A01FEF0411013417005CD0F8 /* numconvert.1.in */ = {isa = PBXFileReference; explicitFileType = text.man; fileEncoding = 4; path = numconvert.1.in; sourceTree = "<group>"; };
+		A01FEF0511013417005CD0F8 /* posixregex.1.in */ = {isa = PBXFileReference; explicitFileType = text.man; fileEncoding = 4; path = posixregex.1.in; sourceTree = "<group>"; };
 		A02133F00E0E4C9C00336FDD /* acinclude.m4 */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = acinclude.m4; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A02133F10E0E4CCE00336FDD /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A02133F20E0E4CCE00336FDD /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
@@ -97,6 +98,7 @@
 				A01FEF0311013417005CD0F8 /* bitops.1.in */,
 				A02134D30E0E719000336FDD /* codetagger.1.in */,
 				A01FEF0411013417005CD0F8 /* numconvert.1.in */,
+				A01FEF0511013417005CD0F8 /* posixregex.1.in */,
 			);
 			path = doc;
 			sourceTree = "<group>";
