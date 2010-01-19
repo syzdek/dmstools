@@ -142,7 +142,7 @@ const char * my_spaces(char * dst);
 uint32_t my_strtouint(const char * str);
 
 //displays usage information
-void my_usage();
+void my_usage(void);
 
 // displays version information
 void my_version(void);
@@ -331,13 +331,13 @@ const char * my_uint2str(char * dst, uint32_t num)
 /// @param[in] str   string to convert
 uint32_t my_strtouint(const char * str)
 {
-   if (!(strncmp(str, "0x", 2)))
+   if (!(strncmp(str, "0x", (size_t)2)))
       return(strtoumax(&str[2], NULL, 16));
-   if (!(strncmp(str, "0X", 2)))
+   if (!(strncmp(str, "0X", (size_t)2)))
       return(strtoumax(&str[2], NULL, 16));
-   if (!(strncmp(str, "00", 2)))
+   if (!(strncmp(str, "00", (size_t)2)))
       return(strtoumax(str, NULL, 2));
-   if (!(strncmp(str, "0", 1)))
+   if (!(strncmp(str, "0", (size_t)1)))
       return(strtoumax(str, NULL, 8));
    return(strtoumax(str, NULL, 10));
 }
