@@ -359,7 +359,7 @@ int main(int argc, char * argv[])
       printf("reading data...\n");
    if (file2.filename)
       printf("  ");
-   printf("%soffset     00       01       02       03       04       05       06       07     01234567%s\n", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""), ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
+   printf("%soffset        00       01       02       03       04       05       06       07     01234567%s\n", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""), ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
    if (offset_mod)
    {
       if ((my_read(&file1, offset_mod, len, verbose) == -1))
@@ -388,7 +388,7 @@ int main(int argc, char * argv[])
       {
          if (file2.filename)
             printf("  ");
-         printf("%soffset     00       01       02       03       04       05       06       07     01234567%s\n", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""), ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
+         printf("%soffset        00       01       02       03       04       05       06       07     01234567%s\n", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""), ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
       };
    };
 
@@ -554,7 +554,7 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
    // prints line offset
    if ((max1) && (diff1[8]))
    {
-      printf("%s< 0%04zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
+      printf("%s< 0%07zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
                                ((file1->pos-max1)/8),
                                ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
 
@@ -600,7 +600,7 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
 
    if ((max2) && (diff2[8]))
    {
-      printf("%s> 0%04zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
+      printf("%s> 0%07zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
                                ((file2->pos-max2)/8),
                                ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
 
@@ -667,7 +667,7 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
       return(0);
 
    // prints line offset
-   printf("%s0%04zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
+   printf("%s0%07zo0:%s", ((opts & MY_OPT_XTERM) ? MY_TERM_BOLD : ""),
                           (file->pos/8),
                           ((opts & MY_OPT_XTERM) ? MY_TERM_RESET : ""));
 
