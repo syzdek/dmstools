@@ -9,6 +9,11 @@ Copyright (C) 2008, 2009, 2010 David M. Syzdek <david@syzdek.net>
 	- Adding option in bindump to display bits in little endian (syzdek)
 	- Adding option in numconvert to display bits and bytes in little
 	  endian (syzdek)
+	- Updating bitops to use the same command line flag as numconvert
+	  for hex output. (syzdek)
+	- Creating initial man pages for bindump, binops, numconvert, and
+	  posixregex. (syzdek)
+	- Fixing compiler misc warnings. (syzdek)
 
 0.9	2010/01/06 (syzdek)
 	- Adding bindump utility (syzdek)
