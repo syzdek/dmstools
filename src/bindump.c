@@ -141,7 +141,7 @@ struct bindump_file
    size_t        read;        ///< number of bytes read
    ssize_t       code;        ///< return code of last file operation
    const char  * filename;    ///< name of the file
-   char          data[8];     ///< buffer for storing data for processing
+   unsigned      data[8];     ///< buffer for storing data for processing
 };
 
 
@@ -155,28 +155,28 @@ struct bindump_file
 int main PARAMS((int argc, char * argv[]));
 
 // closes a file
-int my_close PARAMS((BinDumpFile * file, uint32_t verbose));
+int my_close PARAMS((BinDumpFile * file, unsigned verbose));
 
 // preforms lseek on file
-int my_lseek PARAMS((BinDumpFile * file, size_t offset, uint32_t verbose));
+int my_lseek PARAMS((BinDumpFile * file, size_t offset, unsigned verbose));
 
 // determines the max number of bytes to dislpay
 size_t my_max PARAMS((ssize_t code, size_t len));
 
 // opens a file
-int my_open PARAMS((BinDumpFile * file, uint32_t verbose));
+int my_open PARAMS((BinDumpFile * file, unsigned verbose));
 
 // displays the diff between two files
 size_t my_print_diff PARAMS((BinDumpFile * file1, BinDumpFile * file2,
-   size_t offset, size_t len, uint32_t opts));
+   size_t offset, size_t len, unsigned opts));
 
 // displays one line 8 byte chunk of data
 size_t my_print_dump PARAMS((BinDumpFile * file, size_t offset, size_t len,
-   uint32_t opts));
+   unsigned opts));
 
 // performs read upon file
 int my_read PARAMS((BinDumpFile * file, size_t offset, size_t len,
-   uint32_t verbose));
+   unsigned verbose));
 
 //displays usage information
 void my_usage PARAMS((void));
@@ -185,7 +185,7 @@ void my_usage PARAMS((void));
 void my_version PARAMS((void));
 
 // displays data in binary notation
-char * my_byte2str PARAMS((uint8_t data, char * buff, int opts));
+char * my_byte2str PARAMS((unsigned data, char * buff, unsigned opts));
 
 
 /////////////////
@@ -200,7 +200,7 @@ char * my_byte2str PARAMS((uint8_t data, char * buff, int opts));
 int main(int argc, char * argv[])
 {
    int         c;
-   int         opts;
+   unsigned    opts;
    int         opt_index;
    size_t      offset;
    size_t      offset_mod;
@@ -375,14 +375,14 @@ int main(int argc, char * argv[])
    // read data from file handle
    while ( (!(file1.eof)) || (!(file2.eof)) )
    {
-      if ((my_read(&file1, 0, len, verbose) == -1))
+      if ((my_read(&file1, (size_t)0, len, verbose) == -1))
          return(my_close(&file2, verbose));
-      if ((my_read(&file2, 0, len, verbose) == -1))
+      if ((my_read(&file2, (size_t)0, len, verbose) == -1))
          return(my_close(&file1, verbose));
       if (file2.filename)
-         line_add = my_print_diff(&file1, &file2, 0, len, opts);
+         line_add = my_print_diff(&file1, &file2, (size_t)0, len, opts);
       else
-         line_add = my_print_dump(&file1, 0, len, opts);
+         line_add = my_print_dump(&file1, (size_t)0, len, opts);
       line += line_add;
       if ( (!(line %  22)) && (line_add) )
       {
@@ -404,7 +404,7 @@ int main(int argc, char * argv[])
 /// closes a file
 /// @param[in]  file       file to use for operations
 /// @param[in]  verbose    verbose level of messages to display
-int my_close(BinDumpFile * file, uint32_t verbose)
+int my_close(BinDumpFile * file, unsigned verbose)
 {
    if (file->fd == -1)
       return(1);
@@ -426,7 +426,7 @@ int my_close(BinDumpFile * file, uint32_t verbose)
 /// @param[in]  file       file to use for operations
 /// @param[in]  offset     offset
 /// @param[in]  verbose    verbose level of messages to display
-int my_lseek(BinDumpFile * file, size_t offset, uint32_t verbose)
+int my_lseek(BinDumpFile * file, size_t offset, unsigned verbose)
 {
    if ( (file->fd == -1) || (file->fd == STDIN_FILENO) )
       return(0);
@@ -460,7 +460,7 @@ size_t my_max(ssize_t code, size_t len)
 /// opens a file
 /// @param[in]  file       file to use for operations
 /// @param[in]  verbose    verbose level of messages to display
-int my_open(BinDumpFile * file, uint32_t verbose)
+int my_open(BinDumpFile * file, unsigned verbose)
 {
    file->fd = -1;
 
@@ -497,7 +497,7 @@ int my_open(BinDumpFile * file, uint32_t verbose)
 /// @param[in]  verbose    verbose level of messages to display
 /// @param[in]  opts       output options
 size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
-   size_t len, uint32_t opts)
+   size_t len, unsigned opts)
 {
    char    buff[9];
    size_t  s;
@@ -519,8 +519,8 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
       return(0);
 
    diff = 0;
-   memset(diff1, 0, 9);
-   memset(diff2, 0, 9);
+   memset(diff1, 0, (size_t)9);
+   memset(diff2, 0, (size_t)9);
    for(s = 0; s < (8-offset); s++)
    {
       if ( (s < max1) && (s < max2) )
@@ -655,7 +655,7 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
 /// @param[in]  verbose    verbose level of messages to display
 /// @param[in]  opts       output options
 size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
-   uint32_t opts)
+   unsigned opts)
 {
    char   buff[9];
    size_t s;
@@ -705,7 +705,7 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
 /// @param[in]  file       file to use for operations
 /// @param[in]  offset     offset
 /// @param[in]  len        len
-int my_read(BinDumpFile * file, size_t offset, size_t len, uint32_t verbose)
+int my_read(BinDumpFile * file, size_t offset, size_t len, unsigned verbose)
 {
    size_t max;
 
@@ -785,7 +785,7 @@ void my_version(void)
 /// @param[in]  data    8 bits to translate into an ASCII string buffer
 /// @param[out] buff    ASCII string buffer to hold the result
 /// @param[in]  opts    output options
-char * my_byte2str(uint8_t data, char * buff, int opts)
+char * my_byte2str(unsigned data, char * buff, unsigned opts)
 {
    uint32_t b;
    if (!(opts & MY_OPT_REVERSEBIT))
