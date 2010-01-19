@@ -173,7 +173,7 @@ int main(int argc, char * argv[])
    int          y;
    int          err;
    int          code;
-   int          strlen;
+   int          str_len;
    int          quiet;
    int          verbosity;
    int          opt_index;
@@ -260,7 +260,7 @@ int main(int argc, char * argv[])
       printf("regex: %s\n",restr);
    if ((err = regcomp(&regex, restr, REG_EXTENDED|REG_ICASE)))
    {
-      regerror(err, &regex, msg, BUFFER_SIZE-1);
+      regerror(err, &regex, msg, (size_t)BUFFER_SIZE-1);
       printf("%s\n", msg);
       return(1);
    };
@@ -272,12 +272,12 @@ int main(int argc, char * argv[])
    for (x = optind; x < argc; x++)
    {
       /* copies string into buffer and prints to screen */
-      strncpy(arg, argv[x], BUFFER_SIZE-1);
+      strncpy(arg, argv[x], (size_t)BUFFER_SIZE-1);
       if (!(quiet))
          printf("%3i: %s  ==> ", x-optind+1, arg);
 
       /* tests the buffer against the regular expression */
-      if ((err = regexec(&regex, arg, MAX_MATCHES, matches, 0)))
+      if ((err = regexec(&regex, arg, (size_t)MAX_MATCHES, matches, 0)))
       {
          if (!(quiet))
             printf("not found\n");
@@ -285,17 +285,17 @@ int main(int argc, char * argv[])
       } else {
          if (!(quiet))
             printf(" found\n");
-         strlen = 1;
+         str_len = 1;
 
          /* copies sub matches in buffer string */
          if (verbosity)
          {
             for(y = 0; ((y < MAX_MATCHES) && (matches[y].rm_eo > -1)); y++)
             {
-               memset(str, 0, BUFFER_SIZE);
-               if ((strlen = matches[y].rm_eo - matches[y].rm_so))
+               memset(str, 0, (size_t)BUFFER_SIZE);
+               if ((str_len = matches[y].rm_eo - matches[y].rm_so))
                {
-                  strncpy(str, &arg[matches[y].rm_so], strlen);
+                  strncpy(str, &arg[matches[y].rm_so], (size_t)str_len);
                   printf("     submatch %i: %s\n", y, str);
                } else if (matches[y].rm_eo > 0) {
                   printf("   submatch %i:\n", y);
