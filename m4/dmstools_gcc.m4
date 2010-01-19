@@ -116,7 +116,7 @@ AC_DEFUN([AC_DMS_ENABLE_WARNINGS],[dnl
       ac_dms_warnings_list="${ac_dms_warnings_list} -Wmissing-prototypes"
       ac_dms_warnings_list="${ac_dms_warnings_list} -Wmissing-declarations"
       ac_dms_warnings_list="${ac_dms_warnings_list} -Wmissing-noreturn"
-      ac_dms_warnings_list="${ac_dms_warnings_list} -Wmissing-format-attribute" # vprintf is failing this warning
+      #ac_dms_warnings_list="${ac_dms_warnings_list} -Wmissing-format-attribute" # vprintf is failing this warning
       ac_dms_warnings_list="${ac_dms_warnings_list} -Wredundant-decls"
       ac_dms_warnings_list="${ac_dms_warnings_list} -Wunreachable-code"
       ac_dms_warnings_list="${ac_dms_warnings_list} -Winvalid-pch"
