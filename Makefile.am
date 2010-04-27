@@ -148,6 +148,8 @@ EXTRA_DIST				= build-aux/config.rpath \
 					  include/dmsversion.h.in \
 					  include/gettext.h \
 					  lib/libdms.sym \
+					  m4/dmstools_gcc.m4 \
+					  m4/dmstools_git.m4 \
 					  $(srcdir)/dmstools.tags \
 					  $(srcdir)/doc/Doxyfile \
 					  $(srcdir)/doc/codetagger.1.in \
