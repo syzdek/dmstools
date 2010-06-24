@@ -155,16 +155,16 @@ struct bindump_file
 int main PARAMS((int argc, char * argv[]));
 
 // closes a file
-int my_close PARAMS((BinDumpFile * file, uint32_t verbose));
+int my_close PARAMS((BinDumpFile * file, unsigned verbose));
 
 // preforms lseek on file
-int my_lseek PARAMS((BinDumpFile * file, size_t offset, uint32_t verbose));
+int my_lseek PARAMS((BinDumpFile * file, size_t offset, unsigned verbose));
 
 // determines the max number of bytes to dislpay
 size_t my_max PARAMS((ssize_t code, size_t len));
 
 // opens a file
-int my_open PARAMS((BinDumpFile * file, uint32_t verbose));
+int my_open PARAMS((BinDumpFile * file, unsigned verbose));
 
 // displays the diff between two files
 size_t my_print_diff PARAMS((BinDumpFile * file1, BinDumpFile * file2,
@@ -176,7 +176,7 @@ size_t my_print_dump PARAMS((BinDumpFile * file, size_t offset, size_t len,
 
 // performs read upon file
 int my_read PARAMS((BinDumpFile * file, size_t offset, size_t len,
-   uint32_t verbose));
+   unsigned verbose));
 
 //displays usage information
 void my_usage PARAMS((void));
@@ -208,7 +208,7 @@ int main(int argc, char * argv[])
    size_t      line;
    size_t      line_add;
    unsigned    opts;
-   uint32_t    verbose;
+   unsigned    verbose;
    BinDumpFile  file1;
    BinDumpFile  file2;
 
@@ -404,7 +404,7 @@ int main(int argc, char * argv[])
 /// closes a file
 /// @param[in]  file       file to use for operations
 /// @param[in]  verbose    verbose level of messages to display
-int my_close(BinDumpFile * file, uint32_t verbose)
+int my_close(BinDumpFile * file, unsigned verbose)
 {
    if (file->fd == -1)
       return(1);
@@ -426,7 +426,7 @@ int my_close(BinDumpFile * file, uint32_t verbose)
 /// @param[in]  file       file to use for operations
 /// @param[in]  offset     offset
 /// @param[in]  verbose    verbose level of messages to display
-int my_lseek(BinDumpFile * file, size_t offset, uint32_t verbose)
+int my_lseek(BinDumpFile * file, size_t offset, unsigned verbose)
 {
    if ( (file->fd == -1) || (file->fd == STDIN_FILENO) )
       return(0);
@@ -460,7 +460,7 @@ size_t my_max(ssize_t code, size_t len)
 /// opens a file
 /// @param[in]  file       file to use for operations
 /// @param[in]  verbose    verbose level of messages to display
-int my_open(BinDumpFile * file, uint32_t verbose)
+int my_open(BinDumpFile * file, unsigned verbose)
 {
    file->fd = -1;
 
@@ -705,7 +705,7 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
 /// @param[in]  file       file to use for operations
 /// @param[in]  offset     offset
 /// @param[in]  len        len
-int my_read(BinDumpFile * file, size_t offset, size_t len, uint32_t verbose)
+int my_read(BinDumpFile * file, size_t offset, size_t len, unsigned verbose)
 {
    size_t max;
 
