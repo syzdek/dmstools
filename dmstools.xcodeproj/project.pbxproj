@@ -60,7 +60,6 @@
 				A02133F30E0E4CCE00336FDD /* configure.ac */,
 				A02133F40E0E4CCE00336FDD /* COPYING */,
 				A02133F50E0E4CCE00336FDD /* COPYING.DOC */,
-				A02133FA0E0E4CCE00336FDD /* dmstools.tags */,
 				A00422720E0E396B00B0ED60 /* doc */,
 				A08B439F10FCD1580091D7C8 /* include */,
 				A02133F60E0E4CCE00336FDD /* INSTALL */,
@@ -109,6 +108,7 @@
 		A004229F0E0E3CC300B0ED60 /* build-aux */ = {
 			isa = PBXGroup;
 			children = (
+				A02133FA0E0E4CCE00336FDD /* dmstools.tags */,
 				A02133F70E0E4CCE00336FDD /* Makefile-xcode */,
 			);
 			path = "build-aux";
