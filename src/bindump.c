@@ -185,7 +185,7 @@ void my_usage PARAMS((void));
 void my_version PARAMS((void));
 
 // displays data in binary notation
-char * my_byte2str PARAMS((uint8_t data, char * buff, unsigned opts));
+char * my_byte2str PARAMS((signed data, char * buff, unsigned opts));
 
 
 /////////////////
@@ -785,9 +785,9 @@ void my_version(void)
 /// @param[in]  data    8 bits to translate into an ASCII string buffer
 /// @param[out] buff    ASCII string buffer to hold the result
 /// @param[in]  opts    output options
-char * my_byte2str(uint8_t data, char * buff, unsigned opts)
+char * my_byte2str(signed data, char * buff, unsigned opts)
 {
-   uint32_t b;
+   unsigned b;
    if (!(opts & MY_OPT_REVERSEBIT))
       for(b = 0; b < 8; b++)
          buff[b] = (data & (0x01 << (7-b))) ? '1' : '0';
