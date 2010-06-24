@@ -375,14 +375,14 @@ int main(int argc, char * argv[])
    // read data from file handle
    while ( (!(file1.eof)) || (!(file2.eof)) )
    {
-      if ((my_read(&file1, 0, len, verbose) == -1))
+      if ((my_read(&file1, (size_t)0, len, verbose) == -1))
          return(my_close(&file2, verbose));
-      if ((my_read(&file2, 0, len, verbose) == -1))
+      if ((my_read(&file2, (size_t)0, len, verbose) == -1))
          return(my_close(&file1, verbose));
       if (file2.filename)
-         line_add = my_print_diff(&file1, &file2, 0, len, opts);
+         line_add = my_print_diff(&file1, &file2, (size_t)0, len, opts);
       else
-         line_add = my_print_dump(&file1, 0, len, opts);
+         line_add = my_print_dump(&file1, (size_t)0, len, opts);
       line += line_add;
       if ( (!(line %  22)) && (line_add) )
       {
@@ -519,8 +519,8 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
       return(0);
 
    diff = 0;
-   memset(diff1, 0, 9);
-   memset(diff2, 0, 9);
+   memset(diff1, 0, (size_t)9);
+   memset(diff2, 0, (size_t)9);
    for(s = 0; s < (8-offset); s++)
    {
       if ( (s < max1) && (s < max2) )
