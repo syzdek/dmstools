@@ -168,11 +168,11 @@ int my_open PARAMS((BinDumpFile * file, uint32_t verbose));
 
 // displays the diff between two files
 size_t my_print_diff PARAMS((BinDumpFile * file1, BinDumpFile * file2,
-   size_t offset, size_t len, uint32_t opts));
+   size_t offset, size_t len, unsigned opts));
 
 // displays one line 8 byte chunk of data
 size_t my_print_dump PARAMS((BinDumpFile * file, size_t offset, size_t len,
-   uint32_t opts));
+   unsigned opts));
 
 // performs read upon file
 int my_read PARAMS((BinDumpFile * file, size_t offset, size_t len,
@@ -185,7 +185,7 @@ void my_usage PARAMS((void));
 void my_version PARAMS((void));
 
 // displays data in binary notation
-char * my_byte2str PARAMS((uint8_t data, char * buff, int opts));
+char * my_byte2str PARAMS((uint8_t data, char * buff, unsigned opts));
 
 
 /////////////////
@@ -200,7 +200,6 @@ char * my_byte2str PARAMS((uint8_t data, char * buff, int opts));
 int main(int argc, char * argv[])
 {
    int         c;
-   int         opts;
    int         opt_index;
    size_t      offset;
    size_t      offset_mod;
@@ -208,6 +207,7 @@ int main(int argc, char * argv[])
    size_t      len;
    size_t      line;
    size_t      line_add;
+   unsigned    opts;
    uint32_t    verbose;
    BinDumpFile  file1;
    BinDumpFile  file2;
@@ -497,7 +497,7 @@ int my_open(BinDumpFile * file, uint32_t verbose)
 /// @param[in]  verbose    verbose level of messages to display
 /// @param[in]  opts       output options
 size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
-   size_t len, uint32_t opts)
+   size_t len, unsigned opts)
 {
    char    buff[9];
    size_t  s;
@@ -655,7 +655,7 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
 /// @param[in]  verbose    verbose level of messages to display
 /// @param[in]  opts       output options
 size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
-   uint32_t opts)
+   unsigned opts)
 {
    char   buff[9];
    size_t s;
@@ -785,7 +785,7 @@ void my_version(void)
 /// @param[in]  data    8 bits to translate into an ASCII string buffer
 /// @param[out] buff    ASCII string buffer to hold the result
 /// @param[in]  opts    output options
-char * my_byte2str(uint8_t data, char * buff, int opts)
+char * my_byte2str(uint8_t data, char * buff, unsigned opts)
 {
    uint32_t b;
    if (!(opts & MY_OPT_REVERSEBIT))
