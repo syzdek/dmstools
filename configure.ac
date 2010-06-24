@@ -113,7 +113,7 @@ AM_CONDITIONAL([HAVE_REGEX], [test x$have_regex = xyes])
 AC_CHECK_LIB([users],[noobs],,[AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
 
 # Creates outputs
-AC_CONFIG_FILES([Makefile po/Makefile.in])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
 # Show local config
