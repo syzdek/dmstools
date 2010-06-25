@@ -57,8 +57,8 @@ cp Makefile.am  Makefile.am-${FILESTAMP}  || restore "${PROGRAM_NAME}: unable to
 # run scripts
 echo "running gettextize -f --no-changelog..."
 gettextize -f --no-changelog || restore "" 1
-echo "running autoreconf -i -f..."
-autoreconf -i -f             || restore "" 1
+echo "running autoreconf -i..."
+autoreconf -i || restore "" 1
 
 # restore files
 restore "restoring files..." 0
