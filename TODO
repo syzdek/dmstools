@@ -1,9 +1,10 @@
 
 DMS Tools and Utilities
-Copyright (C) 2008 David M. Syzdek <david@syzdek.net>
+Copyright (C) 2008, 2010 David M. Syzdek <david@syzdek.net>
 
-General:
- * Write README file. (syzdek)
+Git:
+ * chnage to a method used for determining git version that works with
+   FreeBSD make (syzdek)
 
 Codetagger:
  * warning on failure to find anything to do. (williams)
