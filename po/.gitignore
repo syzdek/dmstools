@@ -6,6 +6,7 @@ Makevars.template
 POTFILES.in
 Rules-quot
 boldquot.sed
+dmstools.pot
 en@boldquot.header
 en@boldquot.po
 en@quot.header
