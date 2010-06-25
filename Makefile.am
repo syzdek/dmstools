@@ -150,7 +150,7 @@ EXTRA_DIST				= build-aux/config.rpath \
 					  lib/libdms.sym \
 					  m4/dmstools_gcc.m4 \
 					  m4/dmstools_git.m4 \
-					  $(srcdir)/dmstools.tags \
+					  $(srcdir)/build-aux/dmstools.tags \
 					  $(srcdir)/doc/Doxyfile \
 					  $(srcdir)/doc/codetagger.1.in \
 					  $(srcdir)/examples/Makefile \
@@ -235,19 +235,19 @@ include/dmsversion.h: Makefile $(srcdir)/include/dmsversion.h.in
 	$(mkdir_p) include
 	@$(do_subst_dt)
 
-license-tags: $(srcdir)/dmstools.tags $(builddir)/src/codetagger
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/AUTHORS
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/acinclude.m4
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/configure.ac
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/ChangeLog
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/doc/codetagger.1.in
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/Makefile.am
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/NEWS
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/README
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/src/codetagger.c
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/src/common.h
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/dmstools.tags
-	$(builddir)/src/codetagger -f $(srcdir)/dmstools.tags $(srcdir)/TODO
+license-tags: $(srcdir)/build-aux/dmstools.tags $(builddir)/src/codetagger
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/AUTHORS
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/acinclude.m4
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/configure.ac
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/ChangeLog
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/doc/codetagger.1.in
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/Makefile.am
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/NEWS
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/README
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/src/codetagger.c
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/src/common.h
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/dmstools.tags
+	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/TODO
 
 # local targets
 install-exec-local:
