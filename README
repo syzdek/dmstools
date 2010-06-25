@@ -52,14 +52,33 @@ The source code for this project is maintained using git (http://git-scm.com).
 The following instructions checkout the source code from the git repository
 and creates the autotool files:
 
-	git clone git://git.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
+	git clone git://github.com/syzdek/dmstools.git
 	cd dmstools
 	aclocal && autoconf && autoheader && automake
 
-The git repository may also be cloned using the following locations:
+   Browse Source:
+      http://github.com/syzdek/dmstools
 
-	git://github.com/syzdek/dmstools.git
-	http://http.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
+   Git URLs:
+      git://github.com/syzdek/dmstools.git
+      git://git.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
+      http://http.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
+      ssh://ssh.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
+
+   Downloading Source:
+
+      $ git clone git://github.com/syzdek/dmstools.git
+
+   Preparing Source:
+
+      $ cd dmstools
+      $ ./build-aux/projreconf.sh
+
+   Git Branches:
+      master - Current release of packages.
+      next   - changes staged for next release
+      pu     - proposed updates for next release
+      xx/yy+ - branch for testing new changes before merging to 'pu' branch
 
 
 Installing From Source
