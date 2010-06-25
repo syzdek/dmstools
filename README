@@ -45,23 +45,6 @@ The following utilities and tools are included in this package:
 	typedef-info - display information about C/C++ data types.
 
 
-Getting the source
-==================
-
-The source code for this project is maintained using git (http://git-scm.com).
-The following instructions checkout the source code from the git repository
-and creates the autotool files:
-
-	git clone git://git.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
-	cd dmstools
-	aclocal && autoconf && autoheader && automake
-
-The git repository may also be cloned using the following locations:
-
-	git://github.com/syzdek/dmstools.git
-	http://http.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
-
-
 Installing From Source
 ======================
 
@@ -73,9 +56,11 @@ Supported platforms:
 
 Required Software:
 
+	* Bash shell
 	* GNU Autoconf
 	* GNU Automake
 	* GNU Compiler Collection
+	* GNU Gettext
 	* GNU Lib C
 	* GNU Libtool
 	* Make
@@ -90,3 +75,38 @@ Basic installation:
 For additional installation information and options, please refer to the
 INSTALLATION file.
 
+
+Getting the source
+==================
+
+The source code for this project is maintained using git (http://git-scm.com).
+The following instructions checkout the source code from the git repository
+and creates the autotool files:
+
+	git clone git://github.com/syzdek/dmstools.git
+	cd dmstools
+	aclocal && autoconf && autoheader && automake
+
+   Browse Source:
+      http://github.com/syzdek/dmstools
+
+   Git URLs:
+      git://github.com/syzdek/dmstools.git
+      git://git.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
+      http://http.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
+      ssh://ssh.scm.syzdek.net/pub/scm/net.syzdek/dmstools.git
+
+   Downloading Source:
+
+      $ git clone git://github.com/syzdek/dmstools.git
+
+   Preparing Source:
+
+      $ cd dmstools
+      $ ./build-aux/projreconf.sh
+
+   Git Branches:
+      master - Current release of packages.
+      next   - changes staged for next release
+      pu     - proposed updates for next release
+      xx/yy+ - branch for testing new changes before merging to 'pu' branch

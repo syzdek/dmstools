@@ -47,6 +47,7 @@
 		A0B6D4911033B0E0004E87EE /* POTFILES.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = POTFILES.in; sourceTree = "<group>"; };
 		A0C7059E10EFEFE4002DA805 /* Makevars */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = Makevars; sourceTree = "<group>"; usesTabs = 1; };
 		A0C705A710EFF101002DA805 /* LINGUAS */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = LINGUAS; sourceTree = "<group>"; };
+		A0D121D911D42C3B001AF23F /* projreconf.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = projreconf.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -60,7 +61,6 @@
 				A02133F30E0E4CCE00336FDD /* configure.ac */,
 				A02133F40E0E4CCE00336FDD /* COPYING */,
 				A02133F50E0E4CCE00336FDD /* COPYING.DOC */,
-				A02133FA0E0E4CCE00336FDD /* dmstools.tags */,
 				A00422720E0E396B00B0ED60 /* doc */,
 				A08B439F10FCD1580091D7C8 /* include */,
 				A02133F60E0E4CCE00336FDD /* INSTALL */,
@@ -109,7 +109,9 @@
 		A004229F0E0E3CC300B0ED60 /* build-aux */ = {
 			isa = PBXGroup;
 			children = (
+				A02133FA0E0E4CCE00336FDD /* dmstools.tags */,
 				A02133F70E0E4CCE00336FDD /* Makefile-xcode */,
+				A0D121D911D42C3B001AF23F /* projreconf.sh */,
 			);
 			path = "build-aux";
 			sourceTree = "<group>";

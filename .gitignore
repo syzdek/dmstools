@@ -6,6 +6,7 @@
 .DS_Store
 .deps
 .dirstamp
+/ABOUT-NLS
 /INSTALL
 /Makefile
 /Makefile.in
