@@ -45,6 +45,35 @@ The following utilities and tools are included in this package:
 	typedef-info - display information about C/C++ data types.
 
 
+Installing From Source
+======================
+
+Supported platforms:
+
+	* FreeBSD
+	* Slackware Linux 12.1
+	* OS X 10.6
+
+Required Software:
+
+	* GNU Autoconf
+	* GNU Automake
+	* GNU Compiler Collection
+	* GNU Lib C
+	* GNU Libtool
+	* Make
+
+Basic installation:
+
+	cd dmstools
+	./configure
+	make
+	make install
+
+For additional installation information and options, please refer to the
+INSTALLATION file.
+
+
 Getting the source
 ==================
 
@@ -79,33 +108,3 @@ and creates the autotool files:
       next   - changes staged for next release
       pu     - proposed updates for next release
       xx/yy+ - branch for testing new changes before merging to 'pu' branch
-
-
-Installing From Source
-======================
-
-Supported platforms:
-
-	* FreeBSD
-	* Slackware Linux 12.1
-	* OS X 10.6
-
-Required Software:
-
-	* GNU Autoconf
-	* GNU Automake
-	* GNU Compiler Collection
-	* GNU Lib C
-	* GNU Libtool
-	* Make
-
-Basic installation:
-
-	cd dmstools
-	./configure
-	make
-	make install
-
-For additional installation information and options, please refer to the
-INSTALLATION file.
-
