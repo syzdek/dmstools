@@ -56,9 +56,11 @@ Supported platforms:
 
 Required Software:
 
+	* Bash shell
 	* GNU Autoconf
 	* GNU Automake
 	* GNU Compiler Collection
+	* GNU Gettext
 	* GNU Lib C
 	* GNU Libtool
 	* Make
