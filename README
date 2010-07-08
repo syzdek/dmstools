@@ -1,6 +1,6 @@
 
 DMS Tools and Utilities
-Copyright (C) 2009 David M. Syzdek <david@syzdek.net>
+Copyright (C) 2009, 2010 David M. Syzdek <david@syzdek.net>
 
 This package is a collection miscellaneous programs that are not large enough
 to require thier own projects, but are useful none the less.  For basic
@@ -80,12 +80,8 @@ Getting the source
 ==================
 
 The source code for this project is maintained using git (http://git-scm.com).
-The following instructions checkout the source code from the git repository
-and creates the autotool files:
-
-	git clone git://github.com/syzdek/dmstools.git
-	cd dmstools
-	aclocal && autoconf && autoheader && automake
+The following contains information to checkout the source code from the git repository
+and create the autotool files.
 
    Browse Source:
       http://github.com/syzdek/dmstools
