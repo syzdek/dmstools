@@ -223,7 +223,7 @@ int main(int argc, char * argv[])
 
       // displays odd rows of colors
       for (x = 0; x < 9; x++)
-         printf(" \033[3%i;4%im  3%i;4%im  \033[40m", x, y, x, y);
+         printf(" \033[0;3%i;4%im 0;3%i;4%im \033[40m", x, y, x, y);
       printf(" \033[0m\n\033[40m");
       // adds row of spaces
       for (x = 0; x < 9; x++)
