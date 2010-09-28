@@ -232,6 +232,17 @@ int main(int argc, char * argv[])
          printf(" \033[30;40m          ");
       printf(" \033[0m\n\033[40m");
    };
+
+   // displays different text modifications
+   for(y = 1; y < 10; y++)
+      printf("  \033[0;40m\033[%i;37;48m%i;37;48m\033[0;40m ", y, y);
+   printf(" \033[0m\n\033[40m");
+
+   // adds row of spaces
+   for (x = 0; x < 9; x++)
+      printf(" \033[30;40m          ");
+   printf(" \033[0m\n\033[40m");
+
    printf("\033[0m\n");
 
    return(0);
