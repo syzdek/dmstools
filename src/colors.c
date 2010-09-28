@@ -20,7 +20,7 @@
  *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
- *  @file src/colors.c displays various colors using ANSI codes
+ *  @file src/colors.c displays various colors using ANSI escape codes
  */
 /*
  *  Simple Build:
