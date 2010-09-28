@@ -130,6 +130,7 @@ void colors_usage(void)
    // line. The two strings referenced are: PROGRAM_NAME, and
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s [OPTIONS]\n"
+         "  -c, --colors-only         only display escape codes for colors\n"
          "  -h, --help                print this help and exit\n"
          "  -V, --version             print version number and exit\n"
          "\n"
@@ -167,11 +168,13 @@ int main(int argc, char * argv[])
    int           c;
    int           x;
    int           y;
+   int           opt;
    int           opt_index;
 
-   static char   short_opt[] = "hV";
+   static char   short_opt[] = "chV";
    static struct option long_opt[] =
    {
+      {"colors-only",   no_argument, 0, 'c'},
       {"help",          no_argument, 0, 'h'},
       {"version",       no_argument, 0, 'V'},
       {NULL,            0,           0, 0  }
@@ -183,12 +186,17 @@ int main(int argc, char * argv[])
    textdomain (PACKAGE);
 #endif
 
+   opt = 0;
+
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
       switch(c)
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
+            break;
+         case 'c':
+            opt = opt | 0x01;
             break;
          case 'h':
             colors_usage();
@@ -233,15 +241,18 @@ int main(int argc, char * argv[])
       printf(" \033[0m\n\033[40m");
    };
 
-   // displays different text modifications
-   for(y = 1; y < 10; y++)
-      printf("  \033[0;40m\033[%i;37;48m%i;37;48m\033[0;40m ", y, y);
-   printf(" \033[0m\n\033[40m");
+   if (!(opt & 0x01))
+   {
+      // displays different text modifications
+      for(y = 1; y < 10; y++)
+         printf("  \033[0;40m\033[%i;37;48m%i;37;48m\033[0;40m ", y, y);
+      printf(" \033[0m\n\033[40m");
 
-   // adds row of spaces
-   for (x = 0; x < 9; x++)
-      printf(" \033[30;40m          ");
-   printf(" \033[0m\n\033[40m");
+      // adds row of spaces
+      for (x = 0; x < 9; x++)
+         printf(" \033[30;40m          ");
+      printf(" \033[0m\n\033[40m");
+   };
 
    printf("\033[0m\n");
 
