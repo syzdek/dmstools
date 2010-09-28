@@ -39,7 +39,7 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
-bin_PROGRAMS				= src/bindump src/bitcopy src/bitops src/dmsversion src/numconvert src/typedef-info
+bin_PROGRAMS				= src/bindump src/bitcopy src/bitops src/colors src/dmsversion src/numconvert src/typedef-info
 include_HEADERS				= include/dms.h include/dmsversion.h
 lib_LTLIBRARIES				= lib/libdms.la
 noinst_PROGRAMS				=
@@ -92,6 +92,13 @@ src_codetagger_SOURCES			= $(noinst_HEADERS) \
 if ! IS_WIN32
 bin_PROGRAMS += src/codetagger
 endif
+
+
+# macros for src/colors
+src_colors_DEPENDENCIES			= $(lib_LTLIBRARIES) Makefile
+src_colors_CPPFLAGS			= -DPROGRAM_NAME="\"colors\"" $(AM_CPPFLAGS)
+src_colors_SOURCES			= $(noinst_HEADERS) \
+					  src/colors.c
 
 
 # macros for src/dmsversion
