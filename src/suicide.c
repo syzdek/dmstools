@@ -1,7 +1,7 @@
 /*
- *  $Id: $
- */
-/*
+ *  DMS Tools and Utilities
+ *  Copyright (C) 2010 David M. Syzdek <david@syzdek.net>.
+ *
  *  Self Signalling Program
  *  Copyright (c) 2008 Alaska Communications Systems
  *
@@ -19,26 +19,27 @@
  *  along with this program; if not, write to the Free Software
  */
 /*
- *  suicide.c - utility for testing default signal behavior
+ *  @file src/suicide.c  Utility for testing default signal behavior
  */
 /*
  *  Simple Build:
- *     gcc -W -Wall -Werror -o suicide suicide.c
+ *     gcc -W -Wall -O2 -c suicide.c
+ *     gcc -W -Wall -O2 -o suicide   suicide.o
  *
- *  Libtool Build:
- *     libtool --mode=compile gcc -W -Wall -Werror -g -O2 -c suicide.c
- *     libtool --mode=link    gcc -W -Wall -Werror -g -O2 -o suicide suicide.o
+ *  GNU Libtool Build:
+ *     libtool --mode=compile gcc -W -Wall -g -O2 -c suicide.c
+ *     libtool --mode=link    gcc -W -Wall -g -O2 -o suicide suicide.lo
  *
- *  Libtool Install:
+ *  GNU Libtool Install:
  *     libtool --mode=install install -c suicide /usr/local/bin/suicide
  *
- *  Libtool Uninstall:
+ *  GNU Libtool Uninstall:
  *     libtool --mode=uninstall rm -f /usr/local/bin/suicide
  *
- *  Libtool Clean:
+ *  GNU Libtool Clean:
  *     libtool --mode=clean rm -f suicide.lo suicide
  */
-#define _SUICIDE_C
+#define _DMSTOOLS_SRC_SUICIDE_C 1
 
 ///////////////
 //           //
@@ -46,8 +47,8 @@
 //           //
 ///////////////
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
+#ifdef HAVE_COMMON_H
+#include "common.h"
 #endif
 
 #include <stdio.h>
@@ -60,28 +61,44 @@
 
 ///////////////////
 //               //
+//  i18l Support //
+//               //
+///////////////////
+
+#ifdef HAVE_GETTEXT
+#   include <gettext.h>
+#   include <libintl.h>
+#   define _(String) gettext (String)
+#   define gettext_noop(String) String
+#   define N_(String) gettext_noop (String)
+#else
+#   define _(String) (String)
+#   define N_(String) String
+#   define textdomain(Domain)
+#   define bindtextdomain(Package, Directory)
+#endif
+
+
+///////////////////
+//               //
 //  Definitions  //
 //               //
 ///////////////////
 
 #ifndef PROGRAM_NAME
-#define PROGRAM_NAME		"suicide"
+#define PROGRAM_NAME "suicide"
 #endif
-
-#ifndef PACKAGE_NAME
-#define PACKAGE_NAME		"Self Signalling Program"
-#endif
-
-#ifndef PACKAGE_VERSION
-#define PACKAGE_VERSION		"1.0.0"
-#endif
-
-#ifndef PACKAGE_COPYRIGHT
-#define PACKAGE_COPYRIGHT	"Copyright (C) 2008 Alaska Communications Systems"
-#endif
-
 #ifndef PACKAGE_BUGREPORT
-#define PACKAGE_BUGREPORT	"david.syzdek@acsalaska.net"
+#define PACKAGE_BUGREPORT "david@syzdek.net"
+#endif
+#ifndef PACKAGE_COPYRIGHT
+#define PACKAGE_COPYRIGHT ""
+#endif
+#ifndef PACKAGE_NAME
+#define PACKAGE_NAME ""
+#endif
+#ifndef PACKAGE_VERSION
+#define PACKAGE_VERSION ""
 #endif
 
 #define MY_LIST_LEN 32
@@ -177,6 +194,9 @@
 #define SIGXFSZ -1
 #endif
 
+#ifndef PARAMS
+#define PARAMS(protos) protos
+#endif
 
 /////////////////
 //             //
@@ -184,20 +204,25 @@
 //             //
 /////////////////
 
-typedef struct my_signal_action
+/// signal action data
+typedef struct my_signal_action MyAction;
+struct my_signal_action
 {
    int number;
    int action;
-} MyAction;
+};
 
 
-typedef struct my_runtime_config
+/// Utility configuration
+typedef struct my_runtime_config MyConf;
+struct my_runtime_config
 {
    int count;
    MyAction pair[MY_LIST_LEN];
-} MyConf;
+};
 
 
+/// table of signal data
 struct my_signal_data
 {
    int action;
@@ -213,32 +238,32 @@ struct my_signal_data
 //              //
 //////////////////
 
-/* processes signals */
-int main(int argc, char * argv[]);
+// processes signals
+int main PARAMS((int argc, char * argv[]));
 
-/* displays summary */
-int my_about(void);
+// displays summary
+int suicide_about PARAMS((void));
 
-/* processes custom command line options */
-int my_getopt(int argc, char * argv[], MyConf * cnf);
+// processes custom command line options
+int suicide_getopt PARAMS((int argc, char * argv[], MyConf * cnf));
 
-/* empty signal handler */
-void my_signal_handler(int sig);
+// empty signal handler
+void suicide_signal_handler PARAMS((int sig));
 
-/* verifies signal number */
-int my_signum(const char * str);
+// verifies signal number
+int suicide_signum PARAMS((const char * str));
 
-/* interprets signal name */
-int my_sigspec(const char * str);
+// interprets signal name
+int suicide_sigspec PARAMS((const char * str));
 
-/* displays SUSv3 signals */
-int my_susv3_sigs(void);
+// displays SUSv3 signals
+int suicide_susv3_sigs PARAMS((void));
 
-/* displays usage */
-int my_usage(void);
+// displays usage
+int suicide_usage PARAMS((void));
 
-/* displays version */
-int my_version(void);
+// displays version
+int suicide_version PARAMS((void));
 
 
 /////////////////
@@ -290,7 +315,9 @@ volatile sig_atomic_t my_toggle_verbose = 0;
 //             //
 /////////////////
 
-/* processes signals */
+/// main statement
+/// @param[in]  argc  number of arguments passed to program
+/// @param[in]  argv  array of arguments passed to program
 int main(int argc, char * argv[])
 {
    int   i;
@@ -299,10 +326,10 @@ int main(int argc, char * argv[])
    pid_t p;	// process ID
    MyConf cnf;
 
-   if ((s = my_getopt(argc, argv, &cnf)) == -1)
+   if ((s = suicide_getopt(argc, argv, &cnf)) == -1)
       return(1);
 
-signal(SIGHUP, my_signal_handler);
+signal(SIGHUP, suicide_signal_handler);
 
    p = getpid();
    if (my_toggle_verbose)
@@ -336,8 +363,8 @@ signal(SIGHUP, my_signal_handler);
 }
 
 
-/* displays summary */
-int my_about(void)
+/// displays summary
+int suicide_about(void)
 {
    printf("About %s:\n", PROGRAM_NAME);
    printf("   This utility is used to test the behavior of unhandled\n");
@@ -351,8 +378,11 @@ int my_about(void)
 }
 
 
-/* processes custom command line options */
-int my_getopt(int argc, char * argv[], MyConf * cnf)
+/// processes custom command line options
+/// @param[in]  argc  number of arguments passed to program
+/// @param[in]  argv  array of arguments passed to program
+/// @param[out] cnf   configuration memory
+int suicide_getopt(int argc, char * argv[], MyConf * cnf)
 {
    int i;
    int sig;
@@ -369,24 +399,24 @@ int my_getopt(int argc, char * argv[], MyConf * cnf)
    for(i = 1; i < argc; i++)
    {
       if (!(strcasecmp(argv[i], "--help")))
-         return(my_usage());
+         return(suicide_usage());
       else if (!(strcmp(argv[i], "-h")))
-         return(my_usage());
+         return(suicide_usage());
 
       if (!(strcasecmp(argv[i], "--about")))
-         return(my_about());
+         return(suicide_about());
       else if (!(strcmp(argv[i], "-a")))
-         return(my_about());
+         return(suicide_about());
 
       else if (!(strcasecmp(argv[i], "--version")))
-         return(my_version());
+         return(suicide_version());
       else if (!(strcmp(argv[i], "-V")))
-         return(my_version());
+         return(suicide_version());
 
       else if (!(strcasecmp(argv[i], "--signals")))
-         return(my_susv3_sigs());
+         return(suicide_susv3_sigs());
       else if (!(strcmp(argv[i], "-S")))
-         return(my_susv3_sigs());
+         return(suicide_susv3_sigs());
 
       else if (!(strcasecmp(argv[i], "--verbose")))
          my_toggle_verbose = 1;
@@ -402,7 +432,7 @@ int my_getopt(int argc, char * argv[], MyConf * cnf)
             fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(-1);
          };
-         if ((sig = my_sigspec(argv[i])) == -1)
+         if ((sig = suicide_sigspec(argv[i])) == -1)
          {
             fprintf(stderr, "%s: invalid signal name -- %s\n", PROGRAM_NAME, argv[i]);
             fprintf(stderr, "Try `%s --signals' for more information.\n", PROGRAM_NAME);
@@ -422,7 +452,7 @@ int my_getopt(int argc, char * argv[], MyConf * cnf)
             fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(-1);
          };
-         if ((sig = my_signum(argv[i])) == -1)
+         if ((sig = suicide_signum(argv[i])) == -1)
          {
             fprintf(stderr, "%s: invalid signal number -- %s\n", PROGRAM_NAME, argv[i]);
             fprintf(stderr, "Try `%s --signals' for more information.\n", PROGRAM_NAME);
@@ -435,9 +465,9 @@ int my_getopt(int argc, char * argv[], MyConf * cnf)
 
       else
       {
-         if ((sig = my_signum(&argv[i][1])) == -1)
+         if ((sig = suicide_signum(&argv[i][1])) == -1)
          {
-            if ((sig = my_sigspec(&argv[i][1])) == -1)
+            if ((sig = suicide_sigspec(&argv[i][1])) == -1)
             {
                fprintf(stderr, "%s: invalid option -- %s\n", PROGRAM_NAME, argv[i]);
                fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
@@ -468,8 +498,8 @@ int my_getopt(int argc, char * argv[], MyConf * cnf)
 }
 
 
-/* empty signal handler */
-void my_signal_handler(int sig)
+/// empty signal handler
+void suicide_signal_handler(int sig)
 {
    int i;
    signal(sig, SIG_IGN);
@@ -477,13 +507,13 @@ void my_signal_handler(int sig)
       for(i = 0; susv3_signals[i].name; i++)
          if (susv3_signals[i].number == sig)
             printf("<< caught %s >> ", susv3_signals[i].name);
-   signal(sig, my_signal_handler);
+   signal(sig, suicide_signal_handler);
    return;
 }
 
 
-/* verifies signal number */
-int my_signum(const char * str)
+/// verifies signal number
+int suicide_signum(const char * str)
 {
    unsigned u;
    int sig;
@@ -498,8 +528,8 @@ int my_signum(const char * str)
 }
 
 
-/* interprets signal name */
-int my_sigspec(const char * str)
+/// interprets signal name
+int suicide_sigspec(const char * str)
 {
    int i;
    for(i = 0; susv3_signals[i].name; i++)
@@ -512,8 +542,8 @@ int my_sigspec(const char * str)
 }
 
 
-/* displays SUSv3 signals */
-int my_susv3_sigs(void)
+/// displays SUSv3 signals
+int suicide_susv3_sigs(void)
 {
    int i;
    printf("Available Single Unix Specification v3 Signals\n");
@@ -525,8 +555,8 @@ int my_susv3_sigs(void)
 }
 
 
-/* displays usage */
-int my_usage(void)
+/// displays usage
+int suicide_usage(void)
 {
    printf("Usage: %s [OPTIONS]\n", PROGRAM_NAME);
    printf("  -signum                   signal number to send\n");
@@ -544,8 +574,8 @@ int my_usage(void)
 }
 
 
-/* displays version */
-int my_version(void)
+/// displays version
+int suicide_version(void)
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
