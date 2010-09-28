@@ -34,6 +34,9 @@ The following utilities and tools are included in this package:
 	codetagger - Replaces the text between two tags with the text
 		contained within a tag definitions file.
 
+	colors - displays ANSI codes for generating colored text in ANSI
+		shells for command line utilities.
+
 	numconvert - converts between binary, octal, decimal, and hexidecimal
 		based number systems.
 
