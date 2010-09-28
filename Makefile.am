@@ -126,6 +126,16 @@ bin_PROGRAMS += src/posixregex
 endif
 
 
+# macros for src/suicide
+src_suicide_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
+src_suicide_CPPFLAGS			= -DPROGRAM_NAME="\"suicide\"" $(AM_CPPFLAGS)
+src_suicide_SOURCES			= $(noinst_HEADERS) \
+					  src/suicide.c
+if HAVE_SIGNAL
+bin_PROGRAMS += src/suicide
+endif
+
+
 # macros for src/posixregex
 src_recurse_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_recurse_CPPFLAGS			= -DPROGRAM_NAME="\"recurse\"" $(AM_CPPFLAGS)

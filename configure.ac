@@ -112,6 +112,12 @@ AM_CONDITIONAL([HAVE_REGEX], [test x$have_regex = xyes])
 
 AC_CHECK_LIB([users],[noobs],,[AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
 
+have_signal=yes
+AC_CHECK_HEADERS([signal.h],  ,[have_signal=no])
+AC_CHECK_TYPES([sig_t],       ,[have_signal=no],[#include <signal.h>])
+AC_SEARCH_LIBS([signal],     ,,[have_signal=no])
+AM_CONDITIONAL([HAVE_SIGNAL], [test x$have_signal = xyes])
+
 # Creates outputs
 AC_CONFIG_FILES([Makefile po/Makefile.in])
 AC_OUTPUT

@@ -30,6 +30,7 @@
 		A02134D30E0E719000336FDD /* codetagger.1.in */ = {isa = PBXFileReference; explicitFileType = text.man; fileEncoding = 4; indentWidth = 8; path = codetagger.1.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A02135010E0E7C6200336FDD /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		A03242690E0E453700D5D5CA /* Makefile.am */ = {isa = PBXFileReference; explicitFileType = text.script.sh; fileEncoding = 4; indentWidth = 8; path = Makefile.am; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
+		A03B6F02125273FA00DB20D4 /* suicide.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = suicide.c; sourceTree = "<group>"; };
 		A051283C10D987300013335E /* bitcopy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitcopy.c; sourceTree = "<group>"; };
 		A07BC6F10F0210CF00219629 /* bitops.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitops.c; sourceTree = "<group>"; };
 		A081550511054BF3006932F1 /* dmstools_gcc.m4 */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = dmstools_gcc.m4; sourceTree = "<group>"; };
@@ -90,6 +91,7 @@
 				A0B6D45D1033A3BA004E87EE /* numconvert.c */,
 				A004228D0E0E3C4200B0ED60 /* posixregex.c */,
 				A007E66F0EB09C51008A1261 /* recurse.c */,
+				A03B6F02125273FA00DB20D4 /* suicide.c */,
 				A0AE375510EAAA3C006B1ADB /* typedef-info.c */,
 			);
 			path = src;
