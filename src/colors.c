@@ -50,6 +50,7 @@
 #endif
 
 #include <stdio.h>
+#include <getopt.h>
 
 
 ///////////////////
@@ -105,8 +106,14 @@
 //              //
 //////////////////
 
+// displays usage
+void colors_usage PARAMS((void));
+
+// displays version information
+void colors_version PARAMS((void));
+
 // main statement
-int main PARAMS((void));
+int main PARAMS((int argc, char * argv[]));
 
 
 /////////////////
@@ -115,13 +122,91 @@ int main PARAMS((void));
 //             //
 /////////////////
 
+/// displays usage
+void colors_usage(void)
+{
+   // TRANSLATORS: The following strings provide usage for command. These
+   // strings are displayed if the program is passed `--help' on the command
+   // line. The two strings referenced are: PROGRAM_NAME, and
+   // PACKAGE_BUGREPORT
+   printf(_("Usage: %s [OPTIONS]\n"
+         "  -h, --help                print this help and exit\n"
+         "  -V, --version             print version number and exit\n"
+         "\n"
+         "Report bugs to <%s>.\n"
+      ), PROGRAM_NAME, PACKAGE_BUGREPORT
+   );
+   return;
+}
+
+
+/// displays version information
+void colors_version(void)
+{
+   // TRANSLATORS: The following strings provide version and copyright
+   // information if the program is passed --version on the command line.
+   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
+   // PACKAGE_VERSION.
+   printf(_("%s (%s) %s\n"
+         "Written by David M. Syzdek.\n"
+         "\n"
+         "%s\n"
+         "This is free software; see the source for copying conditions.  There is NO\n"
+         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_COPYRIGHT
+   );
+   return;
+}
+
+
 /// main statement
 /// @param[in]  argc  number of arguments passed to program
 /// @param[in]  argv  array of arguments passed to program
-int main(void)
+int main(int argc, char * argv[])
 {
-   int x;
-   int y;
+   int           c;
+   int           x;
+   int           y;
+   int           opt_index;
+
+   static char   short_opt[] = "hV";
+   static struct option long_opt[] =
+   {
+      {"help",          no_argument, 0, 'h'},
+      {"version",       no_argument, 0, 'V'},
+      {NULL,            0,           0, 0  }
+   };
+
+#ifdef HAVE_GETTEXT
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, LOCALEDIR);
+   textdomain (PACKAGE);
+#endif
+
+   while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
+   {
+      switch(c)
+      {
+         case -1:	/* no more arguments */
+         case 0:	/* long options toggles */
+            break;
+         case 'h':
+            colors_usage();
+            return(0);
+         case 'V':
+            colors_version();
+            return(0);
+         case '?':
+            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
+            return(1);
+         default:
+            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
+                  "Try `%s --help' for more information.\n"
+               ),  PROGRAM_NAME, c, PROGRAM_NAME
+            );
+            return(1);
+      };
+   };
 
    for (y = 0; y < 9; y++)
    {
