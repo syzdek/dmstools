@@ -257,6 +257,6 @@ int main(int argc, char * argv[])
    printf("\033[0m\n");
 
    return(0);
-};
+}
 
 /* end of source file */
