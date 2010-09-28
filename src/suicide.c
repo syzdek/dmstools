@@ -57,6 +57,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <getopt.h>
 
 
 ///////////////////
@@ -156,9 +157,6 @@ struct my_signal_data
 // processes signals
 int main PARAMS((int argc, char * argv[]));
 
-// processes custom command line options
-int suicide_getopt PARAMS((int argc, char * argv[], MyConf * cnf));
-
 // empty signal handler
 void suicide_signal_handler PARAMS((int sig));
 
@@ -169,7 +167,7 @@ int suicide_signum PARAMS((const char * str));
 int suicide_sigspec PARAMS((const char * str));
 
 // displays SUSv3 signals
-int suicide_susv3_sigs PARAMS((void));
+void suicide_susv3_sigs PARAMS((void));
 
 // displays usage
 void suicide_usage PARAMS((void));
@@ -288,22 +286,73 @@ volatile sig_atomic_t my_toggle_verbose = 0;
 /// @param[in]  argv  array of arguments passed to program
 int main(int argc, char * argv[])
 {
-   int   i;
-   int   e;
-   int   s;	// signal number
-   pid_t p;	// process ID
+   int    c;
+   int    i;
+   int    e;
+   int    s;	// signal number
+   pid_t  p;	// process ID
+   pid_t  pp;	// parent process ID
+   int    verbose;
+   int    opt_index;
    MyConf cnf;
 
-   if ((s = suicide_getopt(argc, argv, &cnf)) == -1)
-      return(1);
-
-signal(SIGHUP, suicide_signal_handler);
-
-   p = getpid();
-   if (my_toggle_verbose)
+   static char   short_opt[] = "hn:s:SvV";
+   static struct option long_opt[] =
    {
-      printf("getppid() == %i\n", getppid());
-      printf("getpid() == %i\n", p);
+      {"help",          no_argument, 0, 'h'},
+      {"signals",       no_argument, 0, 's'},
+      {"verbose",       no_argument, 0, 'v'},
+      {"version",       no_argument, 0, 'V'},
+      {NULL,            0,           0, 0  }
+   };
+
+#ifdef HAVE_GETTEXT
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, LOCALEDIR);
+   textdomain (PACKAGE);
+#endif
+
+   memset(&cnf, 0, sizeof(MyConf));
+   verbose = 0;
+   p       = getpid();
+   pp      = getpid();
+   opt_index          = 0;
+
+   while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
+   {
+      switch(c)
+      {
+         case -1:	/* no more arguments */
+         case 0:	/* long options toggles */
+            break;
+         case 'h':
+            suicide_usage();
+            return(0);
+         case 'S':
+            suicide_susv3_sigs();
+            return(0);
+         case 'V':
+            suicide_version();
+            return(0);
+         case 'v':
+            verbose = 1;
+            break;
+         case '?':
+            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
+            return(1);
+         default:
+            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
+                  "Try `%s --help' for more information.\n"
+               ),  PROGRAM_NAME, c, PROGRAM_NAME
+            );
+            return(1);
+      };
+   };
+
+   if (verbose)
+   {
+      printf("%i = getppid()\n", pp);
+      printf("%i = getpid()\n", p);
    };
 
    for(i = 0; i < cnf.count; i++)
@@ -327,123 +376,6 @@ signal(SIGHUP, suicide_signal_handler);
    };
 
    printf("return(0) == 0\n");
-   return(0);
-}
-
-
-/// processes custom command line options
-/// @param[in]  argc  number of arguments passed to program
-/// @param[in]  argv  array of arguments passed to program
-/// @param[out] cnf   configuration memory
-int suicide_getopt(int argc, char * argv[], MyConf * cnf)
-{
-   int i;
-   int sig;
-
-   my_toggle_verbose = 0;
-   sig = -1;
-   memset(cnf, 0, sizeof(MyConf));
-
-   // Due to the wierd command options such as
-   // -SIG and -NUM, it is not practical to use
-   // getopt() or getopt_long().  As a result
-   // the following custom code is used.
-
-   for(i = 1; i < argc; i++)
-   {
-      if ((!(strcasecmp(argv[i], "--help"))) || (!(strcmp(argv[i], "-h"))))
-      {
-         suicide_usage();
-         return(-1);
-      }
-
-      else if ( (!(strcasecmp(argv[i], "--version"))) || (!(strcmp(argv[i], "-V"))))
-      {
-         suicide_version();
-         return(-1);
-      }
-
-      else if (!(strcasecmp(argv[i], "--signals")))
-         return(suicide_susv3_sigs());
-      else if (!(strcmp(argv[i], "-S")))
-         return(suicide_susv3_sigs());
-
-      else if (!(strcasecmp(argv[i], "--verbose")))
-         my_toggle_verbose = 1;
-      else if (!(strcmp(argv[i], "-v")))
-         my_toggle_verbose = 1;
-
-      else if (!(strcmp(argv[i], "-s")))
-      {
-         i++;
-         if (i == argc)
-         {
-            fprintf(stderr, "%s: option requires an argument -- s\n", PROGRAM_NAME);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(-1);
-         };
-         if ((sig = suicide_sigspec(argv[i])) == -1)
-         {
-            fprintf(stderr, "%s: invalid signal name -- %s\n", PROGRAM_NAME, argv[i]);
-            fprintf(stderr, "Try `%s --signals' for more information.\n", PROGRAM_NAME);
-            return(-1);
-         };
-         cnf->pair[cnf->count].number = sig;
-         cnf->pair[cnf->count].action = MY_ACTION_SIGNAL;
-         cnf->count++;
-      }
-
-      else if (!(strcmp(argv[i], "-n")))
-      {
-         i++;
-         if (i == argc)
-         {
-            fprintf(stderr, "%s: option requires an argument -- n\n", PROGRAM_NAME);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(-1);
-         };
-         if ((sig = suicide_signum(argv[i])) == -1)
-         {
-            fprintf(stderr, "%s: invalid signal number -- %s\n", PROGRAM_NAME, argv[i]);
-            fprintf(stderr, "Try `%s --signals' for more information.\n", PROGRAM_NAME);
-            return(-1);
-         };
-         cnf->pair[cnf->count].number = sig;
-         cnf->pair[cnf->count].action = MY_ACTION_SIGNAL;
-         cnf->count++;
-      }
-
-      else
-      {
-         if ((sig = suicide_signum(&argv[i][1])) == -1)
-         {
-            if ((sig = suicide_sigspec(&argv[i][1])) == -1)
-            {
-               fprintf(stderr, "%s: invalid option -- %s\n", PROGRAM_NAME, argv[i]);
-               fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-               return(-1);
-            };
-         };
-         cnf->pair[cnf->count].number = sig;
-         cnf->pair[cnf->count].action = MY_ACTION_SIGNAL;
-         cnf->count++;
-      };
-
-      if ((cnf->count - 1) >= MY_LIST_LEN)
-      {
-         fprintf(stderr, "%s: too many signal actions specified\n", PROGRAM_NAME);
-         return(-1);
-      };
-   };
-
-   
-   if (!(cnf->count))
-   {
-      fprintf(stderr, "%s: missing required arguments\n", PROGRAM_NAME);
-      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-      return(-1);
-   };
-
    return(0);
 }
 
@@ -493,7 +425,7 @@ int suicide_sigspec(const char * str)
 
 
 /// displays SUSv3 signals
-int suicide_susv3_sigs(void)
+void suicide_susv3_sigs(void)
 {
    int i;
    printf("Available Single Unix Specification v3 Signals\n");
@@ -501,7 +433,7 @@ int suicide_susv3_sigs(void)
    for(i = 0; susv3_signals[i].desc; i++)
       if (susv3_signals[i].number > 0)
          printf("   %-9s   %-5i  %c       %s\n", susv3_signals[i].name, susv3_signals[i].number, susv3_signals[i].action, susv3_signals[i].desc);
-   return(-1);
+   return;
 }
 
 
