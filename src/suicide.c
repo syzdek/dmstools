@@ -241,9 +241,6 @@ struct my_signal_data
 // processes signals
 int main PARAMS((int argc, char * argv[]));
 
-// displays summary
-int suicide_about PARAMS((void));
-
 // processes custom command line options
 int suicide_getopt PARAMS((int argc, char * argv[], MyConf * cnf));
 
@@ -260,10 +257,10 @@ int suicide_sigspec PARAMS((const char * str));
 int suicide_susv3_sigs PARAMS((void));
 
 // displays usage
-int suicide_usage PARAMS((void));
+void suicide_usage PARAMS((void));
 
 // displays version
-int suicide_version PARAMS((void));
+void suicide_version PARAMS((void));
 
 
 /////////////////
@@ -363,21 +360,6 @@ signal(SIGHUP, suicide_signal_handler);
 }
 
 
-/// displays summary
-int suicide_about(void)
-{
-   printf("About %s:\n", PROGRAM_NAME);
-   printf("   This utility is used to test the behavior of unhandled\n");
-   printf("   signals without needing to run a program and using the kill\n");
-   printf("   utility.  This utility will send itself the specified signal\n");
-   printf("   emulating the behavior of kill on itself.\n");
-   printf("\n");
-   printf("   If kill is for sending signals to other processes on the\n");
-   printf("   system, then suicide is used for sending signals to itself.\n");
-   return(-1);
-}
-
-
 /// processes custom command line options
 /// @param[in]  argc  number of arguments passed to program
 /// @param[in]  argv  array of arguments passed to program
@@ -398,20 +380,17 @@ int suicide_getopt(int argc, char * argv[], MyConf * cnf)
 
    for(i = 1; i < argc; i++)
    {
-      if (!(strcasecmp(argv[i], "--help")))
-         return(suicide_usage());
-      else if (!(strcmp(argv[i], "-h")))
-         return(suicide_usage());
+      if ((!(strcasecmp(argv[i], "--help"))) || (!(strcmp(argv[i], "-h"))))
+      {
+         suicide_usage();
+         return(-1);
+      }
 
-      if (!(strcasecmp(argv[i], "--about")))
-         return(suicide_about());
-      else if (!(strcmp(argv[i], "-a")))
-         return(suicide_about());
-
-      else if (!(strcasecmp(argv[i], "--version")))
-         return(suicide_version());
-      else if (!(strcmp(argv[i], "-V")))
-         return(suicide_version());
+      else if ( (!(strcasecmp(argv[i], "--version"))) || (!(strcmp(argv[i], "-V"))))
+      {
+         suicide_version();
+         return(-1);
+      }
 
       else if (!(strcasecmp(argv[i], "--signals")))
          return(suicide_susv3_sigs());
@@ -556,34 +535,53 @@ int suicide_susv3_sigs(void)
 
 
 /// displays usage
-int suicide_usage(void)
+void suicide_usage(void)
 {
-   printf("Usage: %s [OPTIONS]\n", PROGRAM_NAME);
-   printf("  -signum                   signal number to send\n");
-   printf("  -sigspec                  signal name to send\n");
-   printf("  -n signum                 signal number to send\n");
-   printf("  -s sigspec                signal name to send\n");
-   printf("  -a, --about               print description of program\n");
-   printf("  -S, --signals             print SUSv3 signal table\n");
-   printf("  -h, --help                print this help and exit\n");
-   printf("  -v, --verbose             print verbose messages\n");
-   printf("  -V, --version             print version number and exit\n");
-   printf("\n");
-   printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
-   return(-1);
+   // TRANSLATORS: The following strings provide usage for command. These
+   // strings are displayed if the program is passed `--help' on the command
+   // line. The two strings referenced are: PROGRAM_NAME, and
+   // PACKAGE_BUGREPORT
+   printf(_("Usage: %s [OPTIONS]\n"
+         "  -signum                   signal number to send\n"
+         "  -sigspec                  signal name to send\n"
+         "  -n signum                 signal number to send\n"
+         "  -s sigspec                signal name to send\n"
+         "  -S, --signals             print SUSv3 signal table\n"
+         "  -h, --help                print this help and exit\n"
+         "  -v, --verbose             print verbose messages\n"
+         "  -V, --version             print version number and exit\n"
+         "\n"
+         "This utility is used to test the behavior of unhandled\n"
+         "signals without needing to run a program and using the kill\n"
+         "utility.  This utility will send itself the specified signal\n"
+         "emulating the behavior of kill on itself.\n"
+         "\n"
+         "If kill is for sending signals to other processes on the\n"
+         "system, then suicide is used for sending signals to itself.\n"
+         "\n"
+         "Report bugs to <%s>.\n"
+      ), PROGRAM_NAME, PACKAGE_BUGREPORT
+   );
+   return;
 }
 
 
 /// displays version
-int suicide_version(void)
+void suicide_version(void)
 {
-   printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
-   printf("Written by David M. Syzdek.\n");
-   printf("\n");
-   printf("%s\n", PACKAGE_COPYRIGHT);
-   printf("This is free software; see the source for copying conditions.  There is NO\n");
-   printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
-   return(-1);
+   // TRANSLATORS: The following strings provide version and copyright
+   // information if the program is passed --version on the command line.
+   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
+   // PACKAGE_VERSION.
+   printf(_("%s (%s) %s\n"
+         "Written by David M. Syzdek.\n"
+         "\n"
+         "%s\n"
+         "This is free software; see the source for copying conditions.  There is NO\n"
+         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_COPYRIGHT
+   );
+   return;
 }
 
 /* end of source file */
