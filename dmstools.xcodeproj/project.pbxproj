@@ -48,6 +48,7 @@
 		A0C7059E10EFEFE4002DA805 /* Makevars */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = Makevars; sourceTree = "<group>"; usesTabs = 1; };
 		A0C705A710EFF101002DA805 /* LINGUAS */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = LINGUAS; sourceTree = "<group>"; };
 		A0D121D911D42C3B001AF23F /* projreconf.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = projreconf.sh; sourceTree = "<group>"; };
+		A0F53D8F1251734C00D0E47E /* colors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = colors.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -83,6 +84,7 @@
 				A051283C10D987300013335E /* bitcopy.c */,
 				A07BC6F10F0210CF00219629 /* bitops.c */,
 				A004228B0E0E3C4200B0ED60 /* codetagger.c */,
+				A0F53D8F1251734C00D0E47E /* colors.c */,
 				A004228C0E0E3C4200B0ED60 /* common.h */,
 				A08B43D110FD0B280091D7C8 /* dmsversion.c */,
 				A0B6D45D1033A3BA004E87EE /* numconvert.c */,
