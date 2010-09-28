@@ -109,91 +109,6 @@
 #define MY_ACTION_BLOCK		0x04
 #define MY_ACTION_UNBLOCK	0x05
 
-#ifndef SIGABRT
-#define SIGABRT -1
-#endif
-#ifndef SIGALRM
-#define SIGALRM -1
-#endif
-#ifndef SIGBUS
-#define SIGBUS -1
-#endif
-#ifndef SIGCHLD
-#define SIGCHLD -1
-#endif
-#ifndef SIGCONT
-#define SIGCONT -1
-#endif
-#ifndef SIGFPE
-#define SIGFPE -1
-#endif
-#ifndef SIGHUP
-#define SIGHUP -1
-#endif
-#ifndef SIGILL
-#define SIGILL -1
-#endif
-#ifndef SIGINT
-#define SIGINT -1
-#endif
-#ifndef SIGKILL
-#define SIGKILL -1
-#endif
-#ifndef SIGPIPE
-#define SIGPIPE -1
-#endif
-#ifndef SIGQUIT
-#define SIGQUIT -1
-#endif
-#ifndef SIGSEGV
-#define SIGSEGV -1
-#endif
-#ifndef SIGSTOP
-#define SIGSTOP -1
-#endif
-#ifndef SIGTERM
-#define SIGTERM -1
-#endif
-#ifndef SIGTSTP
-#define SIGTSTP -1
-#endif
-#ifndef SIGTTIN
-#define SIGTTIN -1
-#endif
-#ifndef SIGTTOU
-#define SIGTTOU -1
-#endif
-#ifndef SIGUSR1
-#define SIGUSR1 -1
-#endif
-#ifndef SIGUSR2
-#define SIGUSR2 -1
-#endif
-#ifndef SIGPOLL
-#define SIGPOLL -1
-#endif
-#ifndef SIGPROF
-#define SIGPROF -1
-#endif
-#ifndef SIGSYS
-#define SIGSYS -1
-#endif
-#ifndef SIGTRAP
-#define SIGTRAP -1
-#endif
-#ifndef SIGURG
-#define SIGURG -1
-#endif
-#ifndef SIGVTALRM
-#define SIGVTALRM -1
-#endif
-#ifndef SIGXCPU
-#define SIGXCPU -1
-#endif
-#ifndef SIGXFSZ
-#define SIGXFSZ -1
-#endif
-
 #ifndef PARAMS
 #define PARAMS(protos) protos
 #endif
@@ -271,34 +186,90 @@ void suicide_version PARAMS((void));
 
 static const struct my_signal_data susv3_signals[] =
 {
+#ifdef SIGABRT
    { 'A', SIGABRT,     "SIGABRT",     "Process abort signal." },
+#endif
+#ifdef SIGALRM
    { 'T', SIGALRM,     "SIGALRM",     "Alarm clock." },
+#endif
+#ifdef SIGBUS
    { 'A', SIGBUS,      "SIGBUS",      "Access to an undefined portion of a memory object." },
+#endif
+#ifdef SIGCHLD
    { 'I', SIGCHLD,     "SIGCHLD",     "Child process terminated, stopped, or continued." },
+#endif
+#ifdef SIGCONT
    { 'C', SIGCONT,     "SIGCONT",     "Continue executing, if stopped." },
+#endif
+#ifdef SIGFPE
    { 'A', SIGFPE,      "SIGFPE",      "Erroneous arithmetic operation." },
+#endif
+#ifdef SIGHUP
    { 'T', SIGHUP,      "SIGHUP",      "Hangup." },
+#endif
+#ifdef SIGILL
    { 'A', SIGILL,      "SIGILL",      "Illegal instruction." },
+#endif
+#ifdef SIGINT
    { 'T', SIGINT,      "SIGINT",      "Terminal interrupt signal." },
+#endif
+#ifdef SIGKILL
    { 'T', SIGKILL,     "SIGKILL",     "Kill (cannot be caught or ignored)." },
+#endif
+#ifdef SIGPIPE
    { 'T', SIGPIPE,     "SIGPIPE",     "Write on a pipe with no one to read it." },
+#endif
+#ifdef SIGQUIT
    { 'A', SIGQUIT,     "SIGQUIT",     "Terminal quit signal." },
+#endif
+#ifdef SIGSEGV
    { 'A', SIGSEGV,     "SIGSEGV",     "Invalid memory reference." },
+#endif
+#ifdef SIGSTOP
    { 'S', SIGSTOP,     "SIGSTOP",     "Stop executing (cannot be caught or ignored)." },
+#endif
+#ifdef SIGTERM
    { 'T', SIGTERM,     "SIGTERM",     "Termination signal." },
+#endif
+#ifdef SIGTSTP
    { 'S', SIGTSTP,     "SIGTSTP",     "Terminal stop signal." },
+#endif
+#ifdef SIGTTIN
    { 'S', SIGTTIN,     "SIGTTIN",     "Background process attempting read." },
+#endif
+#ifdef SIGTTOU
    { 'S', SIGTTOU,     "SIGTTOU",     "Background process attempting write." },
+#endif
+#ifdef SIGUSR1
    { 'T', SIGUSR1,     "SIGUSR1",     "User-defined signal 1." },
+#endif
+#ifdef SIGUSR2
    { 'T', SIGUSR2,     "SIGUSR2",     "User-defined signal 2." },
+#endif
+#ifdef SIGPOLL
    { 'T', SIGPOLL,     "SIGPOLL",     "Pollable event." },
+#endif
+#ifdef SIGPROF
    { 'T', SIGPROF,     "SIGPROF",     "Profiling timer expired." },
+#endif
+#ifdef SIGSYS
    { 'A', SIGSYS,      "SIGSYS",      "Bad system call." },
+#endif
+#ifdef SIGTRAP
    { 'A', SIGTRAP,     "SIGTRAP",     "Trace/breakpoint trap." },
+#endif
+#ifdef SIGURG
    { 'I', SIGURG,      "SIGURG",      "High bandwidth data is available at a socket." },
+#endif
+#ifdef SIGVTALRM
    { 'T', SIGVTALRM,   "SIGVTALRM",   "Virtual timer expired." },
+#endif
+#ifdef SIGXCPU
    { 'A', SIGXCPU,     "SIGXCPU",     "CPU time limit exceeded." },
+#endif
+#ifdef SIGXFSZ
    { 'A', SIGXFSZ,     "SIGXFSZ",     "File size limit exceeded." },
+#endif
    { 'N', 0,           "NONE",        "N/A" },
    { 0, -1, NULL, NULL }
 };
