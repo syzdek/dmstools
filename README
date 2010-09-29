@@ -45,6 +45,10 @@ The following utilities and tools are included in this package:
 		Useful for testing a POSIX regular expressions or using POSIX
 		regular expressions in shell scripts.
 
+	suicide - This utility is used to test the behavior of signals
+		without needing to run a program and using the kill
+		utility.
+
 	typedef-info - display information about C/C++ data types.
 
 
