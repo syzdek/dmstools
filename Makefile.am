@@ -28,8 +28,8 @@ DIST_SUBDIRS				=
 
 
 # Global flags
-AM_LIBS					= @LTLIBINTL@
-AM_LDFLAGS				= @LTLIBINTL@
+AM_LIBS					=
+AM_LDFLAGS				=
 AM_CFLAGS				= -O2 -W -Wall -Werror $(CFLAGS_WARNINGS)
 AM_CXXFLAGS				= -O2 -W -Wall -Werror
 AM_OBJCFLAGS				= -O2 -W -Wall -Werror
@@ -156,8 +156,7 @@ src_typedef_info_SOURCES		= $(noinst_HEADERS) \
 BUILT_SOURCES				= include/dmsversion.h
 TESTS					=
 XFAIL_TESTS				=
-EXTRA_DIST				= build-aux/config.rpath \
-					  build-aux/git-package-version \
+EXTRA_DIST				= build-aux/git-package-version \
 					  doc/bindump.1.in \
 					  doc/bitops.1.in \
 					  doc/numconvert.1.in \
