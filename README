@@ -106,7 +106,7 @@ and create the autotool files.
    Preparing Source:
 
       $ cd dmstools
-      $ ./build-aux/projreconf.sh
+      $ autoreconf -i -f -I m4
 
    Git Branches:
       master - Current release of packages.

@@ -23,8 +23,8 @@
 #
 
 # Sub directories
-SUBDIRS					= po
-DIST_SUBDIRS				= po
+SUBDIRS					=
+DIST_SUBDIRS				=
 
 
 # Global flags
@@ -163,7 +163,6 @@ EXTRA_DIST				= build-aux/config.rpath \
 					  doc/numconvert.1.in \
 					  doc/posixregex.1.in \
 					  include/dmsversion.h.in \
-					  include/gettext.h \
 					  lib/libdms.sym \
 					  m4/dmstools_gcc.m4 \
 					  m4/dmstools_git.m4 \

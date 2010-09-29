@@ -87,9 +87,6 @@ AC_DISABLE_FAST_INSTALL
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
-# GNU gettext support
-AM_GNU_GETTEXT([external])
-
 # custom configure options
 AC_DMS_ENABLE_WARNINGS
 
@@ -119,7 +116,7 @@ AC_SEARCH_LIBS([signal],     ,,[have_signal=no])
 AM_CONDITIONAL([HAVE_SIGNAL], [test x$have_signal = xyes])
 
 # Creates outputs
-AC_CONFIG_FILES([Makefile po/Makefile.in])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
 # Show local config
