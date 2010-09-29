@@ -52,6 +52,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <signal.h>
 #include <unistd.h>
@@ -120,31 +121,25 @@
 //             //
 /////////////////
 
-/// signal action data
-typedef struct my_signal_action MyAction;
-struct my_signal_action
-{
-   int number;
-   int action;
-};
-
-
-/// Utility configuration
-typedef struct my_runtime_config MyConf;
-struct my_runtime_config
-{
-   int count;
-   MyAction pair[MY_LIST_LEN];
-};
-
-
 /// table of signal data
-struct my_signal_data
+typedef struct suicide_signal_data SuicideData;
+struct suicide_signal_data
 {
    int action;
    int number;
    const char * name;
    const char * desc;
+};
+
+
+/// table of signal data
+typedef struct suicide_signal_action SuicideAction;
+struct suicide_signal_action
+{
+   int number;
+   int pad0;
+   void              * pad1;
+   const SuicideData * data;
 };
 
 
@@ -157,14 +152,16 @@ struct my_signal_data
 // processes signals
 int main PARAMS((int argc, char * argv[]));
 
+// compares two signal rows by signal int value
+int suicide_cmp_val PARAMS((const SuicideData * p1,
+   const SuicideData * p2));
+
+// finds a signal from the table and returns action
+int suicide_find_data PARAMS((SuicideAction *** list, size_t * count,
+   const char * str, int val));
+
 // empty signal handler
 void suicide_signal_handler PARAMS((int sig));
-
-// verifies signal number
-int suicide_signum PARAMS((const char * str));
-
-// interprets signal name
-int suicide_sigspec PARAMS((const char * str));
 
 // displays SUSv3 signals
 void suicide_susv3_sigs PARAMS((void));
@@ -182,7 +179,7 @@ void suicide_version PARAMS((void));
 //             //
 /////////////////
 
-static const struct my_signal_data susv3_signals[] =
+ SuicideData susv3_signals[] =
 {
 #ifdef SIGABRT
    { 'A', SIGABRT,     "SIGABRT",     "Process abort signal." },
@@ -268,8 +265,29 @@ static const struct my_signal_data susv3_signals[] =
 #ifdef SIGXFSZ
    { 'A', SIGXFSZ,     "SIGXFSZ",     "File size limit exceeded." },
 #endif
+#ifdef SIGEMT
+   { ' ', SIGEMT,      "SIGEMT",      "EMT instruction" },
+#endif
+#ifdef SIGIO
+   { ' ', SIGIO,       "SIGIO",       "input/output possible signal" },
+#endif
+#ifdef SIGINFO
+   { ' ', SIGINFO,     "SIGINFO",     "information request" },
+#endif
+#ifdef SIGWINCH
+   { ' ', SIGWINCH,    "SIGWINCH",    "window size changes" },
+#endif
+#ifdef SIGIOT
+   { ' ', SIGIOT,      "SIGIOT",      "IOT trap (4.2 BSD)." },
+#endif
+#ifdef SIGSTKFLT
+   { ' ', SIGSTKFLT,   "SIGSTKFLT",   "Stack fault." },
+#endif
+#ifdef SIGPWR
+   { ' ', SIGPWR,      "SIGPWR",      "Power failure restart (System V)." },
+#endif
    { 'N', 0,           "NONE",        "N/A" },
-   { 0, -1, NULL, NULL }
+   { -1, -1, NULL, NULL }
 };
 
 volatile sig_atomic_t my_toggle_verbose = 0;
@@ -281,20 +299,34 @@ volatile sig_atomic_t my_toggle_verbose = 0;
 //             //
 /////////////////
 
+/// compares two signal rows by signal int value
+/// @param[in]  p1    pointer to first signal
+/// @param[in]  p2    pointer to second signal
+int suicide_cmp_val(const SuicideData * p1, const SuicideData * p2)
+{
+   if (p1->number < p2->number)
+      return(-1);
+   if (p1->number > p2->number)
+      return(1);
+   return(0);
+}
+
+
 /// main statement
 /// @param[in]  argc  number of arguments passed to program
 /// @param[in]  argv  array of arguments passed to program
 int main(int argc, char * argv[])
 {
-   int    c;
-   int    i;
-   int    e;
-   int    s;	// signal number
-   pid_t  p;	// process ID
-   pid_t  pp;	// parent process ID
-   int    verbose;
-   int    opt_index;
-   MyConf cnf;
+   int              c;
+   int              val;
+   int              verbose;
+   int              opt_index;
+   char             buff[16];
+   pid_t            p;   // process ID
+   pid_t            pp;  // parent process ID
+   size_t           count;
+   size_t           action_size;
+   SuicideAction ** actions;
 
    static char   short_opt[] = "hn:s:SvV";
    static struct option long_opt[] =
@@ -312,11 +344,12 @@ int main(int argc, char * argv[])
    textdomain (PACKAGE);
 #endif
 
-   memset(&cnf, 0, sizeof(MyConf));
-   verbose = 0;
-   p       = getpid();
-   pp      = getpid();
-   opt_index          = 0;
+   p           = getpid();
+   pp          = getppid();
+   actions     = NULL;
+   verbose     = 0;
+   opt_index   = 0;
+   action_size = 0;
 
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -328,6 +361,15 @@ int main(int argc, char * argv[])
          case 'h':
             suicide_usage();
             return(0);
+         case 'n':
+            val = strtoll(optarg, NULL, 0);
+            if ((suicide_find_data(&actions, &action_size, NULL, val)))
+               return(1);
+            break;
+         case 's':
+            if ((suicide_find_data(&actions, &action_size, optarg, -1)))
+               return(1);
+            break;
          case 'S':
             suicide_susv3_sigs();
             return(0);
@@ -351,31 +393,32 @@ int main(int argc, char * argv[])
 
    if (verbose)
    {
-      printf("%i = getppid()\n", pp);
-      printf("%i = getpid()\n", p);
+      printf(">> getppid(): %i\n", pp);
+      printf(">> getpid():  %i\n", p);
    };
 
-   for(i = 0; i < cnf.count; i++)
+   for(c = 0; c < 32; c++)
+      signal(c, suicide_signal_handler);
+
+   for(count = 0; count < action_size; count++)
    {
-      switch(cnf.pair[cnf.count].action)
-      {
-         case MY_ACTION_SIGNAL:
-            if (my_toggle_verbose)
-               printf("kill(%i, %i) == ", p, s);
-            fflush(stdout);
-            e = kill(p, s);
-            if (my_toggle_verbose)
-               printf("%i\n", e);
-            break;
-         case MY_ACTION_HANDLE:
-            break;
-         default:
-            printf("unknown action\n");
-            break;
-      };
+      if (actions[count]->data)
+         snprintf(buff, 16L, "%s", actions[count]->data->name);
+      else
+         snprintf(buff, 16L, "%i", actions[count]->number);
+      if (verbose)
+         printf(">> signal(%s)\n", buff);
+      signal(actions[count]->number, suicide_signal_handler);
+      printf(">> kill(%i, %s)\n", p, buff);
+      kill(p, actions[count]->number);
+      if (verbose)
+         printf(">> usleep(100)\n");
+      usleep(100);
    };
 
-   printf("return(0) == 0\n");
+   if (verbose)
+      printf(">> return(0)\n");
+
    return(0);
 }
 
@@ -384,54 +427,94 @@ int main(int argc, char * argv[])
 void suicide_signal_handler(int sig)
 {
    int i;
+   const char * name;
    signal(sig, SIG_IGN);
-   if (my_toggle_verbose)
-      for(i = 0; susv3_signals[i].name; i++)
-         if (susv3_signals[i].number == sig)
-            printf("<< caught %s >> ", susv3_signals[i].name);
+   name = NULL;
+   for(i = 0; susv3_signals[i].name; i++)
+      if (susv3_signals[i].number == sig)
+         name =  susv3_signals[i].name;
+   if (name)
+      printf("   -- caught %s --\n", name);
+   else
+      printf("   -- caught signal %i --\n", sig);
    signal(sig, suicide_signal_handler);
    return;
 }
 
 
-/// verifies signal number
-int suicide_signum(const char * str)
+/// finds a signal from the table and returns action
+/// @param[in]  str
+/// @param[in]  val
+int suicide_find_data(SuicideAction *** list, size_t * count, const char * str,
+   int val)
 {
-   unsigned u;
-   int sig;
-   for(u = 0; u < strlen(str); u++)
-      if ((str[u] < '0') || (str[u] > '9'))
-         return(-1);
-   sig = atol(str);
-   for(u = 0; susv3_signals[u].name; u++)
-      if (susv3_signals[u].number == sig)
-         return(sig);
-   return(-1);
-}
+   int              i;
+   size_t           offset;
+   SuicideAction  * action;
+   SuicideAction ** ptr;
 
+   if (!(ptr = realloc(*list, (sizeof(SuicideAction *)*((*count)+1)))))
+   {
+      fprintf(stderr, PROGRAM_NAME ": out of virtual memory\n");
+      return(-1);
+   };
+   *list = ptr;
 
-/// interprets signal name
-int suicide_sigspec(const char * str)
-{
-   int i;
-   for(i = 0; susv3_signals[i].name; i++)
-      if (!(strcasecmp(str, susv3_signals[i].name)))
-         return(susv3_signals[i].number);
-   for(i = 0; susv3_signals[i].name; i++)
-      if (!(strcasecmp(str, &susv3_signals[i].name[3])))
-         return(susv3_signals[i].number);
-   return(-1);
+   if (!(action = malloc(sizeof(SuicideAction))))
+   {
+      fprintf(stderr, PROGRAM_NAME ": out of virtual memory\n");
+      return(-1);
+   };
+   memset(action, 0, sizeof(SuicideAction));
+   action->number = -1;
+
+   if (str)
+   {
+      offset = (strncasecmp("sig", str, 3L)) ? 3 : 0;
+      for(i = 0; susv3_signals[i].name; i++)
+      {
+         if (!(strcasecmp(&susv3_signals[i].name[offset], str)))
+         {
+            action->number = susv3_signals[i].number;
+            action->data   = &susv3_signals[i];
+            (*list)[(*count)] = action;
+            (*count)++;
+            return(0);
+         };
+      };
+      free(action);
+      fprintf(stderr, PROGRAM_NAME ": unknown signal\n");
+      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+      return(-1);
+   };
+
+   (*list)[(*count)] = action;
+   (*count)++;
+
+   if (!(str))
+   {
+      action->number = val;
+      for(i = 0; susv3_signals[i].name; i++)
+         if (susv3_signals[i].number == val)
+            action->data = &susv3_signals[i];
+   };
+
+   return(0);
 }
 
 
 /// displays SUSv3 signals
 void suicide_susv3_sigs(void)
 {
-   int i;
+   size_t count;
+   size_t i;
    printf("Available Single Unix Specification v3 Signals\n");
    printf("   Signal      Value  Action  Description\n");
-   for(i = 0; susv3_signals[i].desc; i++)
-      if (susv3_signals[i].number > 0)
+   for(i = 0; susv3_signals[i].desc; i++);
+   count = i;
+   qsort(&susv3_signals, count, sizeof(SuicideData), (int (*)(const void *, const void *))suicide_cmp_val);
+   for(i = 0; i < (count+1); i++)
+      if (susv3_signals[i].name)
          printf("   %-9s   %-5i  %c       %s\n", susv3_signals[i].name, susv3_signals[i].number, susv3_signals[i].action, susv3_signals[i].desc);
    return;
 }
@@ -445,12 +528,10 @@ void suicide_usage(void)
    // line. The two strings referenced are: PROGRAM_NAME, and
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s [OPTIONS]\n"
-         "  -signum                   signal number to send\n"
-         "  -sigspec                  signal name to send\n"
+         "  -h, --help                print this help and exit\n"
          "  -n signum                 signal number to send\n"
          "  -s sigspec                signal name to send\n"
          "  -S, --signals             print SUSv3 signal table\n"
-         "  -h, --help                print this help and exit\n"
          "  -v, --verbose             print verbose messages\n"
          "  -V, --version             print version number and exit\n"
          "\n"
