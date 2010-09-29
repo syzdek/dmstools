@@ -320,6 +320,7 @@ int main(int argc, char * argv[])
    int              c;
    int              val;
    int              verbose;
+   int              attempt_catch;
    int              opt_index;
    char             buff[16];
    pid_t            p;   // process ID
@@ -328,7 +329,7 @@ int main(int argc, char * argv[])
    size_t           action_size;
    SuicideAction ** actions;
 
-   static char   short_opt[] = "hn:s:SvV";
+   static char   short_opt[] = "chn:s:SvV";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -350,6 +351,7 @@ int main(int argc, char * argv[])
    verbose     = 0;
    opt_index   = 0;
    action_size = 0;
+   attempt_catch = 0;
 
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -357,6 +359,9 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
+            break;
+         case 'c':
+            attempt_catch = 1;
             break;
          case 'h':
             suicide_usage();
@@ -397,8 +402,9 @@ int main(int argc, char * argv[])
       printf(">> getpid():  %i\n", p);
    };
 
-   for(c = 0; c < 32; c++)
-      signal(c, suicide_signal_handler);
+   if (attempt_catch)
+      for(c = 0; c < 32; c++)
+         signal(c, suicide_signal_handler);
 
    for(count = 0; count < action_size; count++)
    {
@@ -406,9 +412,12 @@ int main(int argc, char * argv[])
          snprintf(buff, 16L, "%s", actions[count]->data->name);
       else
          snprintf(buff, 16L, "%i", actions[count]->number);
-      if (verbose)
-         printf(">> signal(%s)\n", buff);
-      signal(actions[count]->number, suicide_signal_handler);
+      if (attempt_catch)
+      {
+         if (verbose)
+            printf(">> signal(%s)\n", buff);
+         signal(actions[count]->number, suicide_signal_handler);
+      };
       printf(">> kill(%i, %s)\n", p, buff);
       kill(p, actions[count]->number);
       if (verbose)
@@ -528,6 +537,7 @@ void suicide_usage(void)
    // line. The two strings referenced are: PROGRAM_NAME, and
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s [OPTIONS]\n"
+         "  -c                        attempt to catch signals\n"
          "  -h, --help                print this help and exit\n"
          "  -n signum                 signal number to send\n"
          "  -s sigspec                signal name to send\n"
