@@ -203,7 +203,6 @@ int main(int argc, char * argv[])
    int         opt_index;
    size_t      offset;
    size_t      offset_mod;
-   size_t      offset_div;
    size_t      len;
    size_t      line;
    size_t      line_add;
@@ -233,7 +232,6 @@ int main(int argc, char * argv[])
    line         = 0;
    offset       = 0;
    offset_mod   = 0;
-   offset_div   = 0;
    verbose      = 0;
    memset(&file1, 0, sizeof(BinDumpFile));
    memset(&file2, 0, sizeof(BinDumpFile));
@@ -256,7 +254,6 @@ int main(int argc, char * argv[])
             break;
          case 'o':
             offset = strtoul(optarg, NULL, 0);
-            offset_div = (offset / 8);
             offset_mod = (offset % 8);
             break;
          case 'r':
@@ -789,11 +786,15 @@ char * my_byte2str(signed data, char * buff, unsigned opts)
 {
    unsigned b;
    if (!(opts & MY_OPT_REVERSEBIT))
+   {
       for(b = 0; b < 8; b++)
          buff[b] = (data & (0x01 << (7-b))) ? '1' : '0';
-   if ((opts & MY_OPT_REVERSEBIT))
+   }
+   else
+   {
       for(b = 0; b < 8; b++)
          buff[b] = (data & (0x01 << b)) ? '1' : '0';
+   };
    buff[b] = '\0';
    return(buff);
 }
