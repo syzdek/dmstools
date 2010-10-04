@@ -118,11 +118,8 @@ int main(int argc, char * argv[])
 {
    int        c;
    int        i;
-   //int        err;
    int        opts;
    int        option_index;
-   int        len;
-   //void     * ptr;
    char    ** list;
 
    static char   short_options[] = "acfhLqrvV";
@@ -136,7 +133,6 @@ int main(int argc, char * argv[])
       {NULL,            0,           0, 0  }
    };
 
-   len          = 0;
    opts         = 0;
    option_index = 0;
    list         = NULL;
@@ -307,7 +303,7 @@ int recurse_directory(char * origin, int opts, void * data,
                  (dp->d_name[1] != '\0') &&
                  (dp->d_name[1] != '.') )
             {
-               switch (err = recurse_file(file, opts, data, func, &count, &queue, &size))
+               switch (recurse_file(file, opts, data, func, &count, &queue, &size))
                {
                   case -1:
                      free(file);
@@ -329,7 +325,7 @@ int recurse_directory(char * origin, int opts, void * data,
          }
          else if (dp->d_name[0] != '.')
          {
-            switch (err = recurse_file(file, opts, data, func, &count, &queue, &size))
+            switch (recurse_file(file, opts, data, func, &count, &queue, &size))
             {
                case -1:
                   free(file);
