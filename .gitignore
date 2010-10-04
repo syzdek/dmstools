@@ -3,6 +3,7 @@
 *.mode1v3
 *.o
 *.pbxuser
+*.xcworkspace
 .DS_Store
 .deps
 .dirstamp
@@ -20,3 +21,4 @@ config.log
 config.status
 configure
 stamp-h1
+xcuserdata
