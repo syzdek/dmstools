@@ -320,7 +320,6 @@ int codetagger_buffer_write(CodeTagger * cnf, const char * src, size_t len,
 /// @param[in]  ...   the format arguments of the message
 void codetagger_debug_trace(CodeTagger * cnf, const char * func, const char * fmt, ...)
 {
-   int     len;
    char    buff[1024];
    va_list ap;
 
@@ -334,7 +333,7 @@ void codetagger_debug_trace(CodeTagger * cnf, const char * func, const char * fm
       return;
    };
    va_start(ap, fmt);
-      len = vsnprintf(buff, (size_t)1023, fmt, ap);
+      vsnprintf(buff, (size_t)1023, fmt, ap);
    va_end(ap);
    buff[1023] = '\0';
    if (!(func))
@@ -351,7 +350,6 @@ void codetagger_debug_trace(CodeTagger * cnf, const char * func, const char * fm
 /// @param[in]  ...    the format arguments of the message
 void codetagger_error(CodeTagger * cnf, const char * fmt, ...)
 {
-   int     len;
    char    buff[1024];
    va_list ap;
 
@@ -364,7 +362,7 @@ void codetagger_error(CodeTagger * cnf, const char * fmt, ...)
          return;
 
    va_start(ap, fmt);
-      len = vsnprintf(buff, (size_t)1023, fmt, ap);
+      vsnprintf(buff, (size_t)1023, fmt, ap);
    va_end(ap);
    buff[1023] = '\0';
 
@@ -586,7 +584,7 @@ int codetagger_parse_tag_file(CodeTagger * cnf)
    codetagger_verbose(cnf, _("indexing \"%s\"\n"), cnf->tagFile);
    for(i = 0; i < (int)lineCount; i++)
    {
-      if (!(err = regexec(&regex, data[i], (size_t)5, match, 0)))
+      if (!(regexec(&regex, data[i], (size_t)5, match, 0)))
       {
          data[i][(int)match[1].rm_eo] = '\0';
          strncpy(tagName, &data[i][(int)match[1].rm_so], (CODETAGGER_STR_LEN-1));
@@ -733,7 +731,7 @@ int codetagger_scan_directory(CodeTagger * cnf, const char * origin)
                  (dp->d_name[1] != '\0') &&
                  (dp->d_name[1] != '.') )
             {
-               switch (err = codetagger_scan_file(cnf, file, &count, &queue, &size))
+               switch (codetagger_scan_file(cnf, file, &count, &queue, &size))
                {
                   case -1:
                      free(file);
@@ -755,7 +753,7 @@ int codetagger_scan_directory(CodeTagger * cnf, const char * origin)
          }
          else if (dp->d_name[0] != '.')
          {
-            switch (err = codetagger_scan_file(cnf, file, &count, &queue, &size))
+            switch (codetagger_scan_file(cnf, file, &count, &queue, &size))
             {
                case -1:
                   free(file);
@@ -876,6 +874,7 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename,
    char * bol;
    regmatch_t match[5];
    CodeTaggerData * tag;
+   struct stat sb;
 
    codetagger_debug(cnf);
    codetagger_debug_ext(cnf, filename);
@@ -887,6 +886,11 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename,
       return(err);
 
    // imports original file into buffer
+   if ((lstat(filename, &sb)))
+   {
+      codetagger_error(cnf, "%s: %s\n", filename, strerror(errno));
+      return(1);
+   };
    if ((fd = open(filename, O_RDONLY)) == -1)
    {
       codetagger_error(cnf, "%s: %s\n", filename, strerror(errno));
@@ -947,7 +951,7 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename,
          continue;
 
       // fast forwards to end tag in original file
-      if ((err = regexec(&tag->regex, &cnf->buff_orig[cnf->pos_orig+1], (size_t)5, match, 0)))
+      if ((regexec(&tag->regex, &cnf->buff_orig[cnf->pos_orig+1], (size_t)5, match, 0)))
       {
          codetagger_error(cnf, "%s: missing \"%sEND\" tag\n", filename, tagname);
          return(1);
@@ -996,7 +1000,7 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename,
    if (!(cnf->opts & CODETAGGER_OPT_QUIET))
       printf("updating \"%s\"\n", filename);
 
-   if ((fd = open(filename, O_WRONLY|O_TRUNC|O_CREAT)) == -1)
+   if ((fd = open(filename, O_WRONLY|O_TRUNC|O_CREAT, sb.st_mode)) == -1)
    {
       codetagger_error(cnf, "%s: %s\n", filename, strerror(errno));
       close(fd);
