@@ -277,7 +277,7 @@ int main(int argc, char * argv[])
          printf("%3i: %s  ==> ", x-optind+1, arg);
 
       /* tests the buffer against the regular expression */
-      if ((err = regexec(&regex, arg, (size_t)MAX_MATCHES, matches, 0)))
+      if ((regexec(&regex, arg, (size_t)MAX_MATCHES, matches, 0)))
       {
          if (!(quiet))
             printf("not found\n");
@@ -285,7 +285,6 @@ int main(int argc, char * argv[])
       } else {
          if (!(quiet))
             printf(" found\n");
-         str_len = 1;
 
          /* copies sub matches in buffer string */
          if (verbosity)

@@ -472,8 +472,8 @@ int main(int argc, char * argv[])
          return(1);
       };
       for(y = 0; data[y].name; y++)
-         if ( (!(err = regexec(&regex, data[y].name, (size_t)2, matches, 0))) ||
-              (!(err = regexec(&regex, data[y].include, (size_t)2, matches, 0))) )
+         if ( (!(regexec(&regex, data[y].name, (size_t)2, matches, 0))) ||
+              (!(regexec(&regex, data[y].include, (size_t)2, matches, 0))) )
          {
             list_count++;
             if (!(ptr = realloc(list, sizeof(struct my_data)*list_count)))
