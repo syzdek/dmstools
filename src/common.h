@@ -82,9 +82,5 @@
 #define PACKAGE_VERSION ""
 #endif
 
-#ifndef PROGRAM_NAME
-#define PROGRAM_NAME ""
-#endif
-
 #endif
 /* end of header */

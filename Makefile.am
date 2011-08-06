@@ -39,7 +39,7 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
-bin_PROGRAMS				= src/bindump src/bitcopy src/bitops src/colors src/dmsversion src/numconvert src/typedef-info
+bin_PROGRAMS				= src/bindump src/bitcopy src/bitops src/colors src/dmsversion src/netcalc src/numconvert src/typedef-info
 include_HEADERS				= include/dms.h include/dmsversion.h
 lib_LTLIBRARIES				= lib/libdms.la
 noinst_PROGRAMS				=
@@ -107,6 +107,13 @@ src_dmsversion_CPPFLAGS			= -DPROGRAM_NAME="\"dmsversion\"" $(AM_CPPFLAGS)
 src_dmsversion_LDADD			= $(AM_LDADD) lib/libdms.la
 src_dmsversion_SOURCES			= $(noinst_HEADERS) \
 					  src/dmsversion.c
+
+
+# macros for src/netcalc
+src_netcalc_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
+src_netcalc_CPPFLAGS			= -DPROGRAM_NAME="\"netcalc\"" $(AM_CPPFLAGS)
+src_netcalc_SOURCES			= $(noinst_HEADERS) \
+					  src/netcalc.c
 
 
 # macros for src/numconvert
