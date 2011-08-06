@@ -106,6 +106,7 @@
 #define MY_OPT_LEBYTE   0x20  ///< print binary in little endian byte order
 #define MY_OPT_LEBIT    0x40  ///< print binary in little endian bit order
 #define MY_OPT_LIMIT    0x80  ///< print hex and binary with least amount of digits
+#define MY_OPT_ASCII    0x100
 
 #define MY_TOGGLE(value, bit) ( (value&bit) ? (value&(~bit)) : (value|bit))
 
@@ -151,7 +152,7 @@ int main(int argc, char * argv[])
    uintmax_t byte;
 
    // getopt options
-   static char   short_opt[] = "aBbDdhlOoRrsVXx";
+   static char   short_opt[] = "AaBbDdhlOoRrsVXx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -169,8 +170,12 @@ int main(int argc, char * argv[])
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
             break;
+         case 'A':
+            opt |= MY_OPT_ASCII;
+            break;
          case 'a':
-            opt |= (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT);
+            base = -1;
+            //opt |= (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT|);
             break;
          case 'B':
             opt |= MY_OPT_BIN;
@@ -227,8 +232,8 @@ int main(int argc, char * argv[])
       };
    };
 
-   if (!(opt & (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT)))
-      opt |= (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT);
+   if (!(opt & (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT|MY_OPT_ASCII)))
+      opt |= (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT|MY_OPT_ASCII);
 
    if ((argc - optind) < 1)
    {
@@ -256,8 +261,11 @@ int main(int argc, char * argv[])
                     ((argv[x][y] >= 'A') && (argv[x][y] <= 'Z')) )
                   base = 16;
       };
-      num = strtoumax(argv[x], NULL, base);
       max = sizeof(intmax_t);
+      if (base == -1)
+         num = argv[x][0];
+      else
+         num = strtoumax(argv[x], NULL, base);
       if (opt & MY_OPT_LIMIT)
       {
          max = 1;
@@ -265,9 +273,7 @@ int main(int argc, char * argv[])
             if ( (num >> (y*8)) & 0xFF )
                max = (y+1);
       };
-      if (opt & MY_OPT_OCT) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0%jo"    : ",0%jo")    : "0%jo"),    num);
-      if (opt & MY_OPT_DEC) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", %ju"     : ",%ju")     : "%ju"),     num);
-      if (opt & MY_OPT_HEX) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0x%0*jX" : ",0x%0*jX") : "0x%0*jX"), (unsigned)(max*2), num);
+      if (opt & MY_OPT_ASCII) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", '%c'" : ",'%c'") : "'%c'"), ((((num & 0xFF) >= 32) && ((num & 0xFF) <= 126)) ? (char)(num & 0xFF) : '.'));
       if (opt & MY_OPT_BIN)
       {
          if (len) printf((opt & MY_OPT_SPACE) ? ", " : ",");
@@ -285,9 +291,14 @@ int main(int argc, char * argv[])
                   buff[z] = (byte & (0x01 << (7-z))) ? '1' : '0';
             buff[z] = '\0';
             printf("%s", buff);
-            if (opt & MY_OPT_SPACE) printf(" ");
+            if ((opt & MY_OPT_SPACE) && (((uint32_t)y+1) < max))
+               printf(" ");
          };
+         len = 1;
       };
+      if (opt & MY_OPT_HEX) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0x%0*jX" : ",0x%0*jX") : "0x%0*jX"), (unsigned)(max*2), num);
+      if (opt & MY_OPT_OCT) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0%jo"    : ",0%jo")    : "0%jo"),    num);
+      if (opt & MY_OPT_DEC) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", %ju"     : ",%ju")     : "%ju"),     num);
       printf("\n");
    };
 
@@ -303,6 +314,8 @@ void my_usage()
    // line. The two strings referenced are: PROGRAM_NAME, and
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s num1 num2 ... numX\n"
+         "  -A                        enable ASCII output\n"
+         "  -a                        assume binary notation for input\n"
          "  -B                        enable binary output\n"
          "  -b                        assume binary notation for input\n"
          "  -D                        enable decimal output\n"
