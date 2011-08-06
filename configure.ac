@@ -24,12 +24,12 @@
 
 AC_PREREQ(2.61)
 
-AC_COPYRIGHT([Copyright (c) 2008, 2009, 2010 David M. Syzdek <david@syzdek.net>.])
+AC_COPYRIGHT([Copyright (c) 2008, 2009, 2010, 2011 David M. Syzdek <david@syzdek.net>.])
 AC_REVISION($Revision: 1.13 $)
-AC_INIT([DMS Tools and Utilities],[1.1],[david@syzdek.net],[dmstools])
+AC_INIT([DMS Tools and Utilities],[1.2],[david@syzdek.net],[dmstools])
 
-AC_SUBST([RELEASE_MONTH],     ["September 2010"])
-AC_SUBST([PACKAGE_COPYRIGHT], ["Copyright (C) 2008, 2009, 2010 David M. Syzdek."])
+AC_SUBST([RELEASE_MONTH],     ["August 2011"])
+AC_SUBST([PACKAGE_COPYRIGHT], ["Copyright (C) 2008, 2009, 2010, 2011 David M. Syzdek."])
 AC_DEFINE_UNQUOTED(PACKAGE_COPYRIGHT, ["$PACKAGE_COPYRIGHT"], ["Copyright info"])
 
 # Version Info:
