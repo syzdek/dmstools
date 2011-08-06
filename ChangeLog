@@ -2,6 +2,10 @@
 DMS Tools and Utilities
 Copyright (C) 2008, 2009, 2010 David M. Syzdek <david@syzdek.net>
 
+1.2	2011/08/06 (syzdek)
+	- Adding netcalc utility. (syzdek)
+	- Updating numconvert to support ASCII characters (syzdek)
+
 1.1	2010/09/28
 	- Fixing display bug in bindump that was added by git commit
 	  3226926f8b04. (syzdek)
