@@ -35,12 +35,12 @@
 /* Begin PBXFileReference section */
 		A03EDDC614E093A100F3EF24 /* endian */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = endian; sourceTree = BUILT_PRODUCTS_DIR; };
 		A03EDDD114E093BF00F3EF24 /* endian.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = endian.c; sourceTree = "<group>"; };
-		A0F63C96125A49F400E27781 /* acinclude.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = acinclude.m4; sourceTree = "<group>"; };
+		A0F63C96125A49F400E27781 /* acinclude.m4 */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = acinclude.m4; sourceTree = "<group>"; };
 		A0F63C98125A49F400E27781 /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
-		A0F63C9B125A49F400E27781 /* Makefile-xcode */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Makefile-xcode"; sourceTree = "<group>"; };
+		A0F63C9B125A49F400E27781 /* Makefile-xcode */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; path = "Makefile-xcode"; sourceTree = "<group>"; };
 		A0F63CA0125A49F500E27781 /* dmstools.tags */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dmstools.tags; sourceTree = "<group>"; };
 		A0F63CA6125A49F500E27781 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
-		A0F63CA7125A49F500E27781 /* configure.ac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure.ac; sourceTree = "<group>"; };
+		A0F63CA7125A49F500E27781 /* configure.ac */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = configure.ac; sourceTree = "<group>"; };
 		A0F63CA8125A49F500E27781 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		A0F63CAC125A49F500E27781 /* bindump.1.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bindump.1.in; sourceTree = "<group>"; };
 		A0F63CAD125A49F500E27781 /* bitops.1.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bitops.1.in; sourceTree = "<group>"; };
@@ -48,8 +48,8 @@
 		A0F63CAF125A49F500E27781 /* numconvert.1.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = numconvert.1.in; sourceTree = "<group>"; };
 		A0F63CB0125A49F500E27781 /* posixregex.1.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = posixregex.1.in; sourceTree = "<group>"; };
 		A0F63CB2125A49F500E27781 /* dms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dms.h; sourceTree = "<group>"; };
-		A0F63CB3125A49F500E27781 /* dmsversion.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dmsversion.h.in; sourceTree = "<group>"; };
-		A0F63CB4125A49F500E27781 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
+		A0F63CB3125A49F500E27781 /* dmsversion.h.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = dmsversion.h.in; sourceTree = "<group>"; };
+		A0F63CB4125A49F500E27781 /* Makefile.am */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; indentWidth = 8; path = Makefile.am; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		A0F63CB5125A49F500E27781 /* NEWS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NEWS; sourceTree = "<group>"; };
 		A0F63CB6125A49F500E27781 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		A0F63CBC125A49F500E27781 /* bindump.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bindump.c; sourceTree = "<group>"; };
@@ -898,6 +898,7 @@
 				A03EDDCE14E093A100F3EF24 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A0F63DEC125A52C900E27781 /* Build configuration list for PBXNativeTarget "bindump" */ = {
 			isa = XCConfigurationList;
