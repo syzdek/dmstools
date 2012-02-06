@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A03EDDD214E093BF00F3EF24 /* endian.c in Sources */ = {isa = PBXBuildFile; fileRef = A03EDDD114E093BF00F3EF24 /* endian.c */; };
 		A0F63DC9125A526400E27781 /* bindump.c in Sources */ = {isa = PBXBuildFile; fileRef = A0F63CBC125A49F500E27781 /* bindump.c */; };
 		A0F63DCA125A526A00E27781 /* bitcopy.c in Sources */ = {isa = PBXBuildFile; fileRef = A0F63CBE125A49F500E27781 /* bitcopy.c */; };
 		A0F63DCB125A527000E27781 /* bitops.c in Sources */ = {isa = PBXBuildFile; fileRef = A0F63CC0125A49F500E27781 /* bitops.c */; };
@@ -19,7 +20,21 @@
 		A0F63DD3125A529F00E27781 /* typedef-info.c in Sources */ = {isa = PBXBuildFile; fileRef = A0F63CD4125A49F500E27781 /* typedef-info.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		A03EDDC414E093A100F3EF24 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		A03EDDC614E093A100F3EF24 /* endian */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = endian; sourceTree = BUILT_PRODUCTS_DIR; };
+		A03EDDD114E093BF00F3EF24 /* endian.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = endian.c; sourceTree = "<group>"; };
 		A0F63C96125A49F400E27781 /* acinclude.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = acinclude.m4; sourceTree = "<group>"; };
 		A0F63C98125A49F400E27781 /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
 		A0F63C9B125A49F400E27781 /* Makefile-xcode */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Makefile-xcode"; sourceTree = "<group>"; };
@@ -63,6 +78,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A03EDDC314E093A100F3EF24 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0F63D7D125A51D700E27781 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -170,6 +192,7 @@
 				A0F63DB7125A523700E27781 /* recurse */,
 				A0F63DBE125A524100E27781 /* suicide */,
 				A0F63DC5125A525000E27781 /* typedef-info */,
+				A03EDDC614E093A100F3EF24 /* endian */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -214,6 +237,7 @@
 				A0F63CC4125A49F500E27781 /* colors.c */,
 				A0F63CC6125A49F500E27781 /* common.h */,
 				A0F63CC7125A49F500E27781 /* dmsversion.c */,
+				A03EDDD114E093BF00F3EF24 /* endian.c */,
 				A0F63CC9125A49F500E27781 /* numconvert.c */,
 				A0F63CCB125A49F500E27781 /* posixregex.c */,
 				A0F63CCD125A49F500E27781 /* recurse.c */,
@@ -226,6 +250,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A03EDDC514E093A100F3EF24 /* endian */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A03EDDCF14E093A100F3EF24 /* Build configuration list for PBXNativeTarget "endian" */;
+			buildPhases = (
+				A03EDDC214E093A100F3EF24 /* Sources */,
+				A03EDDC314E093A100F3EF24 /* Frameworks */,
+				A03EDDC414E093A100F3EF24 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = endian;
+			productName = endian;
+			productReference = A03EDDC614E093A100F3EF24 /* endian */;
+			productType = "com.apple.product-type.tool";
+		};
 		A0F63D7E125A51D700E27781 /* bindump */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A0F63DEC125A52C900E27781 /* Build configuration list for PBXNativeTarget "bindump" */;
@@ -413,6 +454,7 @@
 				A0F63D8C125A51EC00E27781 /* bitops */,
 				A0F63D93125A51F600E27781 /* codetagger */,
 				A0F63D9A125A520500E27781 /* colors */,
+				A03EDDC514E093A100F3EF24 /* endian */,
 				A0F63DA8125A521B00E27781 /* numconvert */,
 				A0F63DAF125A522D00E27781 /* posixregex */,
 				A0F63DB6125A523700E27781 /* recurse */,
@@ -423,6 +465,14 @@
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A03EDDC214E093A100F3EF24 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A03EDDD214E093BF00F3EF24 /* endian.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0F63D7C125A51D700E27781 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -531,6 +581,41 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		A03EDDCD14E093A100F3EF24 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A03EDDCE14E093A100F3EF24 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -805,6 +890,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		A03EDDCF14E093A100F3EF24 /* Build configuration list for PBXNativeTarget "endian" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A03EDDCD14E093A100F3EF24 /* Debug */,
+				A03EDDCE14E093A100F3EF24 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		A0F63DEC125A52C900E27781 /* Build configuration list for PBXNativeTarget "bindump" */ = {
 			isa = XCConfigurationList;

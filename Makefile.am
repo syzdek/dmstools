@@ -113,6 +113,14 @@ src_colors_SOURCES			= $(noinst_HEADERS) \
 					  src/colors.c
 
 
+# macros for src/endian
+src_endian_DEPENDENCIES			= $(lib_LTLIBRARIES) Makefile
+src_endian_CPPFLAGS			= -DPROGRAM_NAME="\"endian\"" $(AM_CPPFLAGS)
+src_endian_SOURCES			= $(noinst_HEADERS) \
+					  src/endian.c
+bin_PROGRAMS += src/endian
+
+
 # macros for src/dmsversion
 src_dmsversion_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_dmsversion_CPPFLAGS			= -DPROGRAM_NAME="\"dmsversion\"" $(AM_CPPFLAGS)

@@ -3,6 +3,7 @@ bitcopy
 bitops
 codetagger
 colors
+endian
 netcalc
 numconvert
 posixregex
