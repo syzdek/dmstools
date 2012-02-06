@@ -27,7 +27,6 @@
 		A0F63CA6125A49F500E27781 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		A0F63CA7125A49F500E27781 /* configure.ac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure.ac; sourceTree = "<group>"; };
 		A0F63CA8125A49F500E27781 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
-		A0F63CA9125A49F500E27781 /* COPYING.DOC */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING.DOC; sourceTree = "<group>"; };
 		A0F63CAC125A49F500E27781 /* bindump.1.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bindump.1.in; sourceTree = "<group>"; };
 		A0F63CAD125A49F500E27781 /* bitops.1.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bitops.1.in; sourceTree = "<group>"; };
 		A0F63CAE125A49F500E27781 /* codetagger.1.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = codetagger.1.in; sourceTree = "<group>"; };
@@ -146,7 +145,6 @@
 				A0F63CA6125A49F500E27781 /* ChangeLog */,
 				A0F63CA7125A49F500E27781 /* configure.ac */,
 				A0F63CA8125A49F500E27781 /* COPYING */,
-				A0F63CA9125A49F500E27781 /* COPYING.DOC */,
 				A0F63CAA125A49F500E27781 /* doc */,
 				A0F63CB1125A49F500E27781 /* include */,
 				A0F63CB4125A49F500E27781 /* Makefile.am */,
