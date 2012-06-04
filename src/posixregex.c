@@ -73,8 +73,8 @@
 //  [:punct:]    [-!"#$%&'()*+,./:;<=>?@[\\\]_`{|}~]   Punctuation characters
 //
 //   Example Uses:
-//      posixregex '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string
-//      posixregex '\$([[:digit:]]+)\.([[:digit:]]{2,2})' 'Your change is $7.45.'
+//      posixregex -rv '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string
+//      posixregex -rv '\$([[:digit:]]+)\.([[:digit:]]{2,2})' 'Your change is $7.45.'
 
 
 ///////////////
