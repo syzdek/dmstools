@@ -263,6 +263,7 @@ int main(int argc, char * argv[])
       return(1);
    };
 
+   // checking for regular expressions string
    if (!(restr))
       restr = getenv("POSIXREGEX");
    if (!(restr))
