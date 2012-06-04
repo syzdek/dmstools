@@ -186,7 +186,7 @@ int main(int argc, char * argv[])
    int          x;
    int          y;
    int          err;
-   int          code;
+   int          exitcode;
    int          str_len;
    int          quiet;
    int          verbosity;
@@ -212,7 +212,7 @@ int main(int argc, char * argv[])
    };
 
    // initialize variables
-   code      = 0;
+   exitcode  = 0;
    restr     = NULL;
    quiet     = 0;
    verbosity = 0;
@@ -302,7 +302,7 @@ int main(int argc, char * argv[])
             printf("not found\n");
          if (verbosity)
             printf("\n");
-         code = 1;
+         exitcode = 1;
       } else {
          if (!(quiet))
             printf(" found\n");
@@ -330,7 +330,7 @@ int main(int argc, char * argv[])
    regfree(&regex);
 
    // end function
-   return(code);
+   return(exitcode);
 }
 
 
