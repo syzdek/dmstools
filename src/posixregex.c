@@ -163,6 +163,9 @@ void my_posixregex PARAMS((void));
 // displays usage
 void my_usage PARAMS((void));
 
+// display incompatible usage
+void my_usage_incompatible PARAMS((char x, char y));
+
 // displays usage
 void my_version PARAMS((void));
 
@@ -231,7 +234,6 @@ int main(int argc, char * argv[])
             return(0);
          case 'q':
             quiet = 1;
-            verbosity = 0;
             break;
          case 'r':
            restr = optarg;
@@ -240,7 +242,6 @@ int main(int argc, char * argv[])
             my_version();
             return(0);
          case 'v':
-            quiet = 0;
             verbosity++;
             break;
          case '?':
@@ -253,6 +254,13 @@ int main(int argc, char * argv[])
             );
             return(1);
       };
+   };
+
+   // check for incompatible options
+   if ( ((verbosity)) && ((quiet)) )
+   {
+      my_usage_incompatible('v', 'q');
+      return(1);
    };
 
    if (!(restr))
@@ -374,6 +382,19 @@ void my_usage(void)
          "\n"
          "Report bugs to <%s>.\n"
       ), PROGRAM_NAME, PACKAGE_BUGREPORT
+   );
+   return;
+}
+
+
+/// display incompatible usage
+void my_usage_incompatible(char x, char y)
+{
+   fprintf(stderr,
+      _(
+         "%s: incompatible options `-%c' and `-%c'\n"
+         "Try `%s --help' for more information.\n"
+      ),  PROGRAM_NAME, x, y, PROGRAM_NAME
    );
    return;
 }
