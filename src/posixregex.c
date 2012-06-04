@@ -306,12 +306,12 @@ int main(int argc, char * argv[])
       } else {
          if (!(quiet))
             printf(" found\n");
-
-         // copies sub matches in buffer string
          if (verbosity)
          {
+            // displays submatches
             for(y = 0; ((y < MAX_MATCHES) && (matches[y].rm_eo > -1)); y++)
             {
+               // copies sub matches in buffer string
                memset(str, 0, (size_t)BUFFER_SIZE);
                if ((str_len = matches[y].rm_eo - matches[y].rm_so))
                {
