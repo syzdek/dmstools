@@ -294,7 +294,8 @@ int main(int argc, char * argv[])
          printf("%3i: %s  ==> ", x-optind+1, arg);
 
       // tests the buffer against the regular expression
-      if ((regexec(&regex, arg, (size_t)MAX_MATCHES, matches, 0)))
+      err = regexec(&regex, arg, (size_t)MAX_MATCHES, matches, 0);
+      if ((err))
       {
          if (!(quiet))
             printf("not found\n");
