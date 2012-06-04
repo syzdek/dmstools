@@ -293,6 +293,8 @@ int main(int argc, char * argv[])
       {
          if (!(quiet))
             printf("not found\n");
+         if (verbosity)
+            printf("\n");
          code = 1;
       } else {
          if (!(quiet))
