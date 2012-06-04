@@ -57,22 +57,21 @@
 //         //
 /////////////
 
-/*
- *  POSIX        ASCII           Description
- *  [:alnum:]    [A-Za-z0-9]     Alphanumeric characters
- *  [:alpha:]    [A-Za-z]        Alphabetic characters
- *  [:blank:]    [ \t]           Space and tab
- *  [:cntrl:]    [\x00-\x1F\x7F] Control characters
- *  [:digit:]    [0-9]           Digits
- *  [:graph:]    [\x21-\x7E]     Visible characters
- *  [:lower:]    [a-z]           Lowercase letters
- *  [:print:]    [\x20-\x7E]     Visible characters and spaces
- *  [:space:]    [ \t\r\n\v\f]   Whitespace characters
- *  [:upper:]    [A-Z]           Uppercase letters
- *  [:xdigit:]   [A-Fa-f0-9]     Hexadecimal digits
- *  [:punct:]    [-!"#$%&'()*+,./:;<=>?@[\\\]_`{|}~]   Punctuation characters
- */
-
+//
+//  POSIX        ASCII           Description
+//  [:alnum:]    [A-Za-z0-9]     Alphanumeric characters
+//  [:alpha:]    [A-Za-z]        Alphabetic characters
+//  [:blank:]    [ \t]           Space and tab
+//  [:cntrl:]    [\x00-\x1F\x7F] Control characters
+//  [:digit:]    [0-9]           Digits
+//  [:graph:]    [\x21-\x7E]     Visible characters
+//  [:lower:]    [a-z]           Lowercase letters
+//  [:print:]    [\x20-\x7E]     Visible characters and spaces
+//  [:space:]    [ \t\r\n\v\f]   Whitespace characters
+//  [:upper:]    [A-Z]           Uppercase letters
+//  [:xdigit:]   [A-Fa-f0-9]     Hexadecimal digits
+//  [:punct:]    [-!"#$%&'()*+,./:;<=>?@[\\\]_`{|}~]   Punctuation characters
+//
 //   Example Uses:
 //      posixregex '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string
 //      posixregex '\$([[:digit:]]+)\.([[:digit:]]{2,2})' 'Your change is $7.45.'
@@ -155,16 +154,16 @@
 //              //
 //////////////////
 
-/* main statement */
+// main statement
 int main PARAMS((int, char **));
 
-/* displays POSIX regular expressions */
+// displays POSIX regular expressions
 void my_posixregex PARAMS((void));
 
-/* displays usage */
+// displays usage
 void my_usage PARAMS((void));
 
-/* displays usage */
+// displays usage
 void my_version PARAMS((void));
 
 
@@ -179,7 +178,7 @@ void my_version PARAMS((void));
 /// @param[in] argv   array of arguments
 int main(int argc, char * argv[])
 {
-   /* declare local vars */
+   // declare local vars
    int          c;
    int          x;
    int          y;
@@ -196,7 +195,7 @@ int main(int argc, char * argv[])
    regmatch_t   matches[MAX_MATCHES];
    const char * restr;
 
-   /* getopt options */
+   // getopt options
    static char   short_opt[] = "hpqr:vV";
    static struct option long_opt[] =
    {
@@ -209,20 +208,20 @@ int main(int argc, char * argv[])
       {NULL,            0,           0, 0  }
    };
 
-   /* initialize variables */
+   // initialize variables
    code      = 0;
    restr     = NULL;
    quiet     = 0;
    verbosity = 0;
    opt_index = 0;
 
-   /* loops through arguments */
+   // loops through arguments
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
       switch(c)
       {
-         case -1:       /* no more arguments */
-         case 0:        /* long options toggles */
+         case -1:       // no more arguments
+         case 0:        // long options toggles
             break;
          case 'h':
             my_usage();
@@ -267,7 +266,7 @@ int main(int argc, char * argv[])
       return(1);
    };
 
-   /* compile regular expression for later use */
+   // compile regular expression for later use
    if (!(quiet))
       printf("regex: %s\n",restr);
    if ((err = regcomp(&regex, restr, REG_EXTENDED|REG_ICASE)))
@@ -277,18 +276,16 @@ int main(int argc, char * argv[])
       return(1);
    };
 
-   /*
-    *  Loops through command line arguments and tests the compiled expressions
-    *  against each argument.
-    */
+   // Loops through command line arguments and tests the compiled expressions
+   // against each argument.
    for (x = optind; x < argc; x++)
    {
-      /* copies string into buffer and prints to screen */
+      // copies string into buffer and prints to screen
       strncpy(arg, argv[x], (size_t)BUFFER_SIZE-1);
       if (!(quiet))
          printf("%3i: %s  ==> ", x-optind+1, arg);
 
-      /* tests the buffer against the regular expression */
+      // tests the buffer against the regular expression
       if ((regexec(&regex, arg, (size_t)MAX_MATCHES, matches, 0)))
       {
          if (!(quiet))
@@ -300,7 +297,7 @@ int main(int argc, char * argv[])
          if (!(quiet))
             printf(" found\n");
 
-         /* copies sub matches in buffer string */
+         // copies sub matches in buffer string
          if (verbosity)
          {
             for(y = 0; ((y < MAX_MATCHES) && (matches[y].rm_eo > -1)); y++)
@@ -319,10 +316,10 @@ int main(int argc, char * argv[])
       };
    };
 
-   /* free regular expression */
+   // free regular expression
    regfree(&regex);
 
-   /* end function */
+   // end function
    return(code);
 }
 
