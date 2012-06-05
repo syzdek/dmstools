@@ -202,10 +202,11 @@ int main(int argc, char * argv[])
       int          quiet;
       int          verbosity;
       int          substring;
+      int          reg_cflags;
    } opt;
 
    // getopt options
-   static char   short_opt[] = "hpqr:svV";
+   static char   short_opt[] = "hipqr:svV";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -219,8 +220,9 @@ int main(int argc, char * argv[])
 
    // initialize variables
    memset(&opt, 0, sizeof(opt));
-   exitcode  = 0;
-   opt_index = 0;
+   opt.reg_cflags = REG_EXTENDED;
+   exitcode       = 0;
+   opt_index      = 0;
 
    // loops through arguments
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
@@ -233,6 +235,9 @@ int main(int argc, char * argv[])
          case 'h':
             my_usage();
             return(0);
+         case 'i':
+            opt.reg_cflags = opt.reg_cflags | REG_ICASE;
+            break;
          case 'p':
             my_posixregex();
             return(0);
@@ -295,7 +300,7 @@ int main(int argc, char * argv[])
    // compile regular expression for later use
    if (!(opt.quiet))
       printf("regex: %s\n", opt.re_str);
-   if ((err = regcomp(&regex, opt.re_str, REG_EXTENDED|REG_ICASE)))
+   if ((err = regcomp(&regex, opt.re_str, opt.reg_cflags)))
    {
       regerror(err, &regex, msg, (size_t)BUFFER_SIZE-1);
       printf("%s\n", msg);
@@ -410,6 +415,7 @@ void my_usage(void)
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s [OPTIONS] string1 string2 ... stringN\n"
          "  -h, --help                print this help and exit\n"
+         "  -i                        ignore upper/lower case distinctions.\n"
          "  -p, --posixregex          print regular expression patterns\n"
          "  -q, --quiet, --silent     do not print messages\n"
          "  -r regex                  regular expression to use for testing strings\n"
