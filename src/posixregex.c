@@ -206,7 +206,7 @@ int main(int argc, char * argv[])
    } opt;
 
    // getopt options
-   static char   short_opt[] = "bhipqr:svV";
+   static char   short_opt[] = "bhinpqr:svV";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -240,6 +240,19 @@ int main(int argc, char * argv[])
             return(0);
          case 'i':
             opt.reg_cflags = opt.reg_cflags | REG_ICASE;
+            break;
+         case 'n':
+            if ((opt.reg_cflags & REG_EXTENDED))
+            {
+               fprintf(stderr, _("%s: option `-n' requires option `-b'\n"
+                     "Try `%s --help' for more information.\n"
+                  ),  PROGRAM_NAME, PROGRAM_NAME
+               );
+               return(1);
+            };
+#ifdef REG_NOSPEC
+            opt.reg_cflags = opt.reg_cflags | REG_NOSPEC;
+#endif
             break;
          case 'p':
             my_posixregex();
@@ -420,6 +433,7 @@ void my_usage(void)
          "  -b                        use obsolete ``basic'' REs\n"
          "  -h, --help                print this help and exit\n"
          "  -i                        ignore upper/lower case distinctions.\n"
+         "  -n                        turn off recoginition of special characters\n"
          "  -p, --posixregex          print regular expression patterns\n"
          "  -q, --quiet, --silent     do not print messages\n"
          "  -r regex                  regular expression to use for testing strings\n"
