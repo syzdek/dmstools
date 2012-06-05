@@ -370,16 +370,16 @@ int main(int argc, char * argv[])
          if (opt.verbosity)
          {
             // displays submatches
-            for(y = 0; ((y < MAX_MATCHES) && (matches[y].rm_eo > -1)); y++)
+            for(y = 0; ((y < MAX_MATCHES) && (y <= regex.re_nsub)); y++)
             {
                // copies sub matches in buffer string
                memset(str, 0, (size_t)BUFFER_SIZE);
-               if ((str_len = matches[y].rm_eo - matches[y].rm_so))
+               if ((str_len = matches[y].rm_eo - matches[y].rm_so) > 0)
                {
                   strncpy(str, &arg[matches[y].rm_so], (size_t)str_len);
                   printf("     submatch %u: %s\n", y, str);
-               } else if (matches[y].rm_eo > 0) {
-                  printf("   submatch %u:\n", y);
+               } else {
+                  printf("     submatch %u:\n", y);
                };
             };
             printf("\n");
