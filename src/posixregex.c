@@ -184,7 +184,7 @@ int main(int argc, char * argv[])
    // declare local vars
    int          c;
    int          x;
-   int          y;
+   unsigned     y;
    int          err;
    int          exitcode;
    int          str_len;
@@ -377,9 +377,9 @@ int main(int argc, char * argv[])
                if ((str_len = matches[y].rm_eo - matches[y].rm_so))
                {
                   strncpy(str, &arg[matches[y].rm_so], (size_t)str_len);
-                  printf("     submatch %i: %s\n", y, str);
+                  printf("     submatch %u: %s\n", y, str);
                } else if (matches[y].rm_eo > 0) {
-                  printf("   submatch %i:\n", y);
+                  printf("   submatch %u:\n", y);
                };
             };
             printf("\n");
