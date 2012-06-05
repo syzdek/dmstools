@@ -188,15 +188,20 @@ int main(int argc, char * argv[])
    int          err;
    int          exitcode;
    int          str_len;
-   int          quiet;
-   int          verbosity;
    int          opt_index;
    char         arg[BUFFER_SIZE];
    char         msg[BUFFER_SIZE];
    char         str[BUFFER_SIZE];
    regex_t      regex;
    regmatch_t   matches[MAX_MATCHES];
-   const char * restr;
+
+   // toggled options
+   struct
+   {
+      const char * re_str;
+      int          quiet;
+      int          verbosity;
+   } opt;
 
    // getopt options
    static char   short_opt[] = "hpqr:vV";
@@ -212,10 +217,8 @@ int main(int argc, char * argv[])
    };
 
    // initialize variables
+   memset(&opt, 0, sizeof(opt));
    exitcode  = 0;
-   restr     = NULL;
-   quiet     = 0;
-   verbosity = 0;
    opt_index = 0;
 
    // loops through arguments
@@ -233,16 +236,16 @@ int main(int argc, char * argv[])
             my_posixregex();
             return(0);
          case 'q':
-            quiet = 1;
+            opt.quiet = 1;
             break;
          case 'r':
-           restr = optarg;
+           opt.re_str = optarg;
            break;
          case 'V':
             my_version();
             return(0);
          case 'v':
-            verbosity++;
+            opt.verbosity++;
             break;
          case '?':
             fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
@@ -257,16 +260,16 @@ int main(int argc, char * argv[])
    };
 
    // check for incompatible options
-   if ( ((verbosity)) && ((quiet)) )
+   if ( ((opt.verbosity)) && ((opt.quiet)) )
    {
       my_usage_incompatible('v', 'q');
       return(1);
    };
 
    // checking for regular expressions string
-   if (!(restr))
-      restr = getenv("POSIXREGEX");
-   if (!(restr))
+   if (!(opt.re_str))
+      opt.re_str = getenv("POSIXREGEX");
+   if (!(opt.re_str))
    {
       fprintf(stderr, _("%s: missing required argument `-- r'\n"
             "Try `%s --help' for more information.\n"
@@ -276,9 +279,9 @@ int main(int argc, char * argv[])
    };
 
    // compile regular expression for later use
-   if (!(quiet))
-      printf("regex: %s\n",restr);
-   if ((err = regcomp(&regex, restr, REG_EXTENDED|REG_ICASE)))
+   if (!(opt.quiet))
+      printf("regex: %s\n", opt.re_str);
+   if ((err = regcomp(&regex, opt.re_str, REG_EXTENDED|REG_ICASE)))
    {
       regerror(err, &regex, msg, (size_t)BUFFER_SIZE-1);
       printf("%s\n", msg);
@@ -291,22 +294,22 @@ int main(int argc, char * argv[])
    {
       // copies string into buffer and prints to screen
       strncpy(arg, argv[x], (size_t)BUFFER_SIZE-1);
-      if (!(quiet))
+      if (!(opt.quiet))
          printf("%3i: %s  ==> ", x-optind+1, arg);
 
       // tests the buffer against the regular expression
       err = regexec(&regex, arg, (size_t)MAX_MATCHES, matches, 0);
       if ((err))
       {
-         if (!(quiet))
+         if (!(opt.quiet))
             printf("not found\n");
-         if (verbosity)
+         if (opt.verbosity)
             printf("\n");
          exitcode = 1;
       } else {
-         if (!(quiet))
+         if (!(opt.quiet))
             printf(" found\n");
-         if (verbosity)
+         if (opt.verbosity)
          {
             // displays submatches
             for(y = 0; ((y < MAX_MATCHES) && (matches[y].rm_eo > -1)); y++)
