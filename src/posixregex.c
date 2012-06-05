@@ -203,6 +203,7 @@ int main(int argc, char * argv[])
       int          verbosity;
       int          substring;
       int          reg_cflags;
+      unsigned     nmatch;
    } opt;
 
    // getopt options
@@ -326,6 +327,10 @@ int main(int argc, char * argv[])
       return(1);
    };
 
+   // determines number of subexpressions
+   opt.nmatch = (MAX_MATCHES > regex.re_nsub) ? regex.re_nsub : MAX_MATCHES;
+   opt.nmatch++;
+
    // Loops through command line arguments and tests the compiled expressions
    // against each argument.
    for (x = optind; x < argc; x++)
@@ -336,7 +341,7 @@ int main(int argc, char * argv[])
          printf("%3i: %s  ==> ", x-optind+1, arg);
 
       // tests the buffer against the regular expression
-      err = regexec(&regex, arg, (size_t)MAX_MATCHES, matches, 0);
+      err = regexec(&regex, arg, opt.nmatch, matches, 0);
 
       // skips displaying substring if error was encountered
       if ( ((err)) && ((opt.substring)) )
@@ -370,7 +375,7 @@ int main(int argc, char * argv[])
          if (opt.verbosity)
          {
             // displays submatches
-            for(y = 0; ((y < MAX_MATCHES) && (y <= regex.re_nsub)); y++)
+            for(y = 0; (y < opt.nmatch); y++)
             {
                // copies sub matches in buffer string
                memset(str, 0, (size_t)BUFFER_SIZE);
