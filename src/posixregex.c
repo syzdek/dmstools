@@ -433,11 +433,11 @@ void my_usage(void)
    // line. The two strings referenced are: PROGRAM_NAME, and
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s [OPTIONS] string1 string2 ... stringN\n"
-         "  -b                        use obsolete ``basic'' REs\n"
+         "  -b                        use obsolete ``basic'' REs (REG_BASIC)\n"
          "  -h, --help                print this help and exit\n"
-         "  -i                        ignore upper/lower case distinctions.\n"
-         "  -l                        enable newline-sensitive matching\n"
-         "  -n                        turn off recoginition of special characters\n"
+         "  -i                        ignore upper/lower case distinctions. (REG_ICASE)\n"
+         "  -l                        enable newline-sensitive matching (REG_NEWLINE)\n"
+         "  -n                        turn off recoginition of special characters (REG_NOSPEC)\n"
          "  -p, --posixregex          print regular expression patterns\n"
          "  -q, --quiet, --silent     do not print messages\n"
          "  -r regex                  regular expression to use for testing strings\n"
