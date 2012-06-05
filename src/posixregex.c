@@ -377,7 +377,10 @@ int main(int argc, char * argv[])
                if ((str_len = matches[y].rm_eo - matches[y].rm_so) > 0)
                {
                   strncpy(str, &arg[matches[y].rm_so], (size_t)str_len);
-                  printf("     submatch %u: %s\n", y, str);
+                  if (!(y))
+                     printf("     full match: %s\n", str);
+                  else
+                     printf("     submatch %u: %s\n", y, str);
                } else {
                   printf("     submatch %u:\n", y);
                };
