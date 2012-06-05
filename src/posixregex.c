@@ -201,10 +201,11 @@ int main(int argc, char * argv[])
       const char * re_str;
       int          quiet;
       int          verbosity;
+      int          substring;
    } opt;
 
    // getopt options
-   static char   short_opt[] = "hpqr:vV";
+   static char   short_opt[] = "hpqr:svV";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -241,6 +242,9 @@ int main(int argc, char * argv[])
          case 'r':
            opt.re_str = optarg;
            break;
+         case 's':
+            opt.substring++;
+            break;
          case 'V':
             my_version();
             return(0);
@@ -263,6 +267,16 @@ int main(int argc, char * argv[])
    if ( ((opt.verbosity)) && ((opt.quiet)) )
    {
       my_usage_incompatible('v', 'q');
+      return(1);
+   };
+   if ( ((opt.verbosity)) && ((opt.substring)) )
+   {
+      my_usage_incompatible('v', 's');
+      return(1);
+   };
+   if ( ((opt.quiet)) && ((opt.substring)) )
+   {
+      my_usage_incompatible('q', 's');
       return(1);
    };
 
@@ -294,19 +308,39 @@ int main(int argc, char * argv[])
    {
       // copies string into buffer and prints to screen
       strncpy(arg, argv[x], (size_t)BUFFER_SIZE-1);
-      if (!(opt.quiet))
+      if ( (!(opt.quiet)) && (!(opt.substring)) )
          printf("%3i: %s  ==> ", x-optind+1, arg);
 
       // tests the buffer against the regular expression
       err = regexec(&regex, arg, (size_t)MAX_MATCHES, matches, 0);
-      if ((err))
+
+      // skips displaying substring if error was encountered
+      if ( ((err)) && ((opt.substring)) )
+      {
+         continue;
+      }
+      // displays substring if not in summary mode
+      else if ( (!(err)) && ((opt.substring)) )
+      {
+         // copies sub matches in buffer string
+         if ((str_len = matches[0].rm_eo - matches[0].rm_so))
+         {
+            strncpy(str, &arg[matches[0].rm_so], (size_t)str_len);
+            printf("%s\n", str);
+         };
+      }
+      // displays result in summary mode
+      else if ((err))
       {
          if (!(opt.quiet))
             printf("not found\n");
          if (opt.verbosity)
             printf("\n");
          exitcode = 1;
-      } else {
+      }
+      // displays result in summary mode
+      else if (!(err))
+      {
          if (!(opt.quiet))
             printf(" found\n");
          if (opt.verbosity)
@@ -379,6 +413,7 @@ void my_usage(void)
          "  -p, --posixregex          print regular expression patterns\n"
          "  -q, --quiet, --silent     do not print messages\n"
          "  -r regex                  regular expression to use for testing strings\n"
+         "  -s                        display sub string which matches entire regular expression\n"
          "  -v, --verbose             print verbose messages\n"
          "  -V, --version             print version number and exit\n"
          "\n"
