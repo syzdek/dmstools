@@ -206,7 +206,7 @@ int main(int argc, char * argv[])
    } opt;
 
    // getopt options
-   static char   short_opt[] = "bhinpqr:svV";
+   static char   short_opt[] = "bhilnpqr:svV";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -240,6 +240,9 @@ int main(int argc, char * argv[])
             return(0);
          case 'i':
             opt.reg_cflags = opt.reg_cflags | REG_ICASE;
+            break;
+         case 'l':
+            opt.reg_cflags = opt.reg_cflags | REG_NEWLINE;
             break;
          case 'n':
             if ((opt.reg_cflags & REG_EXTENDED))
@@ -433,6 +436,7 @@ void my_usage(void)
          "  -b                        use obsolete ``basic'' REs\n"
          "  -h, --help                print this help and exit\n"
          "  -i                        ignore upper/lower case distinctions.\n"
+         "  -l                        enable newline-sensitive matching\n"
          "  -n                        turn off recoginition of special characters\n"
          "  -p, --posixregex          print regular expression patterns\n"
          "  -q, --quiet, --silent     do not print messages\n"
