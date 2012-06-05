@@ -206,7 +206,7 @@ int main(int argc, char * argv[])
    } opt;
 
    // getopt options
-   static char   short_opt[] = "hipqr:svV";
+   static char   short_opt[] = "bhipqr:svV";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -231,6 +231,9 @@ int main(int argc, char * argv[])
       {
          case -1:       // no more arguments
          case 0:        // long options toggles
+            break;
+         case 'b':
+            opt.reg_cflags = opt.reg_cflags & (~REG_EXTENDED);
             break;
          case 'h':
             my_usage();
@@ -414,6 +417,7 @@ void my_usage(void)
    // line. The two strings referenced are: PROGRAM_NAME, and
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s [OPTIONS] string1 string2 ... stringN\n"
+         "  -b                        use obsolete ``basic'' REs\n"
          "  -h, --help                print this help and exit\n"
          "  -i                        ignore upper/lower case distinctions.\n"
          "  -p, --posixregex          print regular expression patterns\n"
