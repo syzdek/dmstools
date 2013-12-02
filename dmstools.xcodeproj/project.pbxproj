@@ -33,6 +33,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A01CB2AE184D4AEA002235BF /* autogen.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = autogen.sh; sourceTree = "<group>"; };
 		A03EDDC614E093A100F3EF24 /* endian */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = endian; sourceTree = BUILT_PRODUCTS_DIR; };
 		A03EDDD114E093BF00F3EF24 /* endian.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = endian.c; sourceTree = "<group>"; };
 		A0F63C96125A49F400E27781 /* acinclude.m4 */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = acinclude.m4; sourceTree = "<group>"; };
@@ -163,6 +164,7 @@
 			children = (
 				A0F63C96125A49F400E27781 /* acinclude.m4 */,
 				A0F63C98125A49F400E27781 /* AUTHORS */,
+				A01CB2AE184D4AEA002235BF /* autogen.sh */,
 				A0F63CA6125A49F500E27781 /* ChangeLog */,
 				A0F63CA7125A49F500E27781 /* configure.ac */,
 				A0F63CA8125A49F500E27781 /* COPYING */,

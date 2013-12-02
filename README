@@ -106,7 +106,7 @@ and create the autotool files.
    Preparing Source:
 
       $ cd dmstools
-      $ autoreconf -i -f -I m4
+      $ ./autogen.sh
 
    Git Branches:
       master - Current release of packages.
