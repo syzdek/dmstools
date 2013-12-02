@@ -36,12 +36,12 @@
 
 AC_PREREQ(2.61)
 
-AC_COPYRIGHT([Copyright (c) 2008, 2009, 2010, 2011 David M. Syzdek <david@syzdek.net>.])
+AC_COPYRIGHT([Copyright (c) 2008, 2009, 2010, 2011, 2013 David M. Syzdek <david@syzdek.net>.])
 AC_REVISION($Revision: 1.13 $)
 AC_INIT([DMS Tools and Utilities],[1.2],[david@syzdek.net],[dmstools])
 
 AC_SUBST([RELEASE_MONTH],     ["August 2011"])
-AC_SUBST([PACKAGE_COPYRIGHT], ["Copyright (C) 2008, 2009, 2010, 2011 David M. Syzdek."])
+AC_SUBST([PACKAGE_COPYRIGHT], ["Copyright (C) 2008, 2009, 2010, 2011, 2013 David M. Syzdek."])
 AC_DEFINE_UNQUOTED(PACKAGE_COPYRIGHT, ["$PACKAGE_COPYRIGHT"], ["Copyright info"])
 
 # Version Info:
@@ -50,12 +50,9 @@ AC_DEFINE_UNQUOTED(PACKAGE_COPYRIGHT, ["$PACKAGE_COPYRIGHT"], ["Copyright info"]
 #    Age        -- How many seqential past API versions is supported by
 #                  this implementation
 # Format => Current:Revision:Age
-AC_SUBST([LIB_VERSION_CURRENT],  [0])
-AC_SUBST([LIB_VERSION_REVISION], [0])
-AC_SUBST([LIB_VERSION_AGE],      [0])
-AC_SUBST([LIB_VERSION_INFO], [${LIB_VERSION_CURRENT}:${LIB_VERSION_REVISION}:${LIB_VERSION_AGE}])
-AC_SUBST([LIB_RELEASE_INFO], [${LIB_VERSION_CURRENT}]) # used by Win32 DLLs
+AC_BINDLE_LIBTOOL_VERSION_INFO(0, 0, 0)
 
+# autoconf options
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([build-aux/dmstools.tags])
 AC_CONFIG_HEADERS([config.h])
@@ -67,7 +64,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # configures for automake
-AM_INIT_AUTOMAKE(gnu std-options subdir-objects)
+AM_INIT_AUTOMAKE(gnu std-options subdir-objects color-tests)
 
 # Compilers                                                       
 AC_PROG_CC 
@@ -75,16 +72,16 @@ AC_PROG_CC
 #AC_PROG_CXX
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
-AC_USE_SYSTEM_EXTENSIONS # replaces AC_AIX AC_GNU_SOURCE AC_MINIX
+#AC_USE_SYSTEM_EXTENSIONS # replaces AC_AIX AC_GNU_SOURCE AC_MINIX
 AC_C_BIGENDIAN
 
 # binary locations
-AC_PATH_PROG([SHELL],	sh bash,	[AC_MSG_ERROR([missing "sh"])], [$PATH])
-AC_CHECK_TOOLS(AR,	ar gar,		[AC_MSG_ERROR([missing binutil "ar"])])
-AC_CHECK_TOOLS(LD,	ld gld,		[AC_MSG_ERROR([missing binutil "ld"])])
-AC_CHECK_TOOLS(NM,	nm gnm,		[AC_MSG_ERROR([missing binutil "nm"])])
-AC_CHECK_TOOLS(RANLIB,	ranlib granlib,	[AC_MSG_ERROR([missing binutil "ranlib"])])
-AC_CHECK_TOOLS(STRIP,	strip gstrip,	[AC_MSG_ERROR([missing binutil "strip"])])
+AC_PATH_PROG([SHELL],   sh bash,        [AC_MSG_ERROR([missing "sh"])], [$PATH])
+AC_CHECK_TOOLS(AR,      ar gar,         [AC_MSG_ERROR([missing binutil "ar"])])
+AC_CHECK_TOOLS(LD,      ld gld,         [AC_MSG_ERROR([missing binutil "ld"])])
+AC_CHECK_TOOLS(NM,      nm gnm,         [AC_MSG_ERROR([missing binutil "nm"])])
+AC_CHECK_TOOLS(RANLIB,  ranlib granlib, [AC_MSG_ERROR([missing binutil "ranlib"])])
+AC_CHECK_TOOLS(STRIP,   strip gstrip,   [AC_MSG_ERROR([missing binutil "strip"])])
 
 # shell programs
 AC_PROG_AWK
@@ -94,16 +91,22 @@ AM_PROG_LEX
 AC_PROG_LN_S
 
 # GNU Libtool Support
-AC_LIBTOOL_DLOPEN
-AC_DISABLE_FAST_INSTALL
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
+LT_INIT(dlopen disable-fast-install win32-dll)
 
 # custom configure options
-AC_DMS_ENABLE_WARNINGS
+AC_BINDLE_ENABLE_WARNINGS
+AC_BINDLE_WITH_PERL
 
-# sets package version based on the SCM
-AC_DMS_GIT_PACKAGE_VERSION
+# enables getopt_long if header and functions were found
+AC_CHECK_HEADERS([getopt.h], [AC_DEFINE_UNQUOTED(USE_GETOPT_LONG, 1, [Use GNU getopt_long])])
+
+# Symbol checks
+AC_CHECK_DECLS([environ])
+AC_CHECK_LIB([c],  [arc4random],,[AC_DEFINE_UNQUOTED([USE_RANDOM], 1, [Use random()])])
+AC_CHECK_LIB([dl], [dlclose],,[AC_MSG_ERROR([missing required library -ldl])])
+AC_CHECK_LIB([dl], [dlerror],,[AC_MSG_ERROR([missing required library -ldl])])
+AC_CHECK_LIB([dl], [dlopen],,[AC_MSG_ERROR([missing required library -ldl])])
+AC_CHECK_LIB([dl], [dlsym],,[AC_MSG_ERROR([missing required library -ldl])])
 
 # tests for windows platform
 case $host in
@@ -126,6 +129,9 @@ AC_CHECK_HEADERS([signal.h],  ,[have_signal=no])
 AC_CHECK_TYPES([sig_t],       ,[have_signal=no],[#include <signal.h>])
 AC_SEARCH_LIBS([signal],     ,,[have_signal=no])
 AM_CONDITIONAL([HAVE_SIGNAL], [test x$have_signal = xyes])
+
+# determine PACKAGE_VERSION via Git
+AC_BINDLE_GIT_PACKAGE_VERSION([contrib/bindletools/build-aux/git-package-version.sh])
 
 # Creates outputs
 AC_CONFIG_FILES([Makefile])

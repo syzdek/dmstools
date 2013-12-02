@@ -1,6 +1,6 @@
 #
 #   DMS Tools and Utilities
-#   Copyright (C) 2008 David M. Syzdek <david@syzdek.net>
+#   Copyright (C) 2008, 2013 David M. Syzdek <david@syzdek.net>
 #
 #   @SYZDEK_LICENSE_HEADER_START@
 #
@@ -46,7 +46,7 @@ AM_CFLAGS				= -O2 -W -Wall -Werror $(CFLAGS_WARNINGS)
 AM_CXXFLAGS				= -O2 -W -Wall -Werror
 AM_OBJCFLAGS				= -O2 -W -Wall -Werror
 AM_CPPFLAGS				= -O2 -W -Wall -Werror -DHAVE_COMMON_H=1 -I$(top_builddir)/include -I$(top_srcdir)/include
-ACLOCAL_AMFLAGS				= -I m4
+ACLOCAL_AMFLAGS				= -I m4 -I contrib/bindletools/m4 -W all -W error
 DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
@@ -66,7 +66,6 @@ lib_libdms_la_LIBADD			= $(AM_LIBS)
 lib_libdms_la_LDFLAGS			= -rpath '$(libdir)' \
 					  -version-info $(LIB_VERSION_INFO) \
 					  $(AM_LDFLAGS) \
-					  -pthread \
 					  -export-symbols $(srcdir)/lib/libdms.sym
 lib_libdms_la_SOURCES			= include/dms.h \
 					  include/dmsversion.h \
@@ -183,7 +182,8 @@ src_typedef_info_SOURCES		= $(noinst_HEADERS) \
 BUILT_SOURCES				= include/dmsversion.h
 TESTS					=
 XFAIL_TESTS				=
-EXTRA_DIST				= build-aux/git-package-version \
+EXTRA_DIST				= autogen.sh \
+					  build-aux/git-tar-name.txt \
 					  doc/bindump.1.in \
 					  doc/bitops.1.in \
 					  doc/numconvert.1.in \
@@ -214,30 +214,13 @@ CLEANFILES				= \
 					  @PACKAGE_TARNAME@-*.zip
 
 
-# substitution routine
-do_subst = sed \
-	-e 's,[@]SHELL[@],@SHELL@,g' \
-	-e 's,[@]PACKAGE_VERSION[@],@PACKAGE_VERSION@,g' \
-	-e 's![@]PACKAGE_NAME[@]!@PACKAGE_NAME@!g' \
-	-e 's,[@]PACKAGE_TARNAME[@],@PACKAGE_TARNAME@,g' \
-	-e 's,[@]PACKAGE_BUGREPORT[@],@PACKAGE_BUGREPORT@,g' \
-	-e 's|[@]PACKAGE_COPYRIGHT[@]|@PACKAGE_COPYRIGHT@|g' \
-	-e 's,[@]LIB_VERSION_CURRENT[@],@LIB_VERSION_CURRENT@,g' \
-	-e 's,[@]LIB_VERSION_REVISION[@],@LIB_VERSION_REVISION@,g' \
-	-e 's,[@]LIB_VERSION_AGE[@],@LIB_VERSION_AGE@,g' \
-	-e 's,[@]LIB_VERSION_INFO[@],@LIB_VERSION_INFO@,g' \
-	-e 's,[@]LIB_RELEASE_INFO[@],@LIB_RELEASE_INFO@,g' \
+# Makefile includes
+GIT_PACKAGE_VERSION_DIR=include
+SUBST_EXPRESSIONS =  \
 	-e 's,[@]RELEASE_MONTH[@],@RELEASE_MONTH@,g'
-do_subst_fn = \
-		echo "do_subst < ${@}.in > ${@}"; \
-		mkdir -p `dirname ${@}` || exit 1; \
-		${do_subst} < $(srcdir)/${@}.in > ${@} || exit 1; \
-		chmod 0755 ${@}
-do_subst_dt = \
-		echo "do_subst < ${@}.in > ${@}"; \
-		mkdir -p `dirname ${@}` || exit 1; \
-		${do_subst} < $(srcdir)/${@}.in > ${@} || exit 1; \
-		chmod 0644 ${@}
+include $(srcdir)/@bindletools_srcdir@/build-aux/makefile-autotools.am
+include $(srcdir)/@bindletools_srcdir@/build-aux/makefile-subst.am
+include $(srcdir)/@bindletools_srcdir@/build-aux/makefile-version.am
 
 
 # custom targets
@@ -256,26 +239,23 @@ git-package-version-check:
 $(srcdir)/acinclude.m4: git-package-version-check
 
 doc/bitops.1: Makefile $(srcdir)/doc/bitops.1.in
-	@$(do_subst_dt)
+	$(do_subst_dt)
 
 doc/bindump.1: Makefile $(srcdir)/doc/bindump.1.in
-	@$(do_subst_dt)
-
-build-aux/git-package-version:
-	$(top_builddir)/config.status --recheck
+	$(do_subst_dt)
 
 doc/codetagger.1: Makefile $(srcdir)/doc/codetagger.1.in
-	@$(do_subst_dt)
+	$(do_subst_dt)
 
 doc/numconvert.1: Makefile $(srcdir)/doc/numconvert.1.in
-	@$(do_subst_dt)
+	$(do_subst_dt)
 
 doc/posixregex.1: Makefile $(srcdir)/doc/posixregex.1.in
-	@$(do_subst_dt)
+	$(do_subst_dt)
 
 include/dmsversion.h: Makefile $(srcdir)/include/dmsversion.h.in
 	$(mkdir_p) include
-	@$(do_subst_dt)
+	$(do_subst_dt)
 
 license-tags: $(srcdir)/build-aux/dmstools.tags $(builddir)/src/codetagger
 	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/AUTHORS
@@ -297,6 +277,8 @@ install-exec-local:
 install-data-local: 
 
 uninstall-local:
+
+clean-local:
 
 distclean-local:
 	rm -fR $(srcdir)/autom4te.cache
