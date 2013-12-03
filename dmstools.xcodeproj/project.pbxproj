@@ -46,6 +46,7 @@
 		A01CB2AE184D4AEA002235BF /* autogen.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = autogen.sh; sourceTree = "<group>"; };
 		A01CB2AF184D4CCB002235BF /* macaddrutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = macaddrutil.c; sourceTree = "<group>"; };
 		A01CB2B4184D5DEB002235BF /* macaddrutil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = macaddrutil; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01CB2BE184E73B8002235BF /* macaddrutil.1.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = macaddrutil.1.in; sourceTree = "<group>"; };
 		A03EDDC614E093A100F3EF24 /* endian */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = endian; sourceTree = BUILT_PRODUCTS_DIR; };
 		A03EDDD114E093BF00F3EF24 /* endian.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = endian.c; sourceTree = "<group>"; };
 		A0F63C96125A49F400E27781 /* acinclude.m4 */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = acinclude.m4; sourceTree = "<group>"; };
@@ -234,6 +235,7 @@
 				A0F63CAC125A49F500E27781 /* bindump.1.in */,
 				A0F63CAD125A49F500E27781 /* bitops.1.in */,
 				A0F63CAE125A49F500E27781 /* codetagger.1.in */,
+				A01CB2BE184E73B8002235BF /* macaddrutil.1.in */,
 				A0F63CAF125A49F500E27781 /* numconvert.1.in */,
 				A0F63CB0125A49F500E27781 /* posixregex.1.in */,
 			);
@@ -1009,6 +1011,7 @@
 				A01CB2BC184D5DEB002235BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A03EDDCF14E093A100F3EF24 /* Build configuration list for PBXNativeTarget "endian" */ = {
 			isa = XCConfigurationList;

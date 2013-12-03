@@ -1,6 +1,6 @@
 .\"
 .\" DMS Tools and Utilities
-.\" Copyright (C) 2010 David M. Syzdek <david@syzdek.net>
+.\" Copyright (C) 2013 David M. Syzdek <david@syzdek.net>
 .\"
 .\" @SYZDEK_COPYRIGHT_HEADER_START@
 .\"
@@ -31,51 +31,87 @@
 .\"
 .\" @SYZDEK_COPYRIGHT_HEADER_END@
 .\"
-.\" doc/posixregex.1.in - man page for posixregex
+.\" doc/macaddrutil.1.in - man page for macaddrutil
 .\"
-.TH "POSIXREGEX" "1" "@RELEASE_MONTH@" "@PACKAGE_TARNAME@ @PACKAGE_VERSION@" "User Commands"
+.TH "MACADDRUTIL" "1" "@RELEASE_MONTH@" "@PACKAGE_TARNAME@ @PACKAGE_VERSION@" "User Commands"
 .SH NAME
-posixregex \- displays the result of two values after performing bitwise operations
+macaddrutil \- Provides miscellaneous utilities for managing MAC addresses.
 .SH SYNOPSIS
-\fBposixregex\fR [-r \fIregex\fR] \fIstring1 string2 ... stringN\fR
+\fBmacaddrutil\fR [\fB-v\fR] [\fB-q\fR] [\fB-c\fR|\fB-D\fR|\fB-d\fR|\fB-R\fR] [\fB-l\fR|\fB-u\fR] format \fIaddress\fR
 .sp
-\fBposixregex\fR [\fB--help\fR | \fB-h\fR] [\fB--posixregex\fR | \fB-p\fR] [\fB--version\fR | \fB-V\fR]
+\fBmacaddrutil\fR [\fB-v\fR] [\fB-q\fR] [\fB-c\fR|\fB-D\fR|\fB-d\fR|\fB-R\fR] [\fB-l\fR|\fB-u\fR] generate [\fB--xen\fR|\fB--vmware\fR] [\fB-r\fR \fIrandomdev\fR]
+.sp
+\fBmacaddrutil\fR [\fB-v\fR] [\fB-q\fR] [\fB-c\fR|\fB-D\fR|\fB-d\fR|\fB-R\fR] [\fB-l\fR|\fB-u\fR] info \fIaddress\fR
+.sp
+\fBmacaddrutil\fR [\fB--help\fR|\fB-h\fR] [\fB--version\fR|\fB-V\fR]
 
 .SH DESCRIPTION
-The \fBposixregex\fR utility tests a regular expression against the specified
-strings and displays the matched segments of the strings.
+The \fBmacaddrutil\fR utility provides miscellaneous utilities for managing
+MAC addresses.
+
+.SH COMMANDS
+.TP
+\fBformat\fR
+Reformats the notation style of a MAC address.
+.TP
+\fBgenerate\fR
+Generates random MAC address.
+.TP
+\fBinformation\fR
+Displays derived information about a MAC address.
 
 .SH OPTIONS
+.TP
+\fB\-c\fR, \fB--colon\fR
+Displays MAC addresses using colon notation (\fIxx:xx:xx:xx:xx:xx\fR).
+.TP
+\fB\-D\fR, \fB--dot\fR
+Displays MAC addresses using dot notation (\fIxxxx.xxxx.xxxx\fR).
+.TP
+\fB\-d\fR, \fB--dash\fR
+Displays MAC addresses using dash notation (\fIxx-xx-xx-xx-xx-xx\fR).
 .TP
 \fB\-h\fR, \fB--help\fR
 Displays usage information and exits.
 .TP
-\fB\-p\fR, \fB--posixregex\fR
-Print regular expression special patterns.
+\fB\-l\fR, \fB--lower\fR
+Displays MAC addresses using lower case hexadecimal digits.
 .TP
 \fB\-q\fR, \fB--quiet\fR, \fB--silent\fR
-displays verbose messages.
+do not print messages.
 .TP
-\fB\-r\fR
-regular expression to use for testing strings
+\fB\-R\fR, \fB--raw\fR
+Displays MAC addresses using dash notation (\fIxxxxxxxxxxxx\fR).
+.TP
+\fB\-r\fR \fIrandomdev\fR
+Read random data for generate MAC addresses from \fIrandomdev\fR.  The default
+is to use \fI/dev/random\fR.
+.TP
+\fB\-u\fR, \fB--upper\fR
+Displays MAC addresses using upper case hexadecimal digits.
 .TP
 \fB\-V\fR, \fB--version\fR
 displays version number and exits.
 .TP
 \fB\-v\fR, \fB--verbose\fR
-do not print messages.
-
-.SH "ENVIRONMENT VARIABLES"
+displays verbose messages.
 .TP
-\fBPOSIXREGEX\fR
-default regular expression to use for testing strings
+\fB--xen\fR
+generate MAC addresses using the OUI assigned to the Xen project.
+.TP
+\fB--vmware\fR
+generate MAC addresses using the OUI assigned to VMWare.
+
+.SH "TERMS"
+.TP
+\fBOUI\fR
+organizationally unique identifier
+.TP
+\fBMAC address\fR
+media access control address
 
 .SH "DIAGNOSTICS"
-Normally, exit status is 0 if the strings match the regular expression and
-1 otherwise.
-
-.SH "REPORTING BUGS"
-Report bugs to David M. Syzdek <@PACKAGE_BUGREPORT@>.
+Normally, exit status is 0 and 1 if an error occurs.
 
 .SH "SEE ALSO"
 .BR bindump (1),
