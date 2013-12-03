@@ -51,12 +51,25 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
-bin_PROGRAMS				= src/bindump src/bitcopy src/bitops src/colors src/dmsversion src/netcalc src/numconvert src/typedef-info
-include_HEADERS				= include/dms.h include/dmsversion.h
+bin_PROGRAMS				= src/bindump \
+					  src/bitcopy \
+					  src/bitops \
+					  src/colors \
+					  src/dmsversion \
+					  src/macaddrutil \
+					  src/netcalc \
+					  src/numconvert \
+					  src/typedef-info
+include_HEADERS				= include/dms.h \
+					  include/dmsversion.h
 lib_LTLIBRARIES				= lib/libdms.la
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
-man_MANS				= doc/bitops.1 doc/bindump.1 doc/codetagger.1 doc/numconvert.1 doc/posixregex.1
+man_MANS				= doc/bitops.1 \
+					  doc/bindump.1 \
+					  doc/codetagger.1 \
+					  doc/numconvert.1 \
+					  doc/posixregex.1
 
 
 # macros for lib/libotadm.la
@@ -126,6 +139,14 @@ src_dmsversion_CPPFLAGS			= -DPROGRAM_NAME="\"dmsversion\"" $(AM_CPPFLAGS)
 src_dmsversion_LDADD			= $(AM_LDADD) lib/libdms.la
 src_dmsversion_SOURCES			= $(noinst_HEADERS) \
 					  src/dmsversion.c
+
+
+
+# macros for src/netcalc
+src_macaddrutil_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
+src_macaddrutil_CPPFLAGS		= -DPROGRAM_NAME="\"macaddrutil\"" $(AM_CPPFLAGS)
+src_macaddrutil_SOURCES			= $(noinst_HEADERS) \
+					  src/macaddrutil.c
 
 
 # macros for src/netcalc
