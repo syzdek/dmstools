@@ -103,7 +103,7 @@
 #endif
 
 
-#define MAU_GETOPT_SHORT "cDdhlquVv"
+#define MAU_GETOPT_SHORT "cDdhlqRuVv"
 
 #define MAU_GETOPT_LONG {"colon",            no_argument,       NULL, 'c'}, \
                         {"dot",              no_argument,       NULL, 'D'}, \
@@ -111,6 +111,7 @@
                         {"help",             no_argument,       NULL, 'h'}, \
                         {"lower",            no_argument,       NULL, 'l'}, \
                         {"quiet",            no_argument,       NULL, 'q'}, \
+                        {"raw",              no_argument,       NULL, 'R'}, \
                         {"silent",           no_argument,       NULL, 'q'}, \
                         {"upper",            no_argument,       NULL, 'u'}, \
                         {"version",          no_argument,       NULL, 'V'}, \
@@ -123,6 +124,7 @@
 #define MAU_NOTATION_COLON   0x00000000
 #define MAU_NOTATION_DASH    0x00000001
 #define MAU_NOTATION_DOT     0x00000002
+#define MAU_NOTATION_RAW     0x00000003
 
 #define MAU_CASE(notation)                (notation & MAU_MASK_CASE)
 #define MAU_NOTATION(notation)            (notation & MAU_MASK_NOTATION)
@@ -650,6 +652,10 @@ int mau_getopt(mau_config * cnf, int argc, char * const * argv,
       cnf->quiet++;
       return(-2);
 
+      case 'R':
+      cnf->notation = MAU_SET_NOTATION(cnf->notation, MAU_NOTATION_RAW);
+      return(-2);
+
       case 'u':
       cnf->notation = MAU_SET_CASE(cnf->notation, MAU_CASE_UPPER);
       return(-2);
@@ -748,6 +754,14 @@ int mau_mac2str(mau_config * cnf, const mauaddr_t addr, maustr_t str)
       snprintf(str, sizeof(maustr_t), "%02X%02X.%02X%02X.%02X%02X", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
       break;
 
+      case (MAU_NOTATION_RAW | MAU_CASE_LOWER):
+      snprintf(str, sizeof(maustr_t), "%02x%02x%02x%02x%02x%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+      break;
+
+      case (MAU_NOTATION_RAW | MAU_CASE_UPPER):
+      snprintf(str, sizeof(maustr_t), "%02X%02X%02X%02X%02X%02X", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+      break;
+
       default:
       snprintf(str, sizeof(maustr_t), "%02x:%02x:%02x:%02x:%02x:%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
    };
@@ -769,6 +783,8 @@ int mau_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr)
       len = sscanf(str, "%02x-%02x-%02x-%02x-%02x-%02x", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
    if (len != 6)
       len = sscanf(str, "%02X%02X.%02X%02X.%02X%02X", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
+   if (len != 6)
+      len = sscanf(str, "%02X%02X%02X%02X%02X%02X", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
    if (len != 6)
    {
       mau_log_err(cnf, "invalid MAC address\n");
@@ -807,6 +823,7 @@ void mau_usage(mau_config * cnf)
          "  -h, --help                print this help and exit\n"
          "  -l, --lower               print MAC addresses in lower case\n"
          "  -q, --quiet, --silent     do not print messages\n"
+         "  -R, --raw                 print MAC addresses in raw hex notation\n"
          "  -u, --upper               print MAC addresses in upper case\n"
          "  -V, --version             print version number and exit\n"
          "  -v, --verbose             print verbose messages\n"
