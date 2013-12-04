@@ -218,6 +218,7 @@ void mau_cmd_generate_usage(void);
 int mau_cmd_info(mau_config * cnf, int argc, char * argv[]);
 
 int mau_cmd_test(mau_config * cnf, int argc, char * argv[]);
+void mau_cmd_update_usage(void);
 
 int mau_getopt(mau_config * cnf, int argc, char * const * argv,
    const char * short_opt, const struct option * long_opt, int * opt_index);
@@ -258,6 +259,13 @@ extern const int errno;
 const mau_command mau_cmdmap[] =
 {
    {
+      "dump",                                         // command name
+      mau_cmd_test,                                   // entry function
+      NULL,                                           // help function
+      NULL,                                           // cli usage
+      NULL, // "print entire OUI database"                     // command description
+   },
+   {
       "format",                                       // command name
       mau_cmd_format,                                 // entry function
       NULL,                                           // help function
@@ -279,11 +287,18 @@ const mau_command mau_cmdmap[] =
       "display meta information about MAC address"    // command description
    },
    {
-      "test",                                         // command name
+      "update",                                       // command name
+      mau_cmd_test,                                   // entry function
+      mau_cmd_update_usage,                           // help function
+      NULL,                                           // cli usage
+      NULL, // "update local OUI database"                     // command description
+   },
+   {
+      "vendor",                                       // command name
       mau_cmd_test,                                   // entry function
       NULL,                                           // help function
-      " file url",                                    // cli usage
-      NULL                                            // command description
+      " organization",                                // cli usage
+      NULL, // "search for OUI by vendor name"                 // command description
    },
    { NULL, NULL, NULL, NULL, NULL }
 };
@@ -682,6 +697,22 @@ int mau_cmd_test(mau_config * cnf, int argc, char * argv[])
    };
 
    return(0);
+}
+
+
+void mau_cmd_update_usage(void)
+{
+   printf(
+      "UPDATE OPTIONS:\n"
+      "  -1 idx                    index of REGEX sub-match for first octet of OUI\n"
+      "  -2 idx                    index of REGEX sub-match for second octet of OUI\n"
+      "  -3 idx                    index of REGEX sub-match for third octet of OUI\n"
+      "  -r regex                  regulare expression matching a single record in the OUI database\n"
+      "  -O idx                    index of REGEX sub-match for OUI organization\n"
+      "  -o file                   output file to save formatted OUI database\n"
+      "  -u url                    download URL for source OUI database\n"
+   );
+   return;
 }
 
 
