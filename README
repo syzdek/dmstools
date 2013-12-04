@@ -1,6 +1,6 @@
 
 DMS Tools and Utilities
-Copyright (C) 2009, 2010 David M. Syzdek <david@syzdek.net>
+Copyright (C) 2009, 2010, 2013 David M. Syzdek <david@syzdek.net>
 
 This package is a collection miscellaneous programs that are not large enough
 to require thier own projects, but are useful none the less.  For basic
@@ -10,7 +10,6 @@ For the latest information about this project is available from the following
 websites:
 
 	http://github.com/syzdek/dmstools/
-	http://scm.syzdek.net/scm/net.syzdek/dmstools.git
 
 
 Utilities and Tools
@@ -37,6 +36,9 @@ The following utilities and tools are included in this package:
 	colors - displays ANSI escape codes for generating colored text in
 		text terminals.
 
+        macaddrutil - MAC address tool for generating new addresses, reformatting
+                addresses, and displaying address information.
+
 	numconvert - converts between binary, octal, decimal, and hexidecimal
 		based number systems.
 
@@ -58,8 +60,8 @@ Installing From Source
 Supported platforms:
 
 	* FreeBSD
-	* Slackware Linux 12.1
-	* OS X 10.6
+	* Slackware Linux 14.1
+	* OS X 10.8
 
 Required Software:
 
