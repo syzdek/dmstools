@@ -75,6 +75,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <regex.h>
 
 
 ///////////////////
@@ -104,18 +105,20 @@
 
 
 #define MAU_GETOPT_SHORT "cDdhlqRuVv"
+#define MAU_GETOPT_LONG \
+   {"colon",            no_argument,       NULL, 'c' }, \
+   {"dot",              no_argument,       NULL, 'D' }, \
+   {"dash",             no_argument,       NULL, 'd' }, \
+   {"help",             no_argument,       NULL, 'h' }, \
+   {"lower",            no_argument,       NULL, 'l' }, \
+   {"quiet",            no_argument,       NULL, 'q' }, \
+   {"raw",              no_argument,       NULL, 'R' }, \
+   {"silent",           no_argument,       NULL, 'q' }, \
+   {"upper",            no_argument,       NULL, 'u' }, \
+   {"version",          no_argument,       NULL, 'V' }, \
+   {"verbose",          no_argument,       NULL, 'v' }, \
+   { NULL, 0, NULL, 0 }
 
-#define MAU_GETOPT_LONG {"colon",            no_argument,       NULL, 'c'}, \
-                        {"dot",              no_argument,       NULL, 'D'}, \
-                        {"dash",             no_argument,       NULL, 'd'}, \
-                        {"help",             no_argument,       NULL, 'h'}, \
-                        {"lower",            no_argument,       NULL, 'l'}, \
-                        {"quiet",            no_argument,       NULL, 'q'}, \
-                        {"raw",              no_argument,       NULL, 'R'}, \
-                        {"silent",           no_argument,       NULL, 'q'}, \
-                        {"upper",            no_argument,       NULL, 'u'}, \
-                        {"version",          no_argument,       NULL, 'V'}, \
-                        {"verbose",          no_argument,       NULL, 'v'}
 
 #define MAU_MASK_CASE        0xf0000000
 #define MAU_MASK_NOTATION    0x000000FF
@@ -130,6 +133,22 @@
 #define MAU_NOTATION(notation)            (notation & MAU_MASK_NOTATION)
 #define MAU_SET_CASE(notation, flag)      ((notation & (~ MAU_MASK_CASE))     | (flag & MAU_MASK_CASE))
 #define MAU_SET_NOTATION(notation, flag)  ((notation & (~ MAU_MASK_NOTATION)) | (flag & MAU_MASK_NOTATION))
+
+
+#define MAU_BUFF_LEN    1024
+
+
+// definitions providing default parameters for downloading the OUI database
+#define MAU_DOWNLOAD    "http://bindlebinaries.com/bindle-oui.txt"
+//#define MAU_DOWNLOAD    "http://standards.ieee.org/develop/regauth/oui/oui.txt"
+#define MAU_REGEX       "^[[:space:]]{1,}([[:xdigit:]]{2,2})-([[:xdigit:]]{2,2})-([[:xdigit:]]{2,2})" \
+                        "[[:space:]]{1,}\(hex\)" \
+                        "[[:space:]]{1,}([[:alnum:][:punct:]][[:print:]]{1,})$"
+#define MAU_REGEX_OCT1  1  ///< sub-match index of first octet of MAC address
+#define MAU_REGEX_OCT2  2  ///< sub-match index of second octet of MAC address
+#define MAU_REGEX_OCT3  3  ///< sub-match index of third octet of MAC address
+#define MAU_REGEX_ORG   4  ///< sub-match index of OUI organization name
+#define MAU_REGEX_MAX   20 ///< number of regex sub-matches allowed
 
 
 //////////////////
@@ -158,6 +177,10 @@ struct mau_config
    const char         * cmd_name;
    size_t               cmd_len;
    const mau_command  * cmd;
+   regex_t              regex;
+   const char         * regex_str;
+   regmatch_t           matches[MAU_REGEX_MAX];
+   char                 buff[MAU_BUFF_LEN];
 };
 
 
@@ -166,6 +189,7 @@ struct mau_command
    const char * cmd_name;
    int  (*cmd_func)(mau_config * cnf, int argc, char * argv[]);
    void (*cmd_usage)(void);
+   const char * cmd_help;
    const char * cmd_desc;
 };
 
@@ -184,7 +208,6 @@ int main(int argc, char * argv[]);
 
 
 int mau_cmd_format(mau_config * cnf, int argc, char * argv[]);
-void mau_cmd_format_usage(void);
 
 // generate command
 int mau_cmd_generate(mau_config * cnf, int argc, char * argv[]);
@@ -193,7 +216,8 @@ int mau_cmd_generate(mau_config * cnf, int argc, char * argv[]);
 void mau_cmd_generate_usage(void);
 
 int mau_cmd_info(mau_config * cnf, int argc, char * argv[]);
-void mau_cmd_info_usage(void);
+
+int mau_cmd_test(mau_config * cnf, int argc, char * argv[]);
 
 int mau_getopt(mau_config * cnf, int argc, char * const * argv,
    const char * short_opt, const struct option * long_opt, int * opt_index);
@@ -233,10 +257,35 @@ extern const int errno;
 
 const mau_command mau_cmdmap[] =
 {
-   { "format",              mau_cmd_format,    mau_cmd_format_usage,    "reformat MAC address using notation style flags" },
-   { "generate",            mau_cmd_generate,  mau_cmd_generate_usage,  "generate random MAC address" },
-   { "information",         mau_cmd_info,      mau_cmd_info_usage,      "display meta information about MAC address" },
-   { NULL, NULL, NULL, NULL }
+   {
+      "format",                                       // command name
+      mau_cmd_format,                                 // entry function
+      NULL,                                           // help function
+      " address",                                     // cli usage
+      "reformat MAC address using notation flags"     // command description
+   },
+   {
+      "generate",                                     // command name
+      mau_cmd_generate,                               // entry function
+      mau_cmd_generate_usage,                         // help function
+      NULL,                                           // cli usage
+      "generate random MAC address"
+   },
+   {
+      "information",                                  // command name
+      mau_cmd_info,                                   // entry function
+      NULL,                                           // help function
+      " address",                                     // cli usage
+      "display meta information about MAC address"    // command description
+   },
+   {
+      "test",                                         // command name
+      mau_cmd_test,                                   // entry function
+      NULL,                                           // help function
+      " file url",                                    // cli usage
+      NULL                                            // command description
+   },
+   { NULL, NULL, NULL, NULL, NULL }
 };
 
 
@@ -261,11 +310,7 @@ int main(int argc, char * argv[])
 
    // getopt options
    static char   short_opt[] = "+" MAU_GETOPT_SHORT;
-   static struct option long_opt[] =
-   {
-      MAU_GETOPT_LONG,
-      {NULL, 0, NULL, 0 }
-   };
+   static struct option long_opt[] = { MAU_GETOPT_LONG };
 
    memset(&cnf, 0, sizeof(cnf));
 
@@ -347,11 +392,7 @@ int mau_cmd_format(mau_config * cnf, int argc, char * argv[])
 
    // getopt options
    static char   short_opt[] = MAU_GETOPT_SHORT;
-   static struct option long_opt[] =
-   {
-      MAU_GETOPT_LONG,
-      {NULL, 0, NULL, 0 }
-   };
+   static struct option long_opt[] = { MAU_GETOPT_LONG };
 
 
    while((c = mau_getopt(cnf, argc, argv, short_opt, long_opt, &opt_index)) != -1)
@@ -403,18 +444,6 @@ int mau_cmd_format(mau_config * cnf, int argc, char * argv[])
 }
 
 
-/// generate command usage
-void mau_cmd_format_usage(void)
-{
-   printf(
-      (
-         "Usage: %s format [OPTIONS] mac_address\n"
-      ), PROGRAM_NAME
-   );
-   return;
-}
-
-
 /// generate command
 int mau_cmd_generate(mau_config * cnf, int argc, char * argv[])
 {
@@ -423,7 +452,7 @@ int mau_cmd_generate(mau_config * cnf, int argc, char * argv[])
    int            fd;
    const char   * rnd_file;
    int            use_oui;
-   mauoui_t       oui;
+   mauaddr_t      oui;
    mauaddr_t      addr;
    maustr_t       str;
 
@@ -431,11 +460,10 @@ int mau_cmd_generate(mau_config * cnf, int argc, char * argv[])
    static char   short_opt[] = "hr:x" MAU_GETOPT_SHORT;
    static struct option long_opt[] =
    {
-      MAU_GETOPT_LONG,
       // command long options
       {"vmware",           no_argument,       NULL, 0},
       {"xen",              no_argument,       NULL, 0},
-      {NULL, 0, NULL, 0 }
+      MAU_GETOPT_LONG,
    };
 
    rnd_file = "/dev/random";
@@ -527,14 +555,10 @@ int mau_cmd_generate(mau_config * cnf, int argc, char * argv[])
 void mau_cmd_generate_usage(void)
 {
    printf(
-      (
-         "Usage: %s generate [OPTIONS]\n"
-         "COMMAND OPTIONS:\n"
-         "  -r randomdev              a file containing random data\n"
-         "  --vmware                  generate MAC address for VMWare\n"
-         "  --xen                     generate MAC address for Xen\n"
-         "\n"
-      ), PROGRAM_NAME
+      "GENERATE OPTIONS:\n"
+      "  -r randomdev              a file containing random data\n"
+      "  --vmware                  generate MAC address for VMWare\n"
+      "  --xen                     generate MAC address for Xen\n"
    );
    return;
 }
@@ -549,11 +573,7 @@ int mau_cmd_info(mau_config * cnf, int argc, char * argv[])
 
    // getopt options
    static char   short_opt[] = MAU_GETOPT_SHORT;
-   static struct option long_opt[] =
-   {
-      MAU_GETOPT_LONG,
-      {NULL, 0, NULL, 0 }
-   };
+   static struct option long_opt[] = { MAU_GETOPT_LONG };
 
 
    while((c = mau_getopt(cnf, argc, argv, short_opt, long_opt, &opt_index)) != -1)
@@ -607,15 +627,61 @@ int mau_cmd_info(mau_config * cnf, int argc, char * argv[])
 }
 
 
-/// generate command usage
-void mau_cmd_info_usage(void)
+int mau_cmd_test(mau_config * cnf, int argc, char * argv[])
 {
-   printf(
-      (
-         "Usage: %s info [OPTIONS] mac_address\n"
-      ), PROGRAM_NAME
-   );
-   return;
+   int            c;
+   int            opt_index;
+
+   // getopt options
+   static char   short_opt[] = MAU_GETOPT_SHORT;
+   static struct option long_opt[] = { MAU_GETOPT_LONG };
+
+
+   while((c = mau_getopt(cnf, argc, argv, short_opt, long_opt, &opt_index)) != -1)
+   {
+      switch(c)
+      {
+         case -2: /* captured by common options */
+         case -1:	/* no more arguments */
+         case 0:	/* long options toggles */
+         break;
+
+         case 1:
+         return(0);
+         case 2:
+         return(1);
+
+         case '?':
+         fprintf(stderr, "Try `%s %s --help' for more information.\n", PROGRAM_NAME, argv[0]);
+         return(1);
+
+         default:
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s %s --help' for more information.\n", PROGRAM_NAME, argv[0]);
+         return(1);
+      };
+   };
+
+   if ((argc - optind) < 1)
+   {
+      fprintf(stderr, "%s: missing file name\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s %s --help' for more information.\n", PROGRAM_NAME, argv[0]);
+      return(1);
+   };
+   if ((argc - optind) < 2)
+   {
+      fprintf(stderr, "%s: missing URL\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s %s --help' for more information.\n", PROGRAM_NAME, argv[0]);
+      return(1);
+   };
+   if ((optind+2) != argc)
+   {
+      fprintf(stderr, "%s: unrecognized argument `-- %s'\n", PROGRAM_NAME, argv[optind+2]);
+      fprintf(stderr, "Try `%s %s --help' for more information.\n", PROGRAM_NAME, argv[0]);
+      return(1);
+   };
+
+   return(0);
 }
 
 
@@ -801,35 +867,44 @@ int mau_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr)
 /// displays usage information
 void mau_usage(mau_config * cnf)
 {
-   int i;
+   int          i;
+   const char * opts     = "[OPTIONS] ";
+   const char * cmd_name = "COMMAND";
+   const char * cmd_opts = "";
+   const char * cmd_help = " ...";
 
    if ((cnf->cmd))
-      cnf->cmd->cmd_usage();
-   else
    {
-      printf("Usage: %s [OPTIONS] COMMAND ...\n", PROGRAM_NAME);
+      opts     = "";
+      cmd_name = cnf->cmd->cmd_name;
+      cmd_opts = " [OPTIONS]";
+      cmd_help = ((cnf->cmd->cmd_help)) ? cnf->cmd->cmd_help : "";
+   };
+   printf("Usage: %s %s%s%s%s\n", PROGRAM_NAME, opts, cmd_name, cmd_opts, cmd_help);
+   if (!(cnf->cmd))
+   {
       printf("COMMANDS:\n");
       for(i = 0; mau_cmdmap[i].cmd_name != NULL; i++)
-         printf("  %-25s %s\n", mau_cmdmap[i].cmd_name, mau_cmdmap[i].cmd_desc);
-      printf("\n");
+         if ((mau_cmdmap[i].cmd_desc))
+            printf("  %-25s %s\n", mau_cmdmap[i].cmd_name, mau_cmdmap[i].cmd_desc);
    };
-
    printf(
-      (
-         "COMMON OPTIONS:\n"
-         "  -c, --colon               print MAC addresses in colon notation\n"
-         "  -D, --dot                 print MAC addresses in dot notation\n"
-         "  -d, --dash                print MAC addresses in dash notation\n"
-         "  -h, --help                print this help and exit\n"
-         "  -l, --lower               print MAC addresses in lower case\n"
-         "  -q, --quiet, --silent     do not print messages\n"
-         "  -R, --raw                 print MAC addresses in raw hex notation\n"
-         "  -u, --upper               print MAC addresses in upper case\n"
-         "  -V, --version             print version number and exit\n"
-         "  -v, --verbose             print verbose messages\n"
-         "\n"
-      )
+      "COMMON OPTIONS:\n"
+      "  -c, --colon               print MAC addresses in colon notation\n"
+      "  -D, --dot                 print MAC addresses in dot notation\n"
+      "  -d, --dash                print MAC addresses in dash notation\n"
+      "  -h, --help                print this help and exit\n"
+      "  -l, --lower               print MAC addresses in lower case\n"
+      "  -q, --quiet, --silent     do not print messages\n"
+      "  -R, --raw                 print MAC addresses in raw hex notation\n"
+      "  -u, --upper               print MAC addresses in upper case\n"
+      "  -V, --version             print version number and exit\n"
+      "  -v, --verbose             print verbose messages\n"
    );
+   if ((cnf->cmd))
+      if ((cnf->cmd->cmd_usage))
+         cnf->cmd->cmd_usage();
+   printf("\n");
    return;
 }
 
