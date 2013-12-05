@@ -233,7 +233,9 @@ int mau_conv_eui2str(mau_config * cnf, const maueui64_t eui, maustr_t str);
 int mau_conv_mac2eui(mau_config * cnf, const mauaddr_t addr, maueui64_t eui);
 int mau_conv_mac2str(mau_config * cnf, const mauaddr_t addr, maustr_t str);
 int mau_conv_eui2mac(mau_config * cnf, const maueui64_t eui, mauaddr_t addr);
+int mau_conv_sin2eui(mau_config * cnf, const struct sockaddr_in6 * sin, maueui64_t eui);
 int mau_conv_sin2str(mau_config * cnf, const struct sockaddr_in6  * sin, maustr_t str);
+int mau_conv_str2eui(mau_config * cnf, const maustr_t str, maueui64_t eui);
 int mau_conv_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr);
 int mau_conv_str2sin(mau_config * cnf, const maustr_t str, struct sockaddr_in6 * sin);
 
