@@ -36,8 +36,9 @@ The following utilities and tools are included in this package:
 	colors - displays ANSI escape codes for generating colored text in
 		text terminals.
 
-        macaddrutil - MAC address tool for generating new addresses, reformatting
-                addresses, and displaying address information.
+	macaddrinfo - MAC address tool for converting between MAC addresses, IPv6
+		addresses, and modified EUI-64 identifiers as well as display meta
+      information about MAC addresses.
 
 	numconvert - converts between binary, octal, decimal, and hexidecimal
 		based number systems.

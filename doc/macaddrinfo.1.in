@@ -31,34 +31,44 @@
 .\"
 .\" @SYZDEK_COPYRIGHT_HEADER_END@
 .\"
-.\" doc/macaddrutil.1.in - man page for macaddrutil
+.\" doc/macaddrinfo.1.in - man page for macaddrinfo
 .\"
-.TH "MACADDRUTIL" "1" "@RELEASE_MONTH@" "@PACKAGE_TARNAME@ @PACKAGE_VERSION@" "User Commands"
+.TH "MACADDRINFO" "1" "@RELEASE_MONTH@" "@PACKAGE_TARNAME@ @PACKAGE_VERSION@" "User Commands"
 .SH NAME
-macaddrutil \- Provides miscellaneous utilities for managing MAC addresses.
+macaddrinfo \- Provides miscellaneous utilities for managing MAC addresses.
 .SH SYNOPSIS
-\fBmacaddrutil\fR [\fB-v\fR] [\fB-q\fR] [\fB-c\fR|\fB-D\fR|\fB-d\fR|\fB-R\fR] [\fB-l\fR|\fB-u\fR] format \fIaddress\fR
+\fBmacaddrinfo\fR eui64 [\fB-v\fR] [\fB-q\fR] [\fB-l\fR|\fB-u\fR]
 .sp
-\fBmacaddrutil\fR [\fB-v\fR] [\fB-q\fR] [\fB-c\fR|\fB-D\fR|\fB-d\fR|\fB-R\fR] [\fB-l\fR|\fB-u\fR] generate [\fB--xen\fR|\fB--vmware\fR] [\fB-r\fR \fIrandomdev\fR]
+\fBmacaddrinfo\fR generate [\fB-v\fR] [\fB-q\fR] [\fB-c\fR|\fB-D\fR|\fB-d\fR|\fB-R\fR] [\fB-l\fR|\fB-u\fR] [\fB--xen\fR|\fB--vmware\fR] [\fB-r\fR \fIrandomdev\fR]
 .sp
-\fBmacaddrutil\fR [\fB-v\fR] [\fB-q\fR] [\fB-c\fR|\fB-D\fR|\fB-d\fR|\fB-R\fR] [\fB-l\fR|\fB-u\fR] info \fIaddress\fR
+\fBmacaddrinfo\fR info [\fB-v\fR] [\fB-q\fR] [\fB-c\fR|\fB-D\fR|\fB-d\fR|\fB-R\fR] [\fB-l\fR|\fB-u\fR] \fIaddress\fR
 .sp
-\fBmacaddrutil\fR [\fB--help\fR|\fB-h\fR] [\fB--version\fR|\fB-V\fR]
+\fBmacaddrinfo\fR link-local [\fB-v\fR] [\fB-q\fR]
+.sp
+\fBmacaddrinfo\fR macaddress [\fB-v\fR] [\fB-q\fR] [\fB-c\fR|\fB-D\fR|\fB-d\fR|\fB-R\fR] [\fB-l\fR|\fB-u\fR] \fIaddress\fR
+.sp
+\fBmacaddrinfo\fR [\fB--help\fR|\fB-h\fR] [\fB--version\fR|\fB-V\fR]
 
 .SH DESCRIPTION
-The \fBmacaddrutil\fR utility provides miscellaneous utilities for managing
+The \fBmacaddrinfo\fR utility provides miscellaneous utilities for managing
 MAC addresses.
 
 .SH COMMANDS
 .TP
-\fBformat\fR
-Reformats the notation style of a MAC address.
+\fBeui64\fR
+display modified EUI-64 identifier
 .TP
 \fBgenerate\fR
-Generates random MAC address.
+generate random MAC address
 .TP
 \fBinformation\fR
-Displays derived information about a MAC address.
+display meta information about MAC address
+.TP
+\fBlink-local\fR
+display derived IPv6 link-local address
+.TP
+\fBmacaddress\fR
+display MAC address using notation flags
 
 .SH OPTIONS
 .TP
