@@ -158,8 +158,8 @@ struct codetagger_config
 {
    unsigned          opts;
    unsigned          tagCount;
-   unsigned          buff_size;          ///< size of each file buffer
-   int               len_orig;           ///< length of the content of the original file
+   size_t            buff_size;          ///< size of each file buffer
+   ssize_t           len_orig;           ///< length of the content of the original file
    int               pos_orig;           ///< current location in buffer for original file
    int               pos_modd;           ///< current location in buffer for updated file
    char            * buff_orig;          ///< buffer for original file
@@ -392,8 +392,8 @@ void codetagger_error(CodeTagger * cnf, const char * fmt, ...)
 int codetagger_escape_string(CodeTagger * cnf, char * buff, const char * str,
    size_t len)
 {
-   unsigned strpos;
-   unsigned buffpos;
+   size_t strpos;
+   size_t buffpos;
 
    codetagger_debug(cnf);
 
@@ -484,7 +484,7 @@ char ** codetagger_get_file_contents(CodeTagger * cnf, const char * file)
 {
    int            i;
    int            fd;
-   int            len;
+   ssize_t        len;
    int            count;
    char         * buff;
    char        ** lines;
@@ -809,7 +809,7 @@ int codetagger_scan_file(CodeTagger * cnf, const char * file,
 {
    int             err;
    void          * ptr;
-   unsigned        u;
+   ssize_t         u;
    struct stat     sb;
 
    if (cnf->opts & CODETAGGER_OPT_LINKS)
@@ -873,18 +873,18 @@ int codetagger_scan_file(CodeTagger * cnf, const char * file,
 int codetagger_update_file(CodeTagger * cnf, const char * filename,
    struct stat * sbp)
 {
-   int    fd;
-   int    err;
-   int    pos;
-   int    changed;
-   int    len_margin;
-   int    len_stripped;
-   int    len_tagname;
-   char   margin[CODETAGGER_STR_LEN];
-   char   stripped[CODETAGGER_STR_LEN];
-   char   tagname[CODETAGGER_STR_LEN];
-   char * bol;
-   regmatch_t match[5];
+   int          fd;
+   int          err;
+   long long    pos;
+   int          changed;
+   long long    len_margin;
+   long long    len_stripped;
+   long long    len_tagname;
+   char         margin[CODETAGGER_STR_LEN];
+   char         stripped[CODETAGGER_STR_LEN];
+   char         tagname[CODETAGGER_STR_LEN];
+   char       * bol;
+   regmatch_t   match[5];
    CodeTaggerData * tag;
    struct stat sb;
 
