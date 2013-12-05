@@ -81,6 +81,7 @@
 #include <signal.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <errno.h>
 
 
 ///////////////////
@@ -267,8 +268,6 @@ void mau_version(void);
 #ifdef DMSTOOLS_PMARK
 #pragma mark - Variables
 #endif
-
-extern const int errno;
 
 const mau_command mau_cmdmap[] =
 {
@@ -888,7 +887,6 @@ int mau_conv_eui2sin(mau_config * cnf, const maueui64_t eui, struct sockaddr_in6
 {
    assert(cnf != NULL);
    memset(sin, 0, sizeof(struct sockaddr_in6));
-   sin->sin6_len    = sizeof(struct sockaddr_in6);
    sin->sin6_family = AF_INET6;
    sin->sin6_addr.s6_addr[0]  = 0xfe;
    sin->sin6_addr.s6_addr[1]  = 0x80;
@@ -987,7 +985,7 @@ int mau_conv_sin2eui(mau_config * cnf, const struct sockaddr_in6 * sin, maueui64
 int mau_conv_sin2str(mau_config * cnf, const struct sockaddr_in6  * sin, maustr_t str)
 {
    assert(cnf != NULL);
-   getnameinfo((struct sockaddr *)sin, sin->sin6_len, str, sizeof(maustr_t), NULL, 0, NI_NUMERICHOST|NI_NUMERICSERV);
+   getnameinfo((struct sockaddr *)sin, sizeof(struct sockaddr_in6), str, sizeof(maustr_t), NULL, 0, NI_NUMERICHOST|NI_NUMERICSERV);
    return(0);
 }
 
@@ -1089,7 +1087,6 @@ int mau_conv_str2sin(mau_config * cnf, const maustr_t str, struct sockaddr_in6 *
       return(1);
 
    memset(sin, 0, sizeof(struct sockaddr_in6));
-   sin->sin6_len    = sizeof(struct sockaddr_in6);
    sin->sin6_family = AF_INET6;
    memcpy(sin, servinfo->ai_addr, sizeof(struct sockaddr_in6));
 
