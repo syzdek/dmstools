@@ -76,6 +76,10 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <regex.h>
+#include <sys/socket.h>
+#include <signal.h>
+#include <netdb.h>
+#include <arpa/inet.h>
 
 
 ///////////////////
@@ -160,9 +164,10 @@
 #pragma mark - Data Types
 #endif
 
-typedef uint8_t mauaddr_t[6];
-typedef uint8_t mauoui_t[3];
-typedef char    maustr_t[18];
+typedef uint8_t mauaddr_t[6];    // Media Access Control address (MAC address)
+typedef uint8_t mauoui_t[3];     // Organizationally Unique Identifier (OUI)
+typedef uint8_t maueui64_t[8];   // 64-bit Global Identifier (EUI-64)
+typedef char    maustr_t[INET6_ADDRSTRLEN+1];
 
 typedef struct mau_config mau_config;
 typedef struct mau_command mau_command;
@@ -234,7 +239,10 @@ void mau_log_warn(mau_config * cnf, const char * fmt, ...);
 
 void mau_logv(mau_config * cnf, const char * fmt, va_list args);
 
+int mau_eui2str(mau_config * cnf, const maueui64_t eui, maustr_t str);
+int mau_mac2eui(mau_config * cnf, const mauaddr_t addr, maueui64_t eui);
 int mau_mac2str(mau_config * cnf, const mauaddr_t addr, maustr_t str);
+int mau_eui2mac(mau_config * cnf, const maueui64_t eui, mauaddr_t addr);
 int mau_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr);
 
 //displays usage information
@@ -583,8 +591,12 @@ int mau_cmd_info(mau_config * cnf, int argc, char * argv[])
 {
    int            c;
    int            opt_index;
-   maustr_t       str;
    mauaddr_t      addr;
+   maustr_t       addr_str;
+   maueui64_t     eui;
+   maustr_t       eui_str;
+   maustr_t       ipv6_str;
+   struct sockaddr_in6   sin;
 
    // getopt options
    static char   short_opt[] = MAU_GETOPT_SHORT;
@@ -632,11 +644,24 @@ int mau_cmd_info(mau_config * cnf, int argc, char * argv[])
    if ((mau_str2mac(cnf, argv[optind], addr)))
       return(1);
 
-   mau_mac2str(cnf, addr, str);
+   mau_mac2str(cnf, addr, addr_str);
+   mau_mac2eui(cnf, addr, eui);
+   mau_eui2str(cnf, eui, eui_str);
 
-   printf("MAC Address:    %s\n", str);
-   printf("U/L Bit:        %s\n", ((addr[0] & 0x02) == 0x02) ? "1 (locally administered)" : "0 (universally administered)");
-   printf("Multicast Bit:  %s\n", ((addr[0] & 0x01) == 0x01) ? "1 (multicast)" : "0 (unicast)");
+   memset(&sin, 0, sizeof(sin));
+   sin.sin6_len    = sizeof(sin);
+   sin.sin6_family = AF_INET6;
+   sin.sin6_addr.s6_addr[0]  = 0xfe;
+   sin.sin6_addr.s6_addr[1]  = 0x80;
+   memcpy(&sin.sin6_addr.s6_addr[8], eui, 8);
+
+   getnameinfo((struct sockaddr *)&sin, sin.sin6_len, ipv6_str, sizeof(ipv6_str), NULL, 0, NI_NUMERICHOST|NI_NUMERICSERV);
+
+   printf("MAC Address:      %s\n", addr_str);
+   printf("U/L Bit:          %s\n", ((addr[0] & 0x02) == 0x02) ? "1 (locally administered)" : "0 (universally administered)");
+   printf("Multicast Bit:    %s\n", ((addr[0] & 0x01) == 0x01) ? "1 (multicast)" : "0 (unicast)");
+   printf("Modified EUI-64:  %s\n", eui_str);
+   printf("IPv6 Link-local:  %s\n", ipv6_str);
 
    return(0);
 }
@@ -820,6 +845,42 @@ void mau_logv(mau_config * cnf, const char * fmt, va_list args)
       fprintf(stderr, "%s: ", PROGRAM_NAME);
    vfprintf(stderr, fmt, args);
    return;
+}
+
+
+int mau_eui2str(mau_config * cnf, const maueui64_t eui, maustr_t str)
+{
+   switch (cnf->notation | MAU_MASK_CASE)
+   {
+      case MAU_CASE_LOWER:
+      snprintf(str, sizeof(maustr_t), "%02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x", eui[0],eui[1],eui[2],eui[3],eui[4],eui[5],eui[6],eui[7]);
+      break;
+
+      case MAU_CASE_UPPER:
+      default:
+      snprintf(str, sizeof(maustr_t), "%02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X", eui[0],eui[1],eui[2],eui[3],eui[4],eui[5],eui[6],eui[7]);
+      break;
+   }
+   return(0);
+}
+
+
+int mau_mac2eui(mau_config * cnf, const mauaddr_t addr, maueui64_t eui)
+{
+   assert(cnf  != NULL);
+   assert(eui  != NULL);
+   assert(addr != NULL);
+
+   eui[0] = (addr[0] ^ 0x02);
+   eui[1] =  addr[1];
+   eui[2] =  addr[2];
+   eui[3] =  0xff;
+   eui[4] =  0xfe;
+   eui[5] =  addr[3];
+   eui[6] =  addr[4];
+   eui[7] =  addr[5];
+
+   return(0);
 }
 
 
