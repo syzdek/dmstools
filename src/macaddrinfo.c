@@ -32,22 +32,22 @@
  *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
- *  @file src/macaddrutil.c converts string into octal, decimal, hex, and bin
+ *  @file src/macaddrinfo.c converts string into octal, decimal, hex, and bin
  */
 /*
  *  Simple Build:
- *     gcc -W -Wall -O2 -c macaddrutil.c
- *     gcc -W -Wall -O2 -o macaddrutil   macaddrutil.o
+ *     gcc -W -Wall -O2 -c macaddrinfo.c
+ *     gcc -W -Wall -O2 -o macaddrinfo   macaddrinfo.o
  *
  *  GNU Libtool Build:
- *     libtool --mode=compile gcc -W -Wall -g -O2 -c macaddrutil.c
- *     libtool --mode=link    gcc -W -Wall -g -O2 -o macaddrutil macaddrutil.lo
+ *     libtool --mode=compile gcc -W -Wall -g -O2 -c macaddrinfo.c
+ *     libtool --mode=link    gcc -W -Wall -g -O2 -o macaddrinfo macaddrinfo.lo
  *
  *  GNU Libtool Install:
- *     libtool --mode=install install -c macaddrutil /usr/local/bin/macaddrutil
+ *     libtool --mode=install install -c macaddrinfo /usr/local/bin/macaddrinfo
  *
  *  GNU Libtool Clean:
- *     libtool --mode=clean rm -f macaddrutil.lo macaddrutil
+ *     libtool --mode=clean rm -f macaddrinfo.lo macaddrinfo
  */
 #define _DMSTOOLS_SRC_MACADDRUTIL_C 1
 
@@ -92,7 +92,7 @@
 #endif
 
 #ifndef PROGRAM_NAME
-#define PROGRAM_NAME "macaddrutil"
+#define PROGRAM_NAME "macaddrinfo"
 #endif
 #ifndef PACKAGE_BUGREPORT
 #define PACKAGE_BUGREPORT "david@syzdek.net"

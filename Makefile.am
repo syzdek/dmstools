@@ -56,7 +56,7 @@ bin_PROGRAMS				= src/bindump \
 					  src/bitops \
 					  src/colors \
 					  src/dmsversion \
-					  src/macaddrutil \
+					  src/macaddrinfo \
 					  src/netcalc \
 					  src/numconvert \
 					  src/typedef-info
@@ -68,7 +68,7 @@ noinst_HEADERS				= src/common.h
 man_MANS				= doc/bitops.1 \
 					  doc/bindump.1 \
 					  doc/codetagger.1 \
-					  doc/macaddrutil.1 \
+					  doc/macaddrinfo.1 \
 					  doc/numconvert.1 \
 					  doc/posixregex.1
 
@@ -144,10 +144,10 @@ src_dmsversion_SOURCES			= $(noinst_HEADERS) \
 
 
 # macros for src/netcalc
-src_macaddrutil_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
-src_macaddrutil_CPPFLAGS		= -DPROGRAM_NAME="\"macaddrutil\"" $(AM_CPPFLAGS)
-src_macaddrutil_SOURCES			= $(noinst_HEADERS) \
-					  src/macaddrutil.c
+src_macaddrinfo_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
+src_macaddrinfo_CPPFLAGS		= -DPROGRAM_NAME="\"macaddrinfo\"" $(AM_CPPFLAGS)
+src_macaddrinfo_SOURCES			= $(noinst_HEADERS) \
+					  src/macaddrinfo.c
 
 
 # macros for src/netcalc
@@ -208,7 +208,7 @@ EXTRA_DIST				= autogen.sh \
 					  build-aux/git-tar-name.txt \
 					  doc/bindump.1.in \
 					  doc/bitops.1.in \
-					  doc/macaddrutil.1.in \
+					  doc/macaddrinfo.1.in \
 					  doc/numconvert.1.in \
 					  doc/posixregex.1.in \
 					  include/dmsversion.h.in \
@@ -270,7 +270,7 @@ doc/bindump.1: Makefile $(srcdir)/doc/bindump.1.in
 doc/codetagger.1: Makefile $(srcdir)/doc/codetagger.1.in
 	$(do_subst_dt)
 
-doc/macaddrutil.1: Makefile $(srcdir)/doc/macaddrutil.1.in
+doc/macaddrinfo.1: Makefile $(srcdir)/doc/macaddrinfo.1.in
 	$(do_subst_dt)
 
 doc/numconvert.1: Makefile $(srcdir)/doc/numconvert.1.in
