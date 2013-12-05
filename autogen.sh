@@ -47,6 +47,6 @@ if test -d .git || test -f .git;then
    git submodule update --merge 2>&1 | sed -e 's/^/git submodule update: /g' || exit 1
 fi
 
-autoreconf -v -f -I m4 -I contrib/bindletools/m4 -W all -W error || exit 1
+autoreconf -v -i -f -I m4 -I contrib/bindletools/m4 -W all || exit 1
 
 # end of script
