@@ -367,7 +367,7 @@ int main(int argc, char * argv[])
             suicide_usage();
             return(0);
          case 'n':
-            val = strtoll(optarg, NULL, 0);
+            val = (int)strtol(optarg, NULL, 0);
             if ((suicide_find_data(&actions, &action_size, NULL, val)))
                return(1);
             break;
