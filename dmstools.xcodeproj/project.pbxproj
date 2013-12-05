@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A01CB2BD184D5DFD002235BF /* macaddrinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = A01CB2AF184D4CCB002235BF /* macaddrinfo.c */; };
+		A030166F1851235500C15082 /* macaddrinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = A01CB2AF184D4CCB002235BF /* macaddrinfo.c */; };
 		A03EDDD214E093BF00F3EF24 /* endian.c in Sources */ = {isa = PBXBuildFile; fileRef = A03EDDD114E093BF00F3EF24 /* endian.c */; };
 		A0F63DC9125A526400E27781 /* bindump.c in Sources */ = {isa = PBXBuildFile; fileRef = A0F63CBC125A49F500E27781 /* bindump.c */; };
 		A0F63DCA125A526A00E27781 /* bitcopy.c in Sources */ = {isa = PBXBuildFile; fileRef = A0F63CBE125A49F500E27781 /* bitcopy.c */; };
@@ -22,7 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		A01CB2B2184D5DEB002235BF /* CopyFiles */ = {
+		A03016641851234200C15082 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -45,8 +45,8 @@
 /* Begin PBXFileReference section */
 		A01CB2AE184D4AEA002235BF /* autogen.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = autogen.sh; sourceTree = "<group>"; };
 		A01CB2AF184D4CCB002235BF /* macaddrinfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = macaddrinfo.c; sourceTree = "<group>"; };
-		A01CB2B4184D5DEB002235BF /* macaddrutil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = macaddrutil; sourceTree = BUILT_PRODUCTS_DIR; };
 		A01CB2BE184E73B8002235BF /* macaddrinfo.1.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = macaddrinfo.1.in; sourceTree = "<group>"; };
+		A03016661851234200C15082 /* macaddrinfo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = macaddrinfo; sourceTree = BUILT_PRODUCTS_DIR; };
 		A03EDDC614E093A100F3EF24 /* endian */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = endian; sourceTree = BUILT_PRODUCTS_DIR; };
 		A03EDDD114E093BF00F3EF24 /* endian.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = endian.c; sourceTree = "<group>"; };
 		A0F63C96125A49F400E27781 /* acinclude.m4 */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = acinclude.m4; sourceTree = "<group>"; };
@@ -92,7 +92,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A01CB2B1184D5DEB002235BF /* Frameworks */ = {
+		A03016631851234200C15082 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -215,7 +215,7 @@
 				A0F63DBE125A524100E27781 /* suicide */,
 				A0F63DC5125A525000E27781 /* typedef-info */,
 				A03EDDC614E093A100F3EF24 /* endian */,
-				A01CB2B4184D5DEB002235BF /* macaddrutil */,
+				A03016661851234200C15082 /* macaddrinfo */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -275,21 +275,21 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A01CB2B3184D5DEB002235BF /* macaddrutil */ = {
+		A03016651851234200C15082 /* macaddrinfo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A01CB2BA184D5DEB002235BF /* Build configuration list for PBXNativeTarget "macaddrutil" */;
+			buildConfigurationList = A030166C1851234200C15082 /* Build configuration list for PBXNativeTarget "macaddrinfo" */;
 			buildPhases = (
-				A01CB2B0184D5DEB002235BF /* Sources */,
-				A01CB2B1184D5DEB002235BF /* Frameworks */,
-				A01CB2B2184D5DEB002235BF /* CopyFiles */,
+				A03016621851234200C15082 /* Sources */,
+				A03016631851234200C15082 /* Frameworks */,
+				A03016641851234200C15082 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = macaddrutil;
-			productName = macaddrutil;
-			productReference = A01CB2B4184D5DEB002235BF /* macaddrutil */;
+			name = macaddrinfo;
+			productName = macaddrinfo;
+			productReference = A03016661851234200C15082 /* macaddrinfo */;
 			productType = "com.apple.product-type.tool";
 		};
 		A03EDDC514E093A100F3EF24 /* endian */ = {
@@ -497,7 +497,7 @@
 				A0F63D93125A51F600E27781 /* codetagger */,
 				A0F63D9A125A520500E27781 /* colors */,
 				A03EDDC514E093A100F3EF24 /* endian */,
-				A01CB2B3184D5DEB002235BF /* macaddrutil */,
+				A03016651851234200C15082 /* macaddrinfo */,
 				A0F63DA8125A521B00E27781 /* numconvert */,
 				A0F63DAF125A522D00E27781 /* posixregex */,
 				A0F63DB6125A523700E27781 /* recurse */,
@@ -508,11 +508,11 @@
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A01CB2B0184D5DEB002235BF /* Sources */ = {
+		A03016621851234200C15082 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A01CB2BD184D5DFD002235BF /* macaddrinfo.c in Sources */,
+				A030166F1851235500C15082 /* macaddrinfo.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,7 +635,7 @@
 			};
 			name = Release;
 		};
-		A01CB2BB184D5DEB002235BF /* Debug */ = {
+		A030166D1851234200C15082 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -668,7 +668,7 @@
 			};
 			name = Debug;
 		};
-		A01CB2BC184D5DEB002235BF /* Release */ = {
+		A030166E1851234200C15082 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1004,14 +1004,13 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A01CB2BA184D5DEB002235BF /* Build configuration list for PBXNativeTarget "macaddrutil" */ = {
+		A030166C1851234200C15082 /* Build configuration list for PBXNativeTarget "macaddrinfo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A01CB2BB184D5DEB002235BF /* Debug */,
-				A01CB2BC184D5DEB002235BF /* Release */,
+				A030166D1851234200C15082 /* Debug */,
+				A030166E1851234200C15082 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 		A03EDDCF14E093A100F3EF24 /* Build configuration list for PBXNativeTarget "endian" */ = {
 			isa = XCConfigurationList;

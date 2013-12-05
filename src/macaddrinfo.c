@@ -212,7 +212,7 @@ struct mau_command
 int main(int argc, char * argv[]);
 
 
-int mau_cmd_format(mau_config * cnf, int argc, char * argv[]);
+int mau_cmd_eui64(mau_config * cnf, int argc, char * argv[]);
 
 // generate command
 int mau_cmd_generate(mau_config * cnf, int argc, char * argv[]);
@@ -222,8 +222,22 @@ void mau_cmd_generate_usage(void);
 
 int mau_cmd_info(mau_config * cnf, int argc, char * argv[]);
 
+int mau_cmd_link_local(mau_config * cnf, int argc, char * argv[]);
+
+int mau_cmd_macaddress(mau_config * cnf, int argc, char * argv[]);
+
 int mau_cmd_test(mau_config * cnf, int argc, char * argv[]);
 void mau_cmd_update_usage(void);
+
+int mau_conv_eui2sin(mau_config * cnf, const maueui64_t eui, struct sockaddr_in6  * sin);
+int mau_conv_eui2str(mau_config * cnf, const maueui64_t eui, maustr_t str);
+int mau_conv_mac2eui(mau_config * cnf, const mauaddr_t addr, maueui64_t eui);
+int mau_conv_mac2str(mau_config * cnf, const mauaddr_t addr, maustr_t str);
+int mau_conv_eui2mac(mau_config * cnf, const maueui64_t eui, mauaddr_t addr);
+int mau_conv_sin2str(mau_config * cnf, const struct sockaddr_in6  * sin, maustr_t str);
+int mau_conv_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr);
+int mau_conv_str2sin(mau_config * cnf, const maustr_t str, struct sockaddr_in6 * sin);
+
 
 int mau_getopt(mau_config * cnf, int argc, char * const * argv,
    const char * short_opt, const struct option * long_opt, int * opt_index);
@@ -238,12 +252,6 @@ void mau_log_verbose(mau_config * cnf, const char * fmt, ...);
 void mau_log_warn(mau_config * cnf, const char * fmt, ...);
 
 void mau_logv(mau_config * cnf, const char * fmt, va_list args);
-
-int mau_eui2str(mau_config * cnf, const maueui64_t eui, maustr_t str);
-int mau_mac2eui(mau_config * cnf, const mauaddr_t addr, maueui64_t eui);
-int mau_mac2str(mau_config * cnf, const mauaddr_t addr, maustr_t str);
-int mau_eui2mac(mau_config * cnf, const maueui64_t eui, mauaddr_t addr);
-int mau_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr);
 
 //displays usage information
 void mau_usage(mau_config * cnf);
@@ -274,11 +282,11 @@ const mau_command mau_cmdmap[] =
       NULL, // "print entire OUI database"                     // command description
    },
    {
-      "format",                                       // command name
-      mau_cmd_format,                                 // entry function
+      "eui64",                                        // command name
+      mau_cmd_eui64,                                  // entry function
       NULL,                                           // help function
       " address",                                     // cli usage
-      "reformat MAC address using notation flags"     // command description
+      "display modified EUI-64 Identifier"            // command description
    },
    {
       "generate",                                     // command name
@@ -293,6 +301,20 @@ const mau_command mau_cmdmap[] =
       NULL,                                           // help function
       " address",                                     // cli usage
       "display meta information about MAC address"    // command description
+   },
+   {
+      "link-local",                                   // command name
+      mau_cmd_link_local,                             // entry function
+      NULL,                                           // help function
+      " address",                                     // cli usage
+      "display derived IPv6 link-local address"       // command description
+   },
+   {
+      "macaddress",                                   // command name
+      mau_cmd_macaddress,                             // entry function
+      NULL,                                           // help function
+      " address",                                     // cli usage
+      "display MAC address using notation flags"      // command description
    },
    {
       "update",                                       // command name
@@ -406,12 +428,13 @@ int main(int argc, char * argv[])
 }
 
 
-int mau_cmd_format(mau_config * cnf, int argc, char * argv[])
+int mau_cmd_eui64(mau_config * cnf, int argc, char * argv[])
 {
    int            c;
    int            opt_index;
-   maustr_t       str;
    mauaddr_t      addr;
+   maueui64_t     eui;
+   maustr_t       eui_str;
 
    // getopt options
    static char   short_opt[] = MAU_GETOPT_SHORT;
@@ -456,12 +479,12 @@ int mau_cmd_format(mau_config * cnf, int argc, char * argv[])
       return(1);
    };
 
-   if ((mau_str2mac(cnf, argv[optind], addr)))
+   if ((mau_conv_str2mac(cnf, argv[optind], addr)))
       return(1);
+   mau_conv_mac2eui(cnf, addr, eui);
+   mau_conv_eui2str(cnf, eui, eui_str);
 
-   mau_mac2str(cnf, addr, str);
-
-   printf("%s\n", str);
+   printf("%s\n", eui_str);
 
    return(0);
 }
@@ -567,7 +590,7 @@ int mau_cmd_generate(mau_config * cnf, int argc, char * argv[])
    if ((use_oui))
       memcpy(addr, oui, 3);
 
-   mau_mac2str(cnf, addr, str);
+   mau_conv_mac2str(cnf, addr, str);
    printf("%s\n", str);
 
    return(0);
@@ -595,7 +618,7 @@ int mau_cmd_info(mau_config * cnf, int argc, char * argv[])
    maustr_t       addr_str;
    maueui64_t     eui;
    maustr_t       eui_str;
-   maustr_t       ipv6_str;
+   maustr_t       sin_str;
    struct sockaddr_in6   sin;
 
    // getopt options
@@ -641,27 +664,146 @@ int mau_cmd_info(mau_config * cnf, int argc, char * argv[])
       return(1);
    };
 
-   if ((mau_str2mac(cnf, argv[optind], addr)))
+   if ((mau_conv_str2mac(cnf, argv[optind], addr)))
       return(1);
 
-   mau_mac2str(cnf, addr, addr_str);
-   mau_mac2eui(cnf, addr, eui);
-   mau_eui2str(cnf, eui, eui_str);
-
-   memset(&sin, 0, sizeof(sin));
-   sin.sin6_len    = sizeof(sin);
-   sin.sin6_family = AF_INET6;
-   sin.sin6_addr.s6_addr[0]  = 0xfe;
-   sin.sin6_addr.s6_addr[1]  = 0x80;
-   memcpy(&sin.sin6_addr.s6_addr[8], eui, 8);
-
-   getnameinfo((struct sockaddr *)&sin, sin.sin6_len, ipv6_str, sizeof(ipv6_str), NULL, 0, NI_NUMERICHOST|NI_NUMERICSERV);
+   mau_conv_mac2str(cnf, addr, addr_str);
+   mau_conv_mac2eui(cnf, addr, eui);
+   mau_conv_eui2str(cnf, eui, eui_str);
+   mau_conv_eui2sin(cnf, eui, &sin);
+   mau_conv_sin2str(cnf, &sin, sin_str);
 
    printf("MAC Address:      %s\n", addr_str);
    printf("U/L Bit:          %s\n", ((addr[0] & 0x02) == 0x02) ? "1 (locally administered)" : "0 (universally administered)");
    printf("Multicast Bit:    %s\n", ((addr[0] & 0x01) == 0x01) ? "1 (multicast)" : "0 (unicast)");
    printf("Modified EUI-64:  %s\n", eui_str);
-   printf("IPv6 Link-local:  %s\n", ipv6_str);
+   printf("IPv6 Link-local:  %s\n", sin_str);
+
+   return(0);
+}
+
+
+int mau_cmd_link_local(mau_config * cnf, int argc, char * argv[])
+{
+   int            c;
+   int            opt_index;
+   mauaddr_t      addr;
+   maueui64_t     eui;
+   maustr_t       sin_str;
+   struct sockaddr_in6   sin;
+
+   // getopt options
+   static char   short_opt[] = MAU_GETOPT_SHORT;
+   static struct option long_opt[] = { MAU_GETOPT_LONG };
+
+
+   while((c = mau_getopt(cnf, argc, argv, short_opt, long_opt, &opt_index)) != -1)
+   {
+      switch(c)
+      {
+         case -2: /* captured by common options */
+         case -1:	/* no more arguments */
+         case 0:	/* long options toggles */
+         break;
+
+         case 1:
+         return(0);
+         case 2:
+         return(1);
+
+         case '?':
+         fprintf(stderr, "Try `%s info --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
+         default:
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s info --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+      };
+   };
+
+   if ((argc - optind) < 1)
+   {
+      fprintf(stderr, "%s: missing MAC address\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s info --help' for more information.\n", PROGRAM_NAME);
+      return(1);
+   };
+   if ((optind+1) != argc)
+   {
+      fprintf(stderr, "%s: unrecognized argument `-- %s'\n", PROGRAM_NAME, argv[optind+1]);
+      fprintf(stderr, "Try `%s info --help' for more information.\n", PROGRAM_NAME);
+      return(1);
+   };
+
+   if ((mau_conv_str2mac(cnf, argv[optind], addr)))
+      return(1);
+
+   mau_conv_mac2eui(cnf, addr, eui);
+   mau_conv_eui2sin(cnf, eui, &sin);
+   mau_conv_sin2str(cnf, &sin, sin_str);
+
+   printf("%s\n", sin_str);
+
+   return(0);
+}
+
+
+int mau_cmd_macaddress(mau_config * cnf, int argc, char * argv[])
+{
+   int            c;
+   int            opt_index;
+   maustr_t       str;
+   mauaddr_t      addr;
+
+   // getopt options
+   static char   short_opt[] = MAU_GETOPT_SHORT;
+   static struct option long_opt[] = { MAU_GETOPT_LONG };
+
+
+   while((c = mau_getopt(cnf, argc, argv, short_opt, long_opt, &opt_index)) != -1)
+   {
+      switch(c)
+      {
+         case -2: /* captured by common options */
+         case -1:	/* no more arguments */
+         case 0:	/* long options toggles */
+         break;
+
+         case 1:
+         return(0);
+         case 2:
+         return(1);
+
+         case '?':
+         fprintf(stderr, "Try `%s format --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
+         default:
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s format --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+      };
+   };
+
+   if ((argc - optind) < 1)
+   {
+      fprintf(stderr, "%s: missing MAC address\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s format --help' for more information.\n", PROGRAM_NAME);
+      return(1);
+   };
+   if ((optind+1) != argc)
+   {
+      fprintf(stderr, "%s: unrecognized argument `-- %s'\n", PROGRAM_NAME, argv[optind+1]);
+      fprintf(stderr, "Try `%s format --help' for more information.\n", PROGRAM_NAME);
+      return(1);
+   };
+
+   if ((mau_conv_str2mac(cnf, argv[optind], addr)))
+      return(1);
+
+   mau_conv_mac2str(cnf, addr, str);
+
+   printf("%s\n", str);
 
    return(0);
 }
@@ -738,6 +880,232 @@ void mau_cmd_update_usage(void)
       "  -u url                    download URL for source OUI database\n"
    );
    return;
+}
+
+
+int mau_conv_eui2mac(mau_config * cnf, const maueui64_t eui, maueui64_t addr)
+{
+   assert(cnf != NULL);
+   addr[0] = (eui[0] ^ 0x02);
+   addr[1] =  eui[1];
+   addr[2] =  eui[2];
+   addr[3] =  eui[5];
+   addr[4] =  eui[6];
+   addr[5] =  eui[7];
+   return(0);
+}
+
+
+int mau_conv_eui2sin(mau_config * cnf, const maueui64_t eui, struct sockaddr_in6  * sin)
+{
+   assert(cnf != NULL);
+   memset(sin, 0, sizeof(struct sockaddr_in6));
+   sin->sin6_len    = sizeof(struct sockaddr_in6);
+   sin->sin6_family = AF_INET6;
+   sin->sin6_addr.s6_addr[0]  = 0xfe;
+   sin->sin6_addr.s6_addr[1]  = 0x80;
+   memcpy(&sin->sin6_addr.s6_addr[8], eui, 8);
+   return(0);
+}
+
+
+int mau_conv_eui2str(mau_config * cnf, const maueui64_t eui, maustr_t str)
+{
+   switch (cnf->notation & MAU_MASK_CASE)
+   {
+      case MAU_CASE_LOWER:
+      snprintf(str, sizeof(maustr_t), "%02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x", eui[0],eui[1],eui[2],eui[3],eui[4],eui[5],eui[6],eui[7]);
+      break;
+
+      case MAU_CASE_UPPER:
+      default:
+      snprintf(str, sizeof(maustr_t), "%02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X", eui[0],eui[1],eui[2],eui[3],eui[4],eui[5],eui[6],eui[7]);
+      break;
+   }
+   return(0);
+}
+
+
+int mau_conv_mac2eui(mau_config * cnf, const mauaddr_t addr, maueui64_t eui)
+{
+   assert(cnf  != NULL);
+   assert(eui  != NULL);
+   assert(addr != NULL);
+
+   eui[0] = (addr[0] ^ 0x02);
+   eui[1] =  addr[1];
+   eui[2] =  addr[2];
+   eui[3] =  0xff;
+   eui[4] =  0xfe;
+   eui[5] =  addr[3];
+   eui[6] =  addr[4];
+   eui[7] =  addr[5];
+
+   return(0);
+}
+
+
+int mau_conv_mac2str(mau_config * cnf, const mauaddr_t addr, maustr_t str)
+{
+   switch (cnf->notation | (MAU_MASK_NOTATION & MAU_MASK_CASE))
+   {
+      case (MAU_NOTATION_COLON | MAU_CASE_LOWER):
+      snprintf(str, sizeof(maustr_t), "%02x:%02x:%02x:%02x:%02x:%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+      break;
+
+      case (MAU_NOTATION_COLON | MAU_CASE_UPPER):
+      snprintf(str, sizeof(maustr_t), "%02X:%02X:%02X:%02X:%02X:%02X", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+      break;
+
+      case (MAU_NOTATION_DASH | MAU_CASE_LOWER):
+      snprintf(str, sizeof(maustr_t), "%02x-%02x-%02x-%02x-%02x-%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+      break;
+
+      case (MAU_NOTATION_DASH | MAU_CASE_UPPER):
+      snprintf(str, sizeof(maustr_t), "%02X-%02X-%02X-%02X-%02X-%02X", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+      break;
+
+      case (MAU_NOTATION_DOT | MAU_CASE_LOWER):
+      snprintf(str, sizeof(maustr_t), "%02x%02x.%02x%02x.%02x%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+      break;
+
+      case (MAU_NOTATION_DOT | MAU_CASE_UPPER):
+      snprintf(str, sizeof(maustr_t), "%02X%02X.%02X%02X.%02X%02X", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+      break;
+
+      case (MAU_NOTATION_RAW | MAU_CASE_LOWER):
+      snprintf(str, sizeof(maustr_t), "%02x%02x%02x%02x%02x%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+      break;
+
+      case (MAU_NOTATION_RAW | MAU_CASE_UPPER):
+      snprintf(str, sizeof(maustr_t), "%02X%02X%02X%02X%02X%02X", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+      break;
+
+      default:
+      snprintf(str, sizeof(maustr_t), "%02x:%02x:%02x:%02x:%02x:%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+   };
+   return(0);
+}
+
+
+int mau_conv_sin2eui(mau_config * cnf, const struct sockaddr_in6 * sin, maueui64_t eui)
+{
+   assert(cnf != NULL);
+   memcpy(eui, &sin->sin6_addr.s6_addr[8], 8);
+   return(0);
+}
+
+
+int mau_conv_sin2str(mau_config * cnf, const struct sockaddr_in6  * sin, maustr_t str)
+{
+   assert(cnf != NULL);
+   getnameinfo((struct sockaddr *)sin, sin->sin6_len, str, sizeof(maustr_t), NULL, 0, NI_NUMERICHOST|NI_NUMERICSERV);
+   return(0);
+}
+
+
+int mau_conv_str2eui(mau_config * cnf, const maustr_t str, maueui64_t eui)
+{
+   int    buff[8];
+   size_t slen;
+   int    len;
+   int    i;
+   struct sockaddr_in6 sin;
+
+   assert(cnf  != NULL);
+   assert(str  != NULL);
+   assert(eui != NULL);
+
+   if (!(mau_conv_str2sin(cnf, str, &sin)))
+   {
+      mau_conv_sin2eui(cnf, &sin, eui);
+      return(0);
+   };
+
+   slen = strlen(str);
+   len  = 0;
+
+   if (slen == 23)
+      len = sscanf(str, "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5],&buff[6],&buff[7]);
+   if ((slen == 23) && (len != 8))
+      len = sscanf(str, "%02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5],&buff[6],&buff[7]);
+   if ((slen == 19) && (len != 8))
+      len = sscanf(str, "%02X%02X.%02X%02X.%02X%02X.%02X%02X", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5],&buff[6],&buff[7]);
+   if ((slen == 16) && (len != 8))
+      len = sscanf(str, "%02X%02X%02X%02X%02X%02X%02X%02X", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5],&buff[6],&buff[7]);
+   if (len != 8)
+      return(1);
+
+   for(i = 0; i < 8; i++)
+      eui[i] = (uint8_t) buff[i];
+
+   return(0);
+}
+
+
+int mau_conv_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr)
+{
+   maueui64_t eui;
+   int        buff[6];
+   size_t     slen;
+   int        len;
+   int        i;
+
+   assert(str  != NULL);
+   assert(addr != NULL);
+
+   if (!(mau_conv_str2eui(cnf, str, eui)))
+   {
+      mau_conv_eui2mac(cnf, eui, addr);
+      return(0);
+   };
+
+   slen = strlen(str);
+   len  = 0;
+
+   if (slen == 17)
+      len = sscanf(str, "%02x:%02x:%02x:%02x:%02x:%02x", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
+   if ((slen == 17) && (len != 6))
+      len = sscanf(str, "%02x-%02x-%02x-%02x-%02x-%02x", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
+   if ((slen == 14) && (len != 6))
+      len = sscanf(str, "%02X%02X.%02X%02X.%02X%02X", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
+   if ((slen == 12) && (len != 6))
+      len = sscanf(str, "%02X%02X%02X%02X%02X%02X", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
+   if (len != 6)
+   {
+      mau_log_err(cnf, "invalid MAC address\n");
+      return(1);
+   };
+
+   for(i = 0; i < 6; i++)
+      addr[i] = (uint8_t) buff[i];
+
+   return(0);
+}
+
+
+int mau_conv_str2sin(mau_config * cnf, const maustr_t str, struct sockaddr_in6 * sin)
+{
+   struct addrinfo    hints;
+   struct addrinfo  * servinfo;
+
+   assert(cnf  != NULL);
+   assert(str  != NULL);
+   assert(sin != NULL);
+
+   memset(&hints, 0, sizeof(hints));
+   hints.ai_family   = AF_INET6;      // use AF_UNSPEC, AF_INET, or AF_INET6
+   hints.ai_socktype = SOCK_STREAM;
+   hints.ai_flags    = AI_ADDRCONFIG | AI_PASSIVE | AI_NUMERICSERV | AI_NUMERICHOST;
+   if (getaddrinfo(str, NULL, &hints, &servinfo) != 0)
+      return(1);
+
+   memset(sin, 0, sizeof(struct sockaddr_in6));
+   sin->sin6_len    = sizeof(struct sockaddr_in6);
+   sin->sin6_family = AF_INET6;
+   memcpy(sin, servinfo->ai_addr, sizeof(struct sockaddr_in6));
+
+   return(0);
 }
 
 
@@ -845,114 +1213,6 @@ void mau_logv(mau_config * cnf, const char * fmt, va_list args)
       fprintf(stderr, "%s: ", PROGRAM_NAME);
    vfprintf(stderr, fmt, args);
    return;
-}
-
-
-int mau_eui2str(mau_config * cnf, const maueui64_t eui, maustr_t str)
-{
-   switch (cnf->notation | MAU_MASK_CASE)
-   {
-      case MAU_CASE_LOWER:
-      snprintf(str, sizeof(maustr_t), "%02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x", eui[0],eui[1],eui[2],eui[3],eui[4],eui[5],eui[6],eui[7]);
-      break;
-
-      case MAU_CASE_UPPER:
-      default:
-      snprintf(str, sizeof(maustr_t), "%02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X", eui[0],eui[1],eui[2],eui[3],eui[4],eui[5],eui[6],eui[7]);
-      break;
-   }
-   return(0);
-}
-
-
-int mau_mac2eui(mau_config * cnf, const mauaddr_t addr, maueui64_t eui)
-{
-   assert(cnf  != NULL);
-   assert(eui  != NULL);
-   assert(addr != NULL);
-
-   eui[0] = (addr[0] ^ 0x02);
-   eui[1] =  addr[1];
-   eui[2] =  addr[2];
-   eui[3] =  0xff;
-   eui[4] =  0xfe;
-   eui[5] =  addr[3];
-   eui[6] =  addr[4];
-   eui[7] =  addr[5];
-
-   return(0);
-}
-
-
-int mau_mac2str(mau_config * cnf, const mauaddr_t addr, maustr_t str)
-{
-   switch (cnf->notation | (MAU_MASK_NOTATION & MAU_MASK_CASE))
-   {
-      case (MAU_NOTATION_COLON | MAU_CASE_LOWER):
-      snprintf(str, sizeof(maustr_t), "%02x:%02x:%02x:%02x:%02x:%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
-      break;
-
-      case (MAU_NOTATION_COLON | MAU_CASE_UPPER):
-      snprintf(str, sizeof(maustr_t), "%02X:%02X:%02X:%02X:%02X:%02X", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
-      break;
-
-      case (MAU_NOTATION_DASH | MAU_CASE_LOWER):
-      snprintf(str, sizeof(maustr_t), "%02x-%02x-%02x-%02x-%02x-%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
-      break;
-
-      case (MAU_NOTATION_DASH | MAU_CASE_UPPER):
-      snprintf(str, sizeof(maustr_t), "%02X-%02X-%02X-%02X-%02X-%02X", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
-      break;
-
-      case (MAU_NOTATION_DOT | MAU_CASE_LOWER):
-      snprintf(str, sizeof(maustr_t), "%02x%02x.%02x%02x.%02x%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
-      break;
-
-      case (MAU_NOTATION_DOT | MAU_CASE_UPPER):
-      snprintf(str, sizeof(maustr_t), "%02X%02X.%02X%02X.%02X%02X", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
-      break;
-
-      case (MAU_NOTATION_RAW | MAU_CASE_LOWER):
-      snprintf(str, sizeof(maustr_t), "%02x%02x%02x%02x%02x%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
-      break;
-
-      case (MAU_NOTATION_RAW | MAU_CASE_UPPER):
-      snprintf(str, sizeof(maustr_t), "%02X%02X%02X%02X%02X%02X", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
-      break;
-
-      default:
-      snprintf(str, sizeof(maustr_t), "%02x:%02x:%02x:%02x:%02x:%02x", addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
-   };
-   return(0);
-}
-
-
-int mau_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr)
-{
-   int      buff[6];
-   int      len;
-   int      i;
-
-   assert(str  != NULL);
-   assert(addr != NULL);
-
-   len = sscanf(str, "%02x:%02x:%02x:%02x:%02x:%02x", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
-   if (len != 6)
-      len = sscanf(str, "%02x-%02x-%02x-%02x-%02x-%02x", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
-   if (len != 6)
-      len = sscanf(str, "%02X%02X.%02X%02X.%02X%02X", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
-   if (len != 6)
-      len = sscanf(str, "%02X%02X%02X%02X%02X%02X", &buff[0],&buff[1],&buff[2],&buff[3],&buff[4],&buff[5]);
-   if (len != 6)
-   {
-      mau_log_err(cnf, "invalid MAC address\n");
-      return(1);
-   };
-
-   for(i = 0; i < 6; i++)
-      addr[i] = (uint8_t) buff[i];
-
-   return(0);
 }
 
 
