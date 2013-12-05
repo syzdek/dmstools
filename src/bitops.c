@@ -344,14 +344,14 @@ const char * my_uint2str(char * dst, uint32_t num)
 uint32_t my_strtouint(const char * str)
 {
    if (!(strncmp(str, "0x", (size_t)2)))
-      return(strtoumax(&str[2], NULL, 16));
+      return((uint32_t)strtoul(&str[2], NULL, 16));
    if (!(strncmp(str, "0X", (size_t)2)))
-      return(strtoumax(&str[2], NULL, 16));
+      return((uint32_t)strtoul(&str[2], NULL, 16));
    if (!(strncmp(str, "00", (size_t)2)))
-      return(strtoumax(str, NULL, 2));
+      return((uint32_t)strtoul(str, NULL, 2));
    if (!(strncmp(str, "0", (size_t)1)))
-      return(strtoumax(str, NULL, 8));
-   return(strtoumax(str, NULL, 10));
+      return((uint32_t)strtoul(str, NULL, 8));
+   return((uint32_t)strtoul(str, NULL, 10));
 }
 
 
