@@ -187,7 +187,7 @@ int main(int argc, char * argv[])
    unsigned     y;
    int          err;
    int          exitcode;
-   int          str_len;
+   ssize_t      str_len;
    int          opt_index;
    char         arg[BUFFER_SIZE];
    char         msg[BUFFER_SIZE];
@@ -203,7 +203,7 @@ int main(int argc, char * argv[])
       int          verbosity;
       int          substring;
       int          reg_cflags;
-      unsigned     nmatch;
+      size_t       nmatch;
    } opt;
 
    // getopt options
