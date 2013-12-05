@@ -279,35 +279,35 @@ int main(int argc, char * argv[])
          case 0:	/* long options toggles */
             break;
          case 'B':
-            buff_len = strtoul(optarg, NULL, 0);
+            buff_len = (uint32_t)strtoul(optarg, NULL, 0);
             break;
          case 'b':
-            u        = strtoul(optarg, NULL, 0);
+            u        = (uint32_t)strtoul(optarg, NULL, 0);
             buff_len = (u & 0x07) ? ((u/8) + 1) : (u/8);
             break;
          case 'd':
-            data = strtoul(optarg, NULL, 0);
+            data = (uint32_t)strtoul(optarg, NULL, 0);
             break;
          case 'h':
             my_usage();
             return(0);
          case 'L':
-            len  = strtoul(optarg, NULL, 0);
+            len  = (uint32_t)strtoul(optarg, NULL, 0);
             len *= 8;
             if (len > 32)
                len = 32;
             break;
          case 'l':
-            len = strtoul(optarg, NULL, 0);
+            len = (uint32_t)strtoul(optarg, NULL, 0);
             if (len > 32)
                len = 32;
             break;
          case 'O':
-            offset  = strtoul(optarg, NULL, 0);
+            offset  = (uint32_t)strtoul(optarg, NULL, 0);
             offset *= 8;
             break;
          case 'o':
-            offset = strtoul(optarg, NULL, 0);
+            offset = (uint32_t)strtoul(optarg, NULL, 0);
             break;
          case 'V':
             my_version();
