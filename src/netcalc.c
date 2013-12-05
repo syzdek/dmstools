@@ -184,7 +184,7 @@ int netcalc_is_ipv4(const char * str, uint64_t * ipv4_ptr)
    {
       // reads number from string
       ptr = NULL;
-      value = strtol(str, &ptr, 10);
+      value = (int)strtol(str, &ptr, 10);
 
       // exits if string is not a number or IP address
       if (!(ptr))
