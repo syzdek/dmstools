@@ -187,7 +187,7 @@ size_t my_print_dump PARAMS((BinDumpFile * file, size_t offset, size_t len,
    unsigned opts));
 
 // performs read upon file
-int my_read PARAMS((BinDumpFile * file, size_t offset, size_t len,
+ssize_t my_read PARAMS((BinDumpFile * file, size_t offset, size_t len,
    unsigned verbose));
 
 //displays usage information
@@ -714,7 +714,7 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
 /// @param[in]  file       file to use for operations
 /// @param[in]  offset     offset
 /// @param[in]  len        len
-int my_read(BinDumpFile * file, size_t offset, size_t len, unsigned verbose)
+ssize_t my_read(BinDumpFile * file, size_t offset, size_t len, unsigned verbose)
 {
    size_t max;
 
