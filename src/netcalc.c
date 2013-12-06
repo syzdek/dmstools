@@ -157,7 +157,7 @@ const char * netcalc_ipv4tostr(uint64_t ipv4)
    int offset;
    offset = 0;
    for(c = 0; c < 4; c++)
-      offset += snprintf(&buff[offset], 1024-offset, "%lli.", ((ipv4 >> (24 - (8*c)))&0xff) );
+      offset += snprintf(&buff[offset], 1024-offset, "%" PRIu64 ".", ((ipv4 >> (24 - (8*c)))&0xff) );
    buff[offset-1] = '\0';
    return(buff);
 }
@@ -380,10 +380,10 @@ int main(int argc, char * argv[])
 
       // prints information
       printf("%-18s", netcalc_ipv4tostr(network));
-      printf("%-8lli", cidr);
+      printf("%-8" PRIu64, cidr);
       printf("%-18s", netcalc_ipv4tostr(netmask));
       printf("%-18s", netcalc_ipv4tostr(broadcast));
-      printf("%llu", (~netmask + 1));
+      printf("%" PRIu64, (~netmask + 1));
       printf("\n");
 
       // moves to next netmask/cidr
