@@ -132,17 +132,6 @@ struct suicide_signal_data
 };
 
 
-/// table of signal data
-typedef struct suicide_signal_action SuicideAction;
-struct suicide_signal_action
-{
-   int number;
-   int pad0;
-   void              * pad1;
-   const SuicideData * data;
-};
-
-
 //////////////////
 //              //
 //  Prototypes  //
@@ -157,8 +146,7 @@ int suicide_cmp_val PARAMS((const SuicideData * p1,
    const SuicideData * p2));
 
 // finds a signal from the table and returns action
-int suicide_find_data PARAMS((SuicideAction *** list, size_t * count,
-   const char * str, int val));
+int suicide_find_data PARAMS((SuicideData ** data, const char * str, int val));
 
 // empty signal handler
 void suicide_signal_handler PARAMS((int sig));
@@ -182,7 +170,7 @@ void suicide_version PARAMS((void));
 //             //
 /////////////////
 
- SuicideData susv3_signals[] =
+SuicideData susv3_signals[] =
 {
 #ifdef SIGABRT
    { 'A', SIGABRT,     "SIGABRT",     "Process abort signal." },
@@ -325,12 +313,11 @@ int main(int argc, char * argv[])
    int              verbose;
    int              attempt_catch;
    int              opt_index;
+   int              sig;
    char             buff[16];
    pid_t            p;   // process ID
    pid_t            pp;  // parent process ID
-   size_t           count;
-   size_t           action_size;
-   SuicideAction ** actions;
+   SuicideData    * data;
 
    static char   short_opt[] = "chin:s:SvV";
    static struct option long_opt[] =
@@ -350,10 +337,8 @@ int main(int argc, char * argv[])
 
    p           = getpid();
    pp          = getppid();
-   actions     = NULL;
    verbose     = 0;
    opt_index   = 0;
-   action_size = 0;
    attempt_catch = 0;
 
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
@@ -374,11 +359,11 @@ int main(int argc, char * argv[])
             return(0);
          case 'n':
             val = (int)strtol(optarg, NULL, 0);
-            if ((suicide_find_data(&actions, &action_size, NULL, val)))
+            if ((sig = suicide_find_data(&data, NULL, val)) == -1)
                return(1);
             break;
          case 's':
-            if ((suicide_find_data(&actions, &action_size, optarg, -1)))
+            if ((sig = suicide_find_data(&data, optarg, -1)) == -1)
                return(1);
             break;
          case 'S':
@@ -404,32 +389,27 @@ int main(int argc, char * argv[])
 
    if (verbose)
    {
-      printf(">> getppid(): %i\n", pp);
-      printf(">> getpid():  %i\n", p);
+      if ((data))
+         printf(">> %-9s == %i\n", data->name, sig);
+      printf(">> getppid() == %i\n", pp);
+      printf(">> getpid()  == %i\n", p);
    };
 
+   if ((data))
+      snprintf(buff, 16L, "%s", data->name);
+   else
+      snprintf(buff, 16L, "%i", sig);
    if (attempt_catch)
-      for(c = 0; c < 32; c++)
-         signal(c, suicide_signal_handler);
-
-   for(count = 0; count < action_size; count++)
    {
-      if (actions[count]->data)
-         snprintf(buff, 16L, "%s", actions[count]->data->name);
-      else
-         snprintf(buff, 16L, "%i", actions[count]->number);
-      if (attempt_catch)
-      {
-         if (verbose)
-            printf(">> signal(%s)\n", buff);
-         signal(actions[count]->number, suicide_signal_handler);
-      };
-      printf(">> kill(%i, %s)\n", p, buff);
-      kill(p, actions[count]->number);
       if (verbose)
-         printf(">> usleep(100)\n");
-      usleep(100);
+         printf(">> signal(%s)\n", buff);
+      signal(sig, suicide_signal_handler);
    };
+   printf(">> kill(%i, %s)\n", p, buff);
+   kill(p, sig);
+   if (verbose)
+      printf(">> usleep(100)\n");
+   usleep(100);
 
    if (verbose)
       printf(">> return(0)\n");
@@ -460,28 +440,14 @@ void suicide_signal_handler(int sig)
 /// finds a signal from the table and returns action
 /// @param[in]  str
 /// @param[in]  val
-int suicide_find_data(SuicideAction *** list, size_t * count, const char * str,
+int suicide_find_data(SuicideData ** datap, const char * str,
    int val)
 {
-   int              i;
-   size_t           offset;
-   SuicideAction  * action;
-   SuicideAction ** ptr;
+   int    i;
+   size_t offset;
 
-   if (!(ptr = realloc(*list, (sizeof(SuicideAction *)*((*count)+1)))))
-   {
-      fprintf(stderr, PROGRAM_NAME ": out of virtual memory\n");
-      return(-1);
-   };
-   *list = ptr;
-
-   if (!(action = malloc(sizeof(SuicideAction))))
-   {
-      fprintf(stderr, PROGRAM_NAME ": out of virtual memory\n");
-      return(-1);
-   };
-   memset(action, 0, sizeof(SuicideAction));
-   action->number = -1;
+   if ((datap))
+      *datap = NULL;
 
    if (str)
    {
@@ -490,31 +456,22 @@ int suicide_find_data(SuicideAction *** list, size_t * count, const char * str,
       {
          if (!(strcasecmp(&susv3_signals[i].name[offset], str)))
          {
-            action->number = susv3_signals[i].number;
-            action->data   = &susv3_signals[i];
-            (*list)[(*count)] = action;
-            (*count)++;
-            return(0);
+            if ((datap))
+               *datap = &susv3_signals[i];
+            return(susv3_signals[i].number);
          };
       };
-      free(action);
       fprintf(stderr, PROGRAM_NAME ": unknown signal\n");
       fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
       return(-1);
    };
 
-   (*list)[(*count)] = action;
-   (*count)++;
-
-   if (!(str))
-   {
-      action->number = val;
+   if ((datap))
       for(i = 0; susv3_signals[i].name; i++)
          if (susv3_signals[i].number == val)
-            action->data = &susv3_signals[i];
-   };
+            *datap = &susv3_signals[i];
 
-   return(0);
+   return(val);
 }
 
 
