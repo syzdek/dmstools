@@ -63,26 +63,6 @@
 
 ///////////////////
 //               //
-//  i18l Support //
-//               //
-///////////////////
-
-#ifdef HAVE_GETTEXT
-#   include <gettext.h>
-#   include <libintl.h>
-#   define _(String) gettext (String)
-#   define gettext_noop(String) String
-#   define N_(String) gettext_noop (String)
-#else
-#   define _(String) (String)
-#   define N_(String) String
-#   define textdomain(Domain)
-#   define bindtextdomain(Package, Directory)
-#endif
-
-
-///////////////////
-//               //
 //  Definitions  //
 //               //
 ///////////////////
@@ -329,12 +309,6 @@ int main(int argc, char * argv[])
       {NULL,            0,           0, 0  }
    };
 
-#ifdef HAVE_GETTEXT
-   setlocale (LC_ALL, "");
-   bindtextdomain (PACKAGE, LOCALEDIR);
-   textdomain (PACKAGE);
-#endif
-
    p           = getpid();
    pp          = getppid();
    verbose     = 0;
@@ -347,43 +321,53 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
-            break;
+         break;
+
          case 'c':
-            attempt_catch = 1;
-            break;
+         attempt_catch = 1;
+         break;
+
          case 'h':
-            suicide_usage();
-            return(0);
+         suicide_usage();
+         return(0);
+
          case 'i':
-            suicide_susv3_sigs_ignore();
-            return(0);
+         suicide_susv3_sigs_ignore();
+         return(0);
+
          case 'n':
-            val = (int)strtol(optarg, NULL, 0);
-            if ((sig = suicide_find_data(&data, NULL, val)) == -1)
-               return(1);
-            break;
+         val = (int)strtol(optarg, NULL, 0);
+         if ((sig = suicide_find_data(&data, NULL, val)) == -1)
+            return(1);
+         break;
+
          case 's':
-            if ((sig = suicide_find_data(&data, optarg, -1)) == -1)
-               return(1);
-            break;
+         if ((sig = suicide_find_data(&data, optarg, -1)) == -1)
+            return(1);
+         break;
+
          case 'S':
-            suicide_susv3_sigs();
-            return(0);
+         suicide_susv3_sigs();
+         return(0);
+
          case 'V':
-            suicide_version();
-            return(0);
+         suicide_version();
+         return(0);
+
          case 'v':
-            verbose = 1;
-            break;
+         verbose = 1;
+         break;
+
          case '?':
-            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
-                  "Try `%s --help' for more information.\n"
-               ),  PROGRAM_NAME, c, PROGRAM_NAME
-            );
-            return(1);
+         fprintf(stderr, ("%s: unrecognized option `--%c'\n"
+               "Try `%s --help' for more information.\n"
+            ),  PROGRAM_NAME, c, PROGRAM_NAME
+         );
+         return(1);
       };
    };
 
@@ -525,11 +509,7 @@ void suicide_susv3_sigs_ignore(void)
 /// displays usage
 void suicide_usage(void)
 {
-   // TRANSLATORS: The following strings provide usage for command. These
-   // strings are displayed if the program is passed `--help' on the command
-   // line. The two strings referenced are: PROGRAM_NAME, and
-   // PACKAGE_BUGREPORT
-   printf(_("Usage: %s [OPTIONS]\n"
+   printf(("Usage: %s [OPTIONS]\n"
          "  -c                        attempt to catch signals\n"
          "  -i                        print C code to ignore signals\n"
          "  -h, --help                print this help and exit\n"
@@ -557,11 +537,7 @@ void suicide_usage(void)
 /// displays version
 void suicide_version(void)
 {
-   // TRANSLATORS: The following strings provide version and copyright
-   // information if the program is passed --version on the command line.
-   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
-   // PACKAGE_VERSION.
-   printf(_("%s (%s) %s\n"
+   printf(("%s (%s) %s\n"
          "Written by David M. Syzdek.\n"
          "\n"
          "%s\n"
