@@ -108,6 +108,7 @@
 //#include <utmp.h>
 //#include <argp.h>
 //#include <gconv.h>
+#include <wctype.h>
 
 
 ///////////////////
@@ -249,7 +250,7 @@ int main(int argc, char * argv[])
    struct my_data       ** list;
    static struct my_data   data[] =
    {
-      { "DIR",                      sizeof(DIR),                     -1,  "<dirent.h>" },
+//      { "DIR",                      sizeof(DIR),                     -1,  "<dirent.h>" },
       { "FILE",                     sizeof(FILE),                    -1,  "<stdio.h>" },
       { "NULL",                     sizeof(NULL),                    -1,  "<stddef.h>" },
       { "VISIT",                    sizeof(VISIT),                   -1,  "<search.h>" },
@@ -285,7 +286,7 @@ int main(int argc, char * argv[])
       { "imaxdiv_t",                sizeof(imaxdiv_t),               -1,  "<stdlib.h>" },
       { "in_addr_t",                sizeof(in_addr_t),                0,  "<arpa/inet.h>" },
       { "in_port_t",                sizeof(in_port_t),                0,  "<arpa/inet.h>" },
-      { "ino64_t",                  sizeof(ino64_t),                 -1,  "<sys/types.h>" },
+//      { "ino64_t",                  sizeof(ino64_t),                 -1,  "<sys/types.h>" },
       { "ino_t",                    sizeof(ino_t),                   -1,  "<sys/types.h>" },
       { "int",                      sizeof(int),                      1,  "libc" },
       { "int16_t",                  sizeof(int16_t),                  1,  "<inttypes.h>" },
@@ -370,7 +371,7 @@ int main(int argc, char * argv[])
       { "struct rusage",            sizeof(struct rusage),           -1,  "<sys/resource.h>" },
       { "struct sched_param",       sizeof(struct sched_param),      -1,  "<sched.h>" },
       { "struct servent",           sizeof(struct servent),          -1,  "<netdb.h>" },
-      { "struct sgttyb",            sizeof(struct sgttyb),           -1,  "<sgtty.h>" },
+//      { "struct sgttyb",            sizeof(struct sgttyb),           -1,  "<sgtty.h>" },
       { "struct sigaction",         sizeof(struct sigaction),        -1,  "<signal.h>" },
       { "struct sigstack",          sizeof(struct sigstack),         -1,  "<signal.h>" },
       { "struct sigvec",            sizeof(struct sigvec),           -1,  "<signal.h>" },
@@ -379,7 +380,7 @@ int main(int argc, char * argv[])
       { "struct sockaddr_in6",      sizeof(struct sockaddr_in6),     -1,  "<netinet/in.h>" },
       { "struct sockaddr_un",       sizeof(struct sockaddr_un),      -1,  "<sys/un.h>" },
       { "struct stat",              sizeof(struct stat),             -1,  "<sys/stat.h>" },
-      { "struct stat64",            sizeof(struct stat64),           -1,  "<sys/stat.h>" },
+//      { "struct stat64",            sizeof(struct stat64),           -1,  "<sys/stat.h>" },
       { "struct termios",           sizeof(struct termios),          -1,  "<termios.h>" },
       { "struct timespec",          sizeof(struct timespec),         -1,  "<sys/time.h>" },
       { "struct timeval",           sizeof(struct timeval),          -1,  "<sys/time.h>" },
