@@ -687,7 +687,6 @@ int codetagger_scan_directory(CodeTagger * cnf, const char * origin)
    DIR           * d;
    char          * file;
    char         ** queue;
-   void          * ptr;
    size_t          len_dir;
    size_t          len_file;
    size_t          size;
@@ -696,7 +695,6 @@ int codetagger_scan_directory(CodeTagger * cnf, const char * origin)
 
    size  = 0;
    count = 0;
-   ptr   = NULL;
    queue = NULL;
 
    // seeds queue with first file/directory
