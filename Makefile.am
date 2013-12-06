@@ -184,15 +184,6 @@ bin_PROGRAMS += src/suicide
 endif
 
 
-# macros for src/posixregex
-src_recurse_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
-src_recurse_CPPFLAGS			= -DPROGRAM_NAME="\"recurse\"" $(AM_CPPFLAGS)
-src_recurse_SOURCES			= $(noinst_HEADERS) \
-					  src/recurse.c
-if ! IS_WIN32
-bin_PROGRAMS += src/recurse
-endif
-
 # macros for src/typedef-info
 src_typedef_info_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_typedef_info_CPPFLAGS		= -DPROGRAM_NAME="\"typedef-info\"" $(AM_CPPFLAGS)
