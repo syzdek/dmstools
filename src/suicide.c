@@ -166,6 +166,9 @@ void suicide_signal_handler PARAMS((int sig));
 // displays SUSv3 signals
 void suicide_susv3_sigs PARAMS((void));
 
+// display C code to ignore signals
+void suicide_susv3_sigs_ignore PARAMS((void));
+
 // displays usage
 void suicide_usage PARAMS((void));
 
@@ -329,7 +332,7 @@ int main(int argc, char * argv[])
    size_t           action_size;
    SuicideAction ** actions;
 
-   static char   short_opt[] = "chn:s:SvV";
+   static char   short_opt[] = "chin:s:SvV";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -365,6 +368,9 @@ int main(int argc, char * argv[])
             break;
          case 'h':
             suicide_usage();
+            return(0);
+         case 'i':
+            suicide_susv3_sigs_ignore();
             return(0);
          case 'n':
             val = (int)strtol(optarg, NULL, 0);
@@ -525,6 +531,36 @@ void suicide_susv3_sigs(void)
    for(i = 0; i < (count+1); i++)
       if (susv3_signals[i].name)
          printf("   %-9s   %-5i  %c       %s\n", susv3_signals[i].name, susv3_signals[i].number, susv3_signals[i].action, susv3_signals[i].desc);
+   printf
+   (
+      "Actions:\n"
+      "   T  Abnormal termination of the process. The process is terminated \n"
+      "      with all the consequences of _exit() except that the status made\n"
+      "      available to wait() and waitpid() indicates abnormal termination\n"
+      "      by the specified signal.\n"
+      "   A  Abnormal termination of the process. Additionally, implementation\n"
+      "      defined abnormal termination actions, such as creation of a core file,\n"
+      "      may occur.\n"
+      "   I  Ignore the signal.\n"
+      "   S  Stop the process.\n"
+      "   C  Continue the process, if it is stopped; otherwise, ignore the signal.\n"
+   );
+   return;
+}
+
+
+/// displays SUSv3 signals
+void suicide_susv3_sigs_ignore(void)
+{
+   size_t count;
+   size_t i;
+   for(i = 0; susv3_signals[i].desc; i++);
+   count = i;
+   qsort(&susv3_signals, count, sizeof(SuicideData), (int (*)(const void *, const void *))suicide_cmp_val);
+   printf("// ignore SUSv3 signals\n");
+   for(i = 0; i < (count+1); i++)
+      if (susv3_signals[i].name)
+         printf("singal(%s, SIG_IGN);\n", susv3_signals[i].name);
    return;
 }
 
@@ -538,6 +574,7 @@ void suicide_usage(void)
    // PACKAGE_BUGREPORT
    printf(_("Usage: %s [OPTIONS]\n"
          "  -c                        attempt to catch signals\n"
+         "  -i                        print C code to ignore signals\n"
          "  -h, --help                print this help and exit\n"
          "  -n signum                 signal number to send\n"
          "  -s sigspec                signal name to send\n"
