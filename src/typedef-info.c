@@ -405,6 +405,7 @@ int main(int argc, char * argv[])
       { "union wait",               0,                               -1,  "<sys/wait.h>" },
       { "unsigned",                 sizeof(unsigned),                 0,  "libc" },
       { "va_list",                  sizeof(va_list),                 -1,  "<stdarg.h>" },
+      { "void *",                   sizeof(void *),                   0,  "<stdarg.h>" },
       { "wchar_t",                  sizeof(wchar_t),                 -1,  "<stddef.h>" },
       { "wchar_t",                  sizeof(wchar_t),                 -1,  "<wchar.h>" },
 //      { "wctrans_t",                sizeof(wctrans_t),               -1,  "<wchar.h>" },
