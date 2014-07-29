@@ -853,12 +853,10 @@ int codetagger_scan_file(CodeTagger * cnf, const char * file,
 
       case S_IFREG:
          return(codetagger_update_file(cnf, file, &sb));
-         break;
 
       default:
          codetagger_error(cnf, "%s: unknown file type\n", file);
          return(1);
-         break;
    };
 
    return(0);
