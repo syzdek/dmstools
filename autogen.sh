@@ -35,18 +35,55 @@
 #   build-aux/autogen.sh - runs GNU Autotools to create build environment
 #
 
-AUTOGENNAME="`basename ${0}`" || exit $?
-SRCDIR=`dirname ${0}`
+AUTOGENNAME="`basename ${0}`" || exit 1
+SRCDIR="`dirname ${0}`"
 
 
-cd $SRCDIR || exit 1
+# check for required programs
+for TEST_PROG in which autoreconf autoscan find git;do
+   which ${TEST_PROG} 2> /dev/null > /dev/null;
+   if test $? -ne 0;then
+      echo "${AUTOGENNAME}: unable to find \"${TEST_PROG}\""
+      exit 1
+   fi
+done
 
-if test -d .git || test -f .git;then
-   git submodule init           2>&1 | sed -e 's/^/git submodule init: /g' || exit 1
-   git submodule sync           2>&1 | sed -e 's/^/git submodule sync: /g' || exit 1
-   git submodule update --merge 2>&1 | sed -e 's/^/git submodule update: /g' || exit 1
+
+# updates git repository
+if test -d ${SRCDIR}/.git || test -f ${SRCDIR}/.git;then
+   cd ${SRCDIR}
+   git submodule init                              || exit 1
+   git submodule sync                              || exit 1
+   git submodule update --init --recursive --merge || exit 1
+   cd -
 fi
 
-autoreconf -v -i -f -I m4 -I contrib/bindletools/m4 -W all || exit 1
+
+# Performs some useful checks
+autoscan ${SRCDIR} || exit 1
+
+
+# symlinks M4 macros
+cd ${SRCDIR}/m4
+rm -f ./bindle*.m4 || exit 1
+ln -s ../contrib/bindletools/m4/bindle*.m4 ./
+cd -
+
+
+# generates/installs autotools files
+autoreconf -v -i -f -Wall \
+   -I m4 \
+   -m \
+   ${SRCDIR} \
+   || exit 1
+
+
+# makes build directory
+mkdir -p ${SRCDIR}/build
+
+
+# add newline to create visual separation
+echo " "
+
 
 # end of script

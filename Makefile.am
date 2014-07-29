@@ -221,7 +221,9 @@ EXTRA_DIST				= autogen.sh \
 CLEANFILES				= \
 					  $(builddir)/a.out   $(srcdir)/a.out \
 					  $(builddir)/*/a.out $(srcdir)/*/a.out \
-					  config.h.in~ $(srcdir)/config.h.in~ \
+					  autoscan.log        $(srcdir)/autoscan.log \
+					  config.h.in~        $(srcdir)/config.h.in~ \
+					  configure.scan      $(srcdir)/configure.scan \
 					  $(man_MANS) \
 					  include/dmsversion.h \
 					  @PACKAGE_TARNAME@-*.tar.* \
