@@ -232,25 +232,13 @@ CLEANFILES				= \
 GIT_PACKAGE_VERSION_DIR=include
 SUBST_EXPRESSIONS =  \
 	-e 's,[@]RELEASE_MONTH[@],@RELEASE_MONTH@,g'
-include $(srcdir)/@bindletools_srcdir@/build-aux/makefile-autotools.am
-include $(srcdir)/@bindletools_srcdir@/build-aux/makefile-subst.am
-include $(srcdir)/@bindletools_srcdir@/build-aux/makefile-version.am
-
+include $(srcdir)/contrib/bindletools/build-aux/makefile-bindle.am
+include $(srcdir)/contrib/bindletools/build-aux/makefile-autotools.am
+include $(srcdir)/contrib/bindletools/build-aux/makefile-subst.am
+include $(srcdir)/contrib/bindletools/build-aux/makefile-version.am
 
 # custom targets
-PHONY: git-package-version-check
-
-git-package-version-check:
-	@if test -f $(srcdir)/.git/config;then \
-		GPV=`git --git-dir=$(srcdir)/.git describe 2> /dev/null`; \
-		GPV=`echo $${GPV}|sed -e 's/-/./g' -e 's/^v//g'`; \
-		if test "x$${GPV}" != "x$(PACKAGE_VERSION)" && test "x$${GPV}" != "x";then \
-			$(top_builddir)/config.status --recheck; \
-			$(top_builddir)/config.status; \
-		fi; \
-	fi
-
-$(srcdir)/acinclude.m4: git-package-version-check
+PHONY:
 
 doc/bitops.1: Makefile $(srcdir)/doc/bitops.1.in
 	$(do_subst_dt)
@@ -274,19 +262,6 @@ include/dmsversion.h: Makefile $(srcdir)/include/dmsversion.h.in
 	$(mkdir_p) include
 	$(do_subst_dt)
 
-license-tags: $(srcdir)/build-aux/dmstools.tags $(builddir)/src/codetagger
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/AUTHORS
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/acinclude.m4
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/configure.ac
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/ChangeLog
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/doc/codetagger.1.in
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/Makefile.am
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/NEWS
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/README
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/src/codetagger.c
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/src/common.h
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/dmstools.tags
-	$(builddir)/src/codetagger -f $(srcdir)/build-aux/dmstools.tags $(srcdir)/TODO
 
 # local targets
 install-exec-local:
