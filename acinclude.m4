@@ -1,6 +1,6 @@
 #
 #   DMS Tools and Utilities
-#   Copyright (C) 2008 David M. Syzdek <david@syzdek.net>
+#   Copyright (C) 2014 David M. Syzdek <david@syzdek.net>
 #
 #   @SYZDEK_LICENSE_HEADER_START@
 #
@@ -34,46 +34,54 @@
 #   acinclude.m4 - custom m4 macros used by configure.ac
 #
 
-# AC_DMS_GIT_PACKAGE_VERSION()
-# -----------------------------------
-AC_DEFUN([AC_DMS_GIT_PACKAGE_VERSION],[dnl
+# AC_DMS_WIN32
+# ______________________________________________________________________________
+AC_DEFUN([AC_DMS_WIN32],[dnl
 
-   if test -f ${srcdir}/.git/config;then
-      GPV=$(git describe --abbrev=7 HEAD 2>/dev/null)
-      GPV=$(echo "$GPV" | sed -e 's/-/./g')
-      GPV=$(echo "$GPV" | sed -e 's/^v//g')
-      if test "x${GPV}" != "x";then
-         AC_MSG_NOTICE([using git package version ${GPV}])
-         if test -d ${ac_aux_dir};then 
-            echo ${GPV} > ${ac_aux_dir}/git-package-version
-         fi
-      fi
-   elif test -f ${ac_aux_dir}/git-package-version;then
-      GPV=$(cat ${ac_aux_dir}/git-package-version)
-      if test -d ${ac_aux_dir};then
-         AC_MSG_NOTICE([using cached git package version ${GPV}])
-      fi
-   fi
+   # prerequists
+   AC_REQUIRE([AC_PROG_CC])
 
-   if test "x${GPV}" = "x";then
-      AC_MSG_WARN([unable to determine package version from Git tags])
-   else
-      #
-      # set internal variables
-      GIT_PACKAGE_VERSION=${GPV}
-      PACKAGE_VERSION=${GPV}
-      VERSION=${GPV}
-      #
-      # set substitution variables
-      AC_SUBST([GIT_PACKAGE_VERSION], [${GPV}])
-      AC_SUBST([PACKAGE_VERSION], [${GPV}])
-      AC_SUBST([VERSION], [${GPV}])
-      #
-      # set C/C++/Objc preprocessor macros
-      AC_DEFINE_UNQUOTED([GIT_PACKAGE_VERSION], ["${GIT_PACKAGE_VERSION}"], [package version determined from git repository])
-      AC_DEFINE_UNQUOTED([PACKAGE_VERSION], ["${GIT_PACKAGE_VERSION}"], [package version determined from git repository])
-      AC_DEFINE_UNQUOTED([VERSION], ["${GIT_PACKAGE_VERSION}"], [package version determined from git repository])
-   fi
+   # tests for windows platform
+   case $host in
+      *mingw*) win32_host='yes';;
+      *)       win32_host='no';;
+   esac
+
+   AM_CONDITIONAL([IS_WIN32], [test x$win32_host = xyes])
 ])dnl
+
+
+# AC_DMS_REGEX
+# ______________________________________________________________________________
+AC_DEFUN([AC_DMS_REGEX],[dnl
+
+   # prerequists
+   AC_REQUIRE([AC_PROG_CC])
+
+   have_regex=yes
+   AC_SEARCH_LIBS([regcomp],   [regex],,[have_regex=no])
+   AC_SEARCH_LIBS([regexec],   [regex],,[have_regex=no])
+   AC_SEARCH_LIBS([regfree],   [regex],,[have_regex=no])
+   AC_SEARCH_LIBS([regerror],  [regex],,[have_regex=no])
+
+   AM_CONDITIONAL([HAVE_REGEX], [test x$have_regex = xyes])
+])dnl
+
+
+# AC_DMS_SIGNAL
+# ______________________________________________________________________________
+AC_DEFUN([AC_DMS_SIGNAL],[dnl
+
+   # prerequists
+   AC_REQUIRE([AC_PROG_CC])
+
+   have_signal=yes
+   AC_CHECK_HEADERS([signal.h],  ,[have_signal=no])
+   AC_CHECK_TYPES([sig_t],       ,[have_signal=no],[#include <signal.h>])
+   AC_SEARCH_LIBS([signal],     ,,[have_signal=no])
+
+   AM_CONDITIONAL([HAVE_SIGNAL], [test x$have_signal = xyes])
+])dnl
+
 
 # end of M4 file

@@ -69,7 +69,7 @@ AM_INIT_AUTOMAKE(gnu std-options subdir-objects color-tests)
 # Compilers                                                       
 AC_PROG_CC 
 #AC_PROG_OBJC
-#AC_PROG_CXX
+AC_PROG_CXX
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
 #AC_USE_SYSTEM_EXTENSIONS # replaces AC_AIX AC_GNU_SOURCE AC_MINIX
@@ -93,38 +93,74 @@ AC_PROG_LN_S
 # GNU Libtool Support
 LT_INIT(dlopen disable-fast-install win32-dll)
 
-# enables getopt_long if header and functions were found
-AC_CHECK_HEADERS([getopt.h], [AC_DEFINE_UNQUOTED(USE_GETOPT_LONG, 1, [Use GNU getopt_long])])
+# check for common functions
+AC_FUNC_FORK
+AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
+AC_FUNC_MALLOC
+AC_FUNC_OBSTACK
+AC_FUNC_REALLOC
+AC_FUNC_STRERROR_R
+
+# Type checks
+AC_TYPE_INT8_T
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_INT64_T
+AC_TYPE_MODE_T
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
+AC_TYPE_SSIZE_T
+AC_TYPE_UID_T
+AC_TYPE_UINT8_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
+
+# check for required functions
+AC_CHECK_FUNCS([bzero],          [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([gettimeofday],   [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([memset],         [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([regcomp],        [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([setlocale],      [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([socket],         [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([strcasecmp],     [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([strchr],         [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([strdup],         [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([strerror],       [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([strncasecmp],    [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([strtol],         [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([strtoul],        [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([strtoumax],      [], [AC_MSG_ERROR([missing required functions])])
+
+# check for headers
+AC_CHECK_HEADERS([arpa/inet.h],  [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([fcntl.h],      [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([getopt.h],     [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([libintl.h],    [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([locale.h],     [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([netdb.h],      [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([sgtty.h],      [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([stddef.h],     [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([sys/socket.h], [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([sys/time.h],   [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([termios.h],    [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([utime.h],      [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([wchar.h],      [], [AC_MSG_ERROR([missing required headers])])
+AC_CHECK_HEADERS([wctype.h],     [], [AC_MSG_ERROR([missing required headers])])
+
+# check types
+AC_CHECK_TYPES([ptrdiff_t],      [], [AC_MSG_ERROR([missing required data type])])
 
 # Symbol checks
 AC_CHECK_DECLS([environ])
-AC_CHECK_LIB([c],  [arc4random],,[AC_DEFINE_UNQUOTED([USE_RANDOM], 1, [Use random()])])
-AC_CHECK_LIB([dl], [dlclose],,[AC_MSG_ERROR([missing required library -ldl])])
-AC_CHECK_LIB([dl], [dlerror],,[AC_MSG_ERROR([missing required library -ldl])])
-AC_CHECK_LIB([dl], [dlopen],,[AC_MSG_ERROR([missing required library -ldl])])
-AC_CHECK_LIB([dl], [dlsym],,[AC_MSG_ERROR([missing required library -ldl])])
+AC_CHECK_LIB([c],    [arc4random],  [], [AC_DEFINE_UNQUOTED([USE_RANDOM], 1, [Use random()])])
+AC_CHECK_LIB([dl],   [dlclose],     [], [AC_MSG_ERROR([missing required library -ldl])])
+AC_CHECK_LIB([dl],   [dlerror],     [], [AC_MSG_ERROR([missing required library -ldl])])
+AC_CHECK_LIB([dl],   [dlopen],      [], [AC_MSG_ERROR([missing required library -ldl])])
+AC_CHECK_LIB([dl],   [dlsym],       [], [AC_MSG_ERROR([missing required library -ldl])])
 
-# tests for windows platform
-case $host in
-   *mingw*) win32_host='yes';;
-   *)       win32_host='no';;
-esac
-AM_CONDITIONAL([IS_WIN32], [test x$win32_host = xyes])
-
-have_regex=yes
-AC_SEARCH_LIBS([regcomp],   [regex],,[have_regex=no])
-AC_SEARCH_LIBS([regexec],   [regex],,[have_regex=no])
-AC_SEARCH_LIBS([regfree],   [regex],,[have_regex=no])
-AC_SEARCH_LIBS([regerror],  [regex],,[have_regex=no])
-AM_CONDITIONAL([HAVE_REGEX], [test x$have_regex = xyes])
 
 AC_CHECK_LIB([users],[noobs],,[AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
-
-have_signal=yes
-AC_CHECK_HEADERS([signal.h],  ,[have_signal=no])
-AC_CHECK_TYPES([sig_t],       ,[have_signal=no],[#include <signal.h>])
-AC_SEARCH_LIBS([signal],     ,,[have_signal=no])
-AM_CONDITIONAL([HAVE_SIGNAL], [test x$have_signal = xyes])
 
 # initiates bindle tools macros
 AC_BINDLE(contrib/bindletools)
@@ -135,6 +171,10 @@ AC_BINDLE_GIT_PACKAGE_VERSION([contrib/bindletools/build-aux/git-package-version
 # custom configure options
 AC_BINDLE_ENABLE_WARNINGS
 AC_BINDLE_WITH_PERL
+AC_DMS_REGEX
+AC_DMS_SIGNAL
+AC_DMS_WIN32
+
 
 # Creates outputs
 AC_CONFIG_FILES([Makefile])
