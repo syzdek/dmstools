@@ -289,7 +289,7 @@ const char * my_notation(char * dst)
          return(dst);
       default:
          snprintf(dst, STR_LEN, "decimal");
-         return(dst);
+         break;
    };
    return(dst);
 }
@@ -333,7 +333,7 @@ const char * my_uint2str(char * dst, uint32_t num)
          snprintf(dst, STR_LEN, "%17s", str);
          return(dst);
       default:
-         return(dst);
+         break;
    };
    return(dst);
 }
@@ -375,7 +375,7 @@ const char * my_spaces(char * dst)
          snprintf(dst, STR_LEN, "%-17s", " ");
          return(dst);
       default:
-         return(dst); 
+         break;
    };
    return(dst);
 }
