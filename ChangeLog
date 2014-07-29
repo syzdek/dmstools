@@ -11,6 +11,8 @@ Copyright (C) 2008, 2009, 2010 David M. Syzdek <david@syzdek.net>
 	  files. (syzdek)
 	- Adding new utility macaddrutil. (syzdek)
 	- Adding new utility netcalc. (syzdek)
+	- Updating to latest version of Bindle Tools. (syzdek)
+	- Cleaning up GNU autotools files. (syzdek)
 
 1.2	2011/08/06 (syzdek)
 	- Adding netcalc utility. (syzdek)
