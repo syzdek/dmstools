@@ -4,7 +4,8 @@
 /codetagger
 /colors
 /endian
-/macaddrutil
+/macaddrinfo
+/macaddrinfo.oui.txt
 /netcalc
 /numconvert
 /posixregex
