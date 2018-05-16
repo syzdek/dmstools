@@ -315,7 +315,7 @@ const mau_command mau_cmdmap[] =
    {
       "generate",                                     // command name
       mau_cmd_generate,                               // entry function
-      "cDdlRr:uxMQXW" MAU_GETOPT_SHORT,               // getopt short options
+      "cDdlRr:uxMNQXW" MAU_GETOPT_SHORT,              // getopt short options
       (struct option [])
       {
          {"microsoft", no_argument, NULL, 'M' },
@@ -973,6 +973,27 @@ int mau_getopt(mau_config * cnf, int argc, char * const * argv,
 
       case 'v':
       cnf->verbose++;
+      return(-2);
+
+      case 'M':
+      cnf->use_oui = 1;
+      cnf->oui[0] = 0x00;
+      cnf->oui[1] = 0x15;
+      cnf->oui[2] = 0x5d;
+      return(-2);
+
+      case 'N':
+      cnf->use_oui = 1;
+      cnf->oui[0] = 0x00;
+      cnf->oui[1] = 0x20;
+      cnf->oui[2] = 0x91;
+      return(-2);
+
+      case 'Q':
+      cnf->use_oui = 1;
+      cnf->oui[0] = 0x52;
+      cnf->oui[1] = 0x54;
+      cnf->oui[2] = 0x00;
       return(-2);
 
       case 'W':
