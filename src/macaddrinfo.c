@@ -315,11 +315,14 @@ const mau_command mau_cmdmap[] =
    {
       "generate",                                     // command name
       mau_cmd_generate,                               // entry function
-      "cDdlRr:uxXW" MAU_GETOPT_SHORT,                 // getopt short options
+      "cDdlRr:uxMQXW" MAU_GETOPT_SHORT,               // getopt short options
       (struct option [])
       {
-      {"vmware",  no_argument, NULL, 'W' },
-      {"xen",     no_argument, NULL, 'X' },
+         {"microsoft", no_argument, NULL, 'M' },
+         {"nsa",       no_argument, NULL, 'N' },
+         {"qemu",      no_argument, NULL, 'Q' },
+         {"vmware",    no_argument, NULL, 'W' },
+         {"xen",       no_argument, NULL, 'X' },
          MAU_GETOPT_LONG
       },                                              // getopt long options
       0, 0,                                           // min/max arguments
@@ -905,6 +908,27 @@ int mau_getopt(mau_config * cnf, int argc, char * const * argv,
          cnf->oui[1] = 0x16;
          cnf->oui[2] = 0x3e;
       };
+      if (!(strcmp(long_opt[*opt_index].name, "microsoft")))
+      {
+         cnf->use_oui = 1;
+         cnf->oui[0] = 0x00;
+         cnf->oui[1] = 0x15;
+         cnf->oui[2] = 0x5d;
+      };
+      if (!(strcmp(long_opt[*opt_index].name, "qemu")))
+      {
+         cnf->use_oui = 1;
+         cnf->oui[0] = 0x52;
+         cnf->oui[1] = 0x54;
+         cnf->oui[2] = 0x00;
+      };
+      if (!(strcmp(long_opt[*opt_index].name, "nsa")))
+      {
+         cnf->use_oui = 1;
+         cnf->oui[0] = 0x00;
+         cnf->oui[1] = 0x20;
+         cnf->oui[2] = 0x91;
+      };
       return(-2);
 
       case 'c':
@@ -1054,6 +1078,9 @@ void mau_usage(mau_config * cnf)
    if ((strchr(shortopts, 'u'))) printf("  -u, --upper               print HEX digits in upper case\n");
    if ((strchr(shortopts, 'V'))) printf("  -V, --version             print version number and exit\n");
    if ((strchr(shortopts, 'v'))) printf("  -v, --verbose             print verbose messages\n");
+   if ((strchr(shortopts, 'M'))) printf("  --microsoft               generate MAC address for Microsoft\n");
+   if ((strchr(shortopts, 'N'))) printf("  --nsa                     generate MAC address for National Security Agency\n");
+   if ((strchr(shortopts, 'Q'))) printf("  --qemu                    generate MAC address for QEMU/KVM\n");
    if ((strchr(shortopts, 'W'))) printf("  --vmware                  generate MAC address for VMWare\n");
    if ((strchr(shortopts, 'X'))) printf("  --xen                     generate MAC address for Xen\n");
    if (!(cnf->cmd))
