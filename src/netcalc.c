@@ -130,7 +130,7 @@
 const char * netcalc_ipv4tostr(uint64_t ipv4);
 
 // tests if string represents an IP address
-int netcalc_is_ipv4 PARAMS((const char * str, uint64_t * ipp));
+int netcalc_is_ipv4 PARAMS((const char * str, uint64_t * ipp, uint64_t * cidrp));
 
 // displays usage
 void netcalc_usage PARAMS((void));
@@ -164,7 +164,7 @@ const char * netcalc_ipv4tostr(uint64_t ipv4)
 
 
 /// tests if string represents an IP address
-int netcalc_is_ipv4(const char * str, uint64_t * ipv4_ptr)
+int netcalc_is_ipv4(const char * str, uint64_t * ipv4_ptr, uint64_t * cidrp)
 {
    int            c;
    int            value;
@@ -177,7 +177,7 @@ int netcalc_is_ipv4(const char * str, uint64_t * ipv4_ptr)
 
    // reset initial IP address
    ipv4 = 0;
-   ptr  = 0;
+   ptr  = NULL;
 
    // loops through octets
    for(c = 0; c < 4; c++)
@@ -189,7 +189,7 @@ int netcalc_is_ipv4(const char * str, uint64_t * ipv4_ptr)
       // exits if string is not a number or IP address
       if (!(ptr))
          return(1);
-      if ((ptr[0] != '.') && (ptr[0] != '\0'))
+      if ((ptr[0] != '.') && (ptr[0] != '\0') && (ptr[0] != '/'))
          return(1);
 
       // exits if number is out of bounds for IPv4 octet
@@ -206,6 +206,21 @@ int netcalc_is_ipv4(const char * str, uint64_t * ipv4_ptr)
          ipv4 = ipv4 << ((3 - c) * 8);
          if ((ipv4_ptr))
             *ipv4_ptr = ipv4;
+         return(0);
+      };
+
+      // process CIDR
+      if (ptr[0] == '/')
+      {
+         value = (int)strtol(&ptr[1], &ptr, 10);
+         if (!(ptr))
+            return(1);
+         if (ptr[0] != '\0')
+            return(1);
+         if ((value < 0) || (value > 32))
+            return(1);
+         if ((cidrp))
+            *cidrp = value;
          return(0);
       };
    };
@@ -263,9 +278,9 @@ int main(int argc, char * argv[])
    int           c;
    int           opt;
    int           opt_index;
-   int64_t       cidr;
-   int64_t       opt_cidr_high;
-   int64_t       opt_ip_count;
+   uint64_t      cidr;
+   uint64_t      opt_cidr_high;
+   uint64_t      opt_ip_count;
    uint64_t      ipv4;
    uint64_t      ipv4_low;
    uint64_t      ipv4_high;
@@ -334,7 +349,7 @@ int main(int argc, char * argv[])
    ipv4_low  = 0;
    for(c = optind; c < argc; c++)
    {
-      if (netcalc_is_ipv4(argv[c], &ipv4))
+      if (netcalc_is_ipv4(argv[c], &ipv4, &opt_cidr_high))
       {
          printf("%s: invalid IPv4 address: %s\n", PROGRAM_NAME, argv[c]);
          return(1);
