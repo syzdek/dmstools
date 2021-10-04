@@ -71,27 +71,6 @@
 
 ///////////////////
 //               //
-//  i18l Support //
-//               //
-///////////////////
-
-#undef HAVE_GETTEXT
-#ifdef HAVE_GETTEXT
-#   include <gettext.h>
-#   include <libintl.h>
-#   define _(String) gettext (String)
-#   define gettext_noop(String) String
-#   define N_(String) gettext_noop (String)
-#else
-#   define _(String) (String)
-#   define N_(String) String
-#   define textdomain(Domain)
-#   define bindtextdomain(Package, Directory)
-#endif
-
-
-///////////////////
-//               //
 //  Definitions  //
 //               //
 ///////////////////
@@ -233,20 +212,14 @@ int netcalc_is_ipv4(const char * str, uint64_t * ipv4_ptr, uint64_t * cidrp)
 /// displays usage
 void netcalc_usage(void)
 {
-   // TRANSLATORS: The following strings provide usage for command. These
-   // strings are displayed if the program is passed `--help' on the command
-   // line. The two strings referenced are: PROGRAM_NAME, and
-   // PACKAGE_BUGREPORT
-   printf(_("Usage: %s [OPTIONS] address1 address2 ... addressN\n"
-         "  -a                        display all matching networks\n"
-         "  -c num                    requested network size in CIDR notation\n"
-         "  -h, --help                print this help and exit\n"
-         "  -i num                    requested network size in amount of IP addresses\n"
-         "  -V, --version             print version number and exit\n"
-         "\n"
-         "Report bugs to <%s>.\n"
-      ), PROGRAM_NAME, PACKAGE_BUGREPORT
-   );
+   printf("Usage: %s [OPTIONS] address1 address2 ... addressN\n", PROGRAM_NAME);
+   printf("  -a                        display all matching networks\n");
+   printf("  -c num                    requested network size in CIDR notation\n");
+   printf("  -h, --help                print this help and exit\n");
+   printf("  -i num                    requested network size in amount of IP addresses\n");
+   printf("  -V, --version             print version number and exit\n");
+   printf("\n");
+   printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
    return;
 }
 
@@ -254,18 +227,12 @@ void netcalc_usage(void)
 /// displays version information
 void netcalc_version(void)
 {
-   // TRANSLATORS: The following strings provide version and copyright
-   // information if the program is passed --version on the command line.
-   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
-   // PACKAGE_VERSION.
-   printf(_("%s (%s) %s\n"
-         "Written by David M. Syzdek.\n"
-         "\n"
-         "%s\n"
-         "This is free software; see the source for copying conditions.  There is NO\n"
-         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
-      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_COPYRIGHT
-   );
+   printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
+   printf("Written by David M. Syzdek.\n");
+   printf("\n");
+   printf("%s\n", PACKAGE_COPYRIGHT);
+   printf("This is free software; see the source for copying conditions.  There is NO\n");
+   printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
    return;
 }
 
@@ -324,23 +291,19 @@ int main(int argc, char * argv[])
             netcalc_version();
             return(0);
          case '?':
-            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
          default:
-            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
-                  "Try `%s --help' for more information.\n"
-               ),  PROGRAM_NAME, c, PROGRAM_NAME
-            );
+            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
       };
    };
 
    if (optind >= argc)
    {
-      fprintf(stderr, _("%s: missing required argument\n"
-         "Try `%s --help' for more information.\n"
-         ),  PROGRAM_NAME, PROGRAM_NAME
-      );
+      fprintf(stderr, "%s: missing required argument\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
       return(1);
    };
 
