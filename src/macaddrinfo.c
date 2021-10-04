@@ -192,6 +192,8 @@ struct mau_config
    regmatch_t           matches[MAU_REGEX_MAX];
    char                 buff[MAU_BUFF_LEN];
    mauaddr_t            oui;
+   uint8_t              pad8;
+   uint8_t              pad8a;
 };
 
 
