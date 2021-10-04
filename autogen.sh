@@ -1,9 +1,8 @@
 #!/bin/sh
 #
-#   David M. Syzdek
-#   Copyright (C) 2013 David M. Syzdek <david@syzdek.net>.
-#
-#   @DMSTOOLS_BSD_LICENSE_START@
+#   Tiny RADIUS Client Library
+#   Copyright (C) 2021 David M. Syzdek <david@syzdek.net>.
+#   All rights reserved.
 #
 #   Redistribution and use in source and binary forms, with or without
 #   modification, are permitted provided that the following conditions are
@@ -21,7 +20,7 @@
 #   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 #   IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 #   THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-#   PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVID M. SYZDEK BE LIABLE FOR
+#   PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL DAVID M SYZDEK BE LIABLE FOR
 #   ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
 #   DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 #   SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
@@ -30,9 +29,7 @@
 #   OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 #   SUCH DAMAGE.
 #
-#   @DMSTOOLS_BSD_LICENSE_END@
-#
-#   build-aux/autogen.sh - runs GNU Autotools to create build environment
+#   autogen.sh - runs GNU Autotools to create build environment
 #
 
 AUTOGENNAME="`basename ${0}`" || exit 1
@@ -59,15 +56,23 @@ if test -d ${SRCDIR}/.git || test -f ${SRCDIR}/.git;then
 fi
 
 
+# symlinks Bindle Tools M4 macros
+if test -f ${SRCDIR}/contrib/bindletools/m4/bindle-gcc.m4;then
+   cd ${SRCDIR}/m4
+   rm -f ./bindle*.m4 || exit 1
+   ln -s ../contrib/bindletools/m4/bindle*.m4 ./
+   cd -
+fi
+
+
+# perform pre-hook
+if test -f ${SRCDIR}/build-aux/autogen-pre-hook.sh;then
+   . ${SRCDIR}/build-aux/autogen-pre-hook.sh
+fi
+
+
 # Performs some useful checks
 autoscan ${SRCDIR} || exit 1
-
-
-# symlinks M4 macros
-cd ${SRCDIR}/m4
-rm -f ./bindle*.m4 || exit 1
-ln -s ../contrib/bindletools/m4/bindle*.m4 ./
-cd -
 
 
 # generates/installs autotools files
@@ -76,6 +81,12 @@ autoreconf -v -i -f -Wall \
    -m \
    ${SRCDIR} \
    || exit 1
+
+
+# perform post-hook
+if test -f ${SRCDIR}/build-aux/autogen-post-hook.sh;then
+   . ${SRCDIR}/build-aux/autogen-post-hook.sh
+fi
 
 
 # makes build directory
