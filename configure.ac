@@ -34,7 +34,7 @@
 #   configure.in - automate compiling on a unix platform
 #
 
-AC_PREREQ(2.61)
+AC_PREREQ(2.65)
 
 AC_COPYRIGHT([Copyright (c) 2008, 2009, 2010, 2011, 2013 David M. Syzdek <david@syzdek.net>.])
 AC_REVISION($Revision: 1.13 $)
@@ -44,17 +44,11 @@ AC_SUBST([RELEASE_MONTH],     ["July 2014"])
 AC_SUBST([PACKAGE_COPYRIGHT], ["Copyright (C) 2008, 2009, 2010, 2011, 2013 David M. Syzdek."])
 AC_DEFINE_UNQUOTED(PACKAGE_COPYRIGHT, ["$PACKAGE_COPYRIGHT"], ["Copyright info"])
 
-# Version Info:
-#    Current    -- the current version number of this API
-#    Revision   -- the revision of the implementation of the API version
-#    Age        -- How many seqential past API versions is supported by
-#                  this implementation
-# Format => Current:Revision:Age
-AC_BINDLE_LIBTOOL_VERSION_INFO(0, 0, 0)
 
 # autoconf options
 AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_SRCDIR([build-aux/dmstools.tags])
+AC_CONFIG_SRCDIR([build-aux/git-tar-name.txt])
+#AC_CONFIG_LIBOBJ_DIR(compat)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -64,16 +58,27 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # configures for automake
-AM_INIT_AUTOMAKE(gnu std-options subdir-objects color-tests)
+AM_INIT_AUTOMAKE(gnu std-options subdir-objects foreign)
 
 # Compilers                                                       
-AC_PROG_CC 
+AC_PROG_CC
 #AC_PROG_OBJC
-AC_PROG_CXX
+#AC_PROG_CXX
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
-#AC_USE_SYSTEM_EXTENSIONS # replaces AC_AIX AC_GNU_SOURCE AC_MINIX
+AC_PROG_MAKE_SET
+AC_USE_SYSTEM_EXTENSIONS # replaces AC_AIX AC_GNU_SOURCE AC_MINIX
 AC_C_BIGENDIAN
+
+# Version Info:
+#    Current    -- the current version number of this API
+#    Revision   -- the revision of the implementation of the API version
+#    Age        -- How many seqential past API versions is supported by
+#                  this implementation
+# Format => Current:Revision:Age
+# Convenience macro:
+#    AC_BINDLE_LIBTOOL_VERSION_INFO(current, revision, age)
+AC_BINDLE_LIBTOOL_VERSION_INFO(0, 0, 0)
 
 # binary locations
 AC_PATH_PROG([SHELL],   sh bash,        [AC_MSG_ERROR([missing "sh"])], [$PATH])
@@ -87,19 +92,16 @@ AC_CHECK_TOOLS(STRIP,   strip gstrip,   [AC_MSG_ERROR([missing binutil "strip"])
 AC_PROG_AWK
 AC_PROG_EGREP
 AC_PROG_FGREP
-AM_PROG_LEX
+#AM_PROG_LEX
 AC_PROG_LN_S
-
-# GNU Libtool Support
-LT_INIT(dlopen disable-fast-install win32-dll)
+AC_PROG_CPP
 
 # check for common functions
 AC_FUNC_FORK
-AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
 AC_FUNC_MALLOC
-AC_FUNC_OBSTACK
 AC_FUNC_REALLOC
 AC_FUNC_STRERROR_R
+AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
 
 # Type checks
 AC_TYPE_INT8_T
@@ -137,7 +139,6 @@ AC_CHECK_HEADERS([arpa/inet.h],  [], [AC_MSG_ERROR([missing required headers])])
 AC_CHECK_HEADERS([fcntl.h],      [], [AC_MSG_ERROR([missing required headers])])
 AC_CHECK_HEADERS([getopt.h],     [], [AC_MSG_ERROR([missing required headers])])
 AC_CHECK_HEADERS([inttypes.h],   [], [AC_MSG_ERROR([missing required headers])])
-AC_CHECK_HEADERS([libintl.h],    [], [AC_MSG_ERROR([missing required headers])])
 AC_CHECK_HEADERS([locale.h],     [], [AC_MSG_ERROR([missing required headers])])
 AC_CHECK_HEADERS([netdb.h],      [], [AC_MSG_ERROR([missing required headers])])
 AC_CHECK_HEADERS([sgtty.h],      [], [AC_MSG_ERROR([missing required headers])])
@@ -166,6 +167,11 @@ AC_CHECK_LIB([dl],   [dlsym],       [], [AC_MSG_ERROR([missing required library 
 
 AC_CHECK_LIB([users],[noobs],,[AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
 
+
+# GNU Libtool Support
+LT_INIT(dlopen disable-fast-install win32-dll)
+
+
 # initiates bindle tools macros
 AC_BINDLE(contrib/bindletools)
 
@@ -173,7 +179,7 @@ AC_BINDLE(contrib/bindletools)
 AC_BINDLE_GIT_PACKAGE_VERSION([contrib/bindletools/build-aux/git-package-version.sh])
 
 # custom configure options
-AC_BINDLE_ENABLE_WARNINGS
+AC_BINDLE_ENABLE_WARNINGS([-Wno-unknown-pragmas], [])
 AC_BINDLE_WITH_PERL
 AC_DMS_REGEX
 AC_DMS_SIGNAL
