@@ -382,6 +382,7 @@ int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
       if ((endptr[0] != '\0') || (&ptr[1] == endptr))
       {
          fprintf(stderr, "%s: invalid CIDR\n", PROGRAM_NAME);
+         netcalc_ip_free(ip);
          free(str);
          return(1);
       };
@@ -394,6 +395,7 @@ int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
       if ((cidr < -1) || (cidr > 32))
       {
          fprintf(stderr, "%s: invalid CIDR\n", PROGRAM_NAME);
+         netcalc_ip_free(ip);
          free(str);
          return(1);
       };
@@ -414,6 +416,7 @@ int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
       if ((cidr < -1) || (cidr > 128))
       {
          fprintf(stderr, "%s: invalid CIDR\n", PROGRAM_NAME);
+         netcalc_ip_free(ip);
          free(str);
          return(1);
       };
@@ -1073,6 +1076,7 @@ int main(int argc, char * argv[])
       };
    };
 
+   // sets defaults and adjusts cidr
    if (cnf->family == NETCALC_INET)
    {
       cnf->cidr_limit  = ((cnf->cidr_limit == -1)      ? 32        : cnf->cidr_limit) + 128 - 32;
