@@ -1,6 +1,6 @@
 /*
  *  DMS Tools and Utilities
- *  Copyright (C) 2011 David M. Syzdek <david@syzdek.net>.
+ *  Copyright (C) 2011, 2021 David M. Syzdek <david@syzdek.net>.
  *
  *  @SYZDEK_LICENSE_HEADER_START@
  *
@@ -61,9 +61,9 @@
 #include "common.h"
 #endif
 
+#include <assert.h>
 #include <stdio.h>
 #include <getopt.h>
-#include <arpa/inet.h>
 #include <string.h>
 #include <inttypes.h>
 #include <stdlib.h>
@@ -96,7 +96,45 @@
 #endif
 
 
-#define NETCALC_OPT_ALL_NETWORKS          0x0001
+#define NETCALC_ALL_NETWORKS          0x0001
+#define NETCALC_IPV6_EXPAND           0x0002
+#define NETCALC_IPV6_FULL             0x0004
+#define NETCALC_NO_MAP                0x0008
+
+#define NETCALC_INET                      4
+#define NETCALC_INET6                     6
+
+
+/////////////////
+//             //
+//  Datatypes  //
+//             //
+/////////////////
+
+typedef struct _netcalc_ip netcalc_ip;
+typedef struct _netcalc    netcalc;
+
+struct _netcalc_ip
+{
+   uint32_t   addr[8];
+};
+
+
+struct _netcalc
+{
+   int32_t               cidr;
+   int32_t               cidr_limit;
+   int32_t               cidr_incr;
+   int32_t               family;
+   uint64_t              opts;
+   size_t                count;
+   netcalc_ip *          lower;
+   netcalc_ip *          upper;
+   int                   len_netmask;
+   int                   len_broadcast;
+   int                   len_network;
+   int                   len_wildmask;
+};
 
 
 //////////////////
@@ -105,20 +143,140 @@
 //              //
 //////////////////
 
-// converts IPv4 to string
-const char * netcalc_ipv4tostr(uint64_t ipv4);
+int
+netcalc_init(
+         netcalc **                    cnfp );
 
-// tests if string represents an IP address
-int netcalc_is_ipv4 PARAMS((const char * str, uint64_t * ipp, uint64_t * cidrp));
+
+void
+netcalc_free(
+         netcalc *                     cnfi );
+
+
+int
+netcalc_ip_cmp(
+         netcalc_ip *                  ip1,
+         netcalc_ip *                  ip2 );
+
+
+void
+netcalc_ip_free(
+         netcalc_ip *                  ip );
+
+
+int
+netcalc_ip_parse(
+         netcalc *                     cnf,
+         netcalc_ip **                 ipp,
+         const char *                  str );
+
+
+int
+netcalc_ip_parse_ipv4(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str );
+
+
+int
+netcalc_ip_parse_ipv4_str(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str );
+
+
+int
+netcalc_ip_parse_ipv6(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str );
+
+
+int netcalc_ip_string(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str,
+         size_t                        size );
+
+
+int netcalc_ip_string_ipv4(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str,
+         size_t                        size );
+
+
+int netcalc_ip_string_ipv6(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str,
+         size_t                        size );
+
+
+int
+netcalc_ip_parse_ipv6_mapped_ipv4(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        node );
+
+
+void
+netcalc_net_broadcast_r(
+         netcalc_ip *                  broadcast,
+         netcalc_ip *                  ip,
+         int32_t                       cidr );
+
+
+int
+netcalc_net_cmp(
+         netcalc_ip *                  ip1,
+         netcalc_ip *                  ip2,
+         int32_t                       cidr );
+
+
+void
+netcalc_net_netmask_r(
+         netcalc_ip *                  netmask,
+         int32_t                       cidr );
+
+
+void
+netcalc_net_network_r(
+         netcalc_ip *                  network,
+         netcalc_ip *                  ip,
+         int32_t                       cidr );
+
+
+void
+netcalc_net_wildmask_r(
+         netcalc_ip *                  wildmask,
+         int32_t                       cidr );
+
+
+void
+netcalc_print_ip(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         int32_t                       cidr,
+         int                           header );
+
 
 // displays usage
-void netcalc_usage PARAMS((void));
+void
+netcalc_usage( void );
+
 
 // displays version information
-void netcalc_version PARAMS((void));
+void
+netcalc_version( void );
+
 
 // main statement
-int main PARAMS((int argc, char * argv[]));
+int
+main(
+         int                           argc,
+         char *                        argv[] );
+
 
 char buff[1024];
 
@@ -129,83 +287,613 @@ char buff[1024];
 //             //
 /////////////////
 
-/// converts IPv4 to string
-const char * netcalc_ipv4tostr(uint64_t ipv4)
+
+void netcalc_free( netcalc * cnf )
 {
-   int c;
-   int offset;
-   offset = 0;
-   for(c = 0; c < 4; c++)
-      offset += snprintf(&buff[offset], 1024-offset, "%" PRIu64 ".", ((ipv4 >> (24 - (8*c)))&0xff) );
-   buff[offset-1] = '\0';
-   return(buff);
+   if (!(cnf))
+      return;
+
+   bzero(cnf, sizeof(netcalc));
+   free(cnf);
+
+   return;
 }
 
 
-/// tests if string represents an IP address
-int netcalc_is_ipv4(const char * str, uint64_t * ipv4_ptr, uint64_t * cidrp)
+int netcalc_init( netcalc ** cnfp )
 {
-   int            c;
-   int            value;
-   uint64_t       ipv4;
-   char         * ptr;
+   assert(cnfp != NULL);
 
-   // reset IP address buffer
-   if ((ipv4_ptr))
-      *ipv4_ptr = 0;
-
-   // reset initial IP address
-   ipv4 = 0;
-   ptr  = NULL;
-
-   // loops through octets
-   for(c = 0; c < 4; c++)
+   if ((*cnfp = malloc(sizeof(netcalc))) == NULL)
    {
-      // reads number from string
-      ptr = NULL;
-      value = (int)strtol(str, &ptr, 10);
+      fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+      return(1);
+   };
+   bzero(*cnfp, sizeof(netcalc));
 
-      // exits if string is not a number or IP address
-      if (!(ptr))
-         return(1);
-      if ((ptr[0] != '.') && (ptr[0] != '\0') && (ptr[0] != '/'))
-         return(1);
+   (*cnfp)->cidr          = 128;
+   (*cnfp)->cidr_limit    = -1;
+   (*cnfp)->cidr_incr     = -1;
+   (*cnfp)->family        = NETCALC_INET;
 
-      // exits if number is out of bounds for IPv4 octet
-      if ((value < 0) || (value > 255))
-         return(1);
+   (*cnfp)->len_netmask   = 7;
+   (*cnfp)->len_network   = 7;
+   (*cnfp)->len_wildmask  = 8;
+   (*cnfp)->len_broadcast = 9;
 
-      // adds number to IPv4 address and moves position within string
-      ipv4 = ((ipv4 << 8) | (((uint64_t)value) & 0xFF));
-      str = &ptr[1];
+   return(0);
+}
 
-      // finishes up if at end of string
-      if ((ptr[0] == '\0') || (ptr[1] == '\0'))
+
+int netcalc_ip_cmp( netcalc_ip * ip1, netcalc_ip * ip2 )
+{
+   int pos;
+   assert(ip1 != NULL);
+   assert(ip2 != NULL);
+   for(pos = 0; ((pos < 7) && (ip1->addr[pos] == ip2->addr[pos])); pos++);
+   if (ip1->addr[pos] < ip2->addr[pos])
+      return(-1);
+   if (ip1->addr[pos] > ip2->addr[pos])
+      return(1);
+   return(0);
+}
+
+
+void netcalc_ip_free( netcalc_ip * ip )
+{
+   if (!(ip))
+      return;
+   bzero(ip, sizeof(netcalc_ip));
+   free(ip);
+   return;
+}
+
+
+int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
+{
+   int             rc;
+   netcalc_ip *    ip;
+   char *          ptr;
+   char *          endptr;
+   int32_t         cidr;
+   char *          str;
+
+   assert(cnf != NULL);
+
+   // allocate memory
+   if ((ip = malloc(sizeof(netcalc_ip))) == NULL)
+   {
+      fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+      return(1);
+   };
+   if ((str = strdup(ipstr)) == NULL)
+   {
+      netcalc_ip_free(ip);
+      fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+      return(1);
+   };
+
+   // parses CIDR
+   cidr = -1;
+   if ((ptr = strrchr(str, '/')) != NULL)
+   {
+      ptr[0]  = '\0';
+      cidr    = (int32_t)strtol(&ptr[1], &endptr, 0);
+      if ((endptr[0] != '\0') || (&ptr[1] == endptr))
       {
-         ipv4 = ipv4 << ((3 - c) * 8);
-         if ((ipv4_ptr))
-            *ipv4_ptr = ipv4;
-         return(0);
-      };
-
-      // process CIDR
-      if (ptr[0] == '/')
-      {
-         value = (int)strtol(&ptr[1], &ptr, 10);
-         if (!(ptr))
-            return(1);
-         if (ptr[0] != '\0')
-            return(1);
-         if ((value < 0) || (value > 32))
-            return(1);
-         if ((cidrp))
-            *cidrp = value;
-         return(0);
+         fprintf(stderr, "%s: invalid CIDR\n", PROGRAM_NAME);
+         free(str);
+         return(1);
       };
    };
 
-   // if we made it here, then the string is not an IPv4 address
-   return(1);
+   // parses string
+   if ((ptr = strchr(str, ':')) == NULL)
+   {
+      // verifies cidr
+      if ((cidr < -1) || (cidr > 32))
+      {
+         fprintf(stderr, "%s: invalid CIDR\n", PROGRAM_NAME);
+         free(str);
+         return(1);
+      };
+
+      // normalizes CIDR for IPv6
+      if (cidr >= 0)
+         cidr += 128 - 32;
+
+      // parse string
+      if ((rc = netcalc_ip_parse_ipv4(cnf, ip, str)) != 0)
+      {
+         netcalc_ip_free(ip);
+         free(str);
+         return(1);
+      };
+   } else {
+      // verifies cidr
+      if ((cidr < -1) || (cidr > 128))
+      {
+         fprintf(stderr, "%s: invalid CIDR\n", PROGRAM_NAME);
+         free(str);
+         return(1);
+      };
+
+      // parses string
+      if ((rc = netcalc_ip_parse_ipv6(cnf, ip, str)) != 0)
+      {
+         netcalc_ip_free(ip);
+         free(str);
+         return(1);
+      };
+   };
+
+   // normalizes CIDR
+   if ((cnf->cidr > cidr) && (cidr != -1))
+      cnf->cidr = cidr;
+
+   // frees resources
+   free(str);
+
+   *ipp = ip;
+
+   return(0);
+}
+
+
+int netcalc_ip_parse_ipv4( netcalc * cnf, netcalc_ip * ip, char * str )
+{
+   assert(cnf != NULL);
+   assert(ip  != NULL);
+
+   ip->addr[5] = 0xffff;
+
+   // parses IPv4 string
+   return(netcalc_ip_parse_ipv4_str(cnf, ip, str));
+}
+
+
+int netcalc_ip_parse_ipv4_str( netcalc * cnf, netcalc_ip * ip, char * str )
+{
+   uint32_t        addr;
+   uint32_t        octet;
+   int             pos;
+   char *          ptr;
+   char *          endptr;
+   char *          nodes[4];
+
+   assert(cnf != NULL);
+   assert(ip  != NULL);
+   assert(str != NULL);
+
+   // set state
+   addr = 0;
+
+   // splits octets
+   for(pos = 0; (pos < 3); pos++)
+   {
+      nodes[pos] = str;
+      if ((ptr = strchr(str, '.')) == NULL)
+      {
+         fprintf(stderr, "%s: invalid IPv4 address\n", PROGRAM_NAME);
+         return(1);
+      };
+      ptr[0] = '\0';
+      str    = &ptr[1];
+   };
+   nodes[pos] = str;
+
+   // parses octets
+   for(pos = 0; (pos < 4); pos++)
+   {
+      octet = (uint32_t)strtoul(nodes[pos], &endptr, 10);
+      if ((nodes[pos] == endptr) || (endptr[0] != '\0') || (octet > 255))
+      {
+         fprintf(stderr, "%s: invalid IPv4 address\n", PROGRAM_NAME);
+         return(1);
+      };
+      addr = (addr << 8) | (octet & 0xff);
+   };
+
+   // stores address data
+   ip->addr[6] = (addr >> 16) & 0xffff;
+   ip->addr[7] = (addr >>  0) & 0xffff;
+
+   return(0);
+}
+
+
+int netcalc_ip_parse_ipv6( netcalc * cnf, netcalc_ip * ip, char * str)
+{
+   int      pos;
+   int      rev;
+   int      compress;
+   char *   nodes[9];
+   char *   ptr;
+   char *   endptr;
+
+   assert(cnf != NULL);
+   assert(ip  != NULL);
+
+   cnf->family = NETCALC_INET6;
+
+   // verifies zero compression
+   compress = 0;
+   for(pos = 1; (pos < (int)strlen(str)); pos++)
+      if ((str[pos-0] == ':') && (str[pos-1] == ':'))
+         compress++;
+   if (compress > 1)
+   {
+      fprintf(stderr, "%s:%i: invalid IPv6 address\n", PROGRAM_NAME, __LINE__);
+      return(1);
+   };
+
+   // set state
+   bzero(nodes, sizeof(nodes));
+
+   // splits octets
+   for(pos = 0; ((pos < 8) && (str[0] != ':') && ((ptr = strchr(str, ':')) != NULL)); pos++)
+   {
+      nodes[pos] = str;
+      str        = &ptr[1];
+      ptr[0]     = '\0';
+   };
+   for(rev = 7; ((rev > 0) && ((ptr = strrchr(str, ':')) != NULL)); rev--)
+   {
+      ptr[0]     = '\0';
+      nodes[rev] = &ptr[1];
+      if ((rev == 7) && ((strchr(nodes[rev], '.'))))
+         rev--;
+   };
+   nodes[rev] = str;
+   if (rev < pos)
+   {
+      fprintf(stderr, "%s:%i: invalid IPv6 address\n", PROGRAM_NAME, __LINE__);
+      return(1);
+   };
+
+   // converts string to numeric data
+   for(pos = 0; (pos < 8); pos++)
+   {
+      if (!(nodes[pos]))
+         continue;
+      if (!(nodes[pos][0]))
+         continue;
+      ip->addr[pos] = (uint32_t)strtoul(nodes[pos], &endptr, 16);
+      if ((pos == 7) && (endptr[0] == '.'))
+         return(netcalc_ip_parse_ipv6_mapped_ipv4(cnf, ip, nodes[7]));
+      if ( (nodes[pos] == endptr) || (endptr[0] != '\0') || (ip->addr[pos] > 0xffff) )
+      {
+         fprintf(stderr, "%s:%i: invalid IPv6 address\n", PROGRAM_NAME, __LINE__);
+         return(1);
+      };
+   };
+
+   return(0);
+}
+
+
+int netcalc_ip_parse_ipv6_mapped_ipv4( netcalc * cnf, netcalc_ip * ip, char * node )
+{
+   int          pos;
+
+   assert(cnf  != NULL);
+   assert(ip   != NULL);
+   assert(node != NULL);
+
+   // verify syntax
+   for(pos = 0; (pos < 5); pos++)
+   {
+      if (ip->addr[pos] != 0)
+      {
+         fprintf(stderr, "%s:%i: invalid IPv6 address\n", PROGRAM_NAME, __LINE__);
+         return(1);
+      };
+   };
+   if (ip->addr[5] != 0xffff)
+   {
+      fprintf(stderr, "%s:%i: invalid IPv6 address\n", PROGRAM_NAME, __LINE__);
+      return(1);
+   };
+
+   return(netcalc_ip_parse_ipv4_str(cnf, ip, node));
+}
+
+
+int netcalc_ip_string( netcalc * cnf, netcalc_ip * ip, char * str, size_t size )
+{
+   if (cnf->family == NETCALC_INET)
+      return(netcalc_ip_string_ipv4(cnf, ip, str, size));
+   return(netcalc_ip_string_ipv6(cnf, ip, str, size));
+}
+
+
+int netcalc_ip_string_ipv4( netcalc * cnf, netcalc_ip * ip, char * str, size_t size )
+{
+   assert(cnf != NULL);
+   assert(ip  != NULL);
+   assert(str != NULL);
+   assert(size > 0);
+   snprintf(
+      str,
+      size,
+      "%i.%i.%i.%i",
+      (ip->addr[6] >> 8),
+      (ip->addr[6]  & 0xff),
+      (ip->addr[7] >> 8),
+      (ip->addr[7]  & 0xff)
+   );
+   return(0);
+}
+
+
+int netcalc_ip_string_ipv6( netcalc * cnf, netcalc_ip * ip, char * str, size_t size )
+{
+   char    b[32];
+   char *  ptr;
+   int     ipv4mapped;
+   int     padding;
+   int     pos;
+   int     zero_offset;
+   int     zero_len;
+   int     offset;
+
+   assert(cnf != NULL);
+   assert(ip  != NULL);
+   assert(str != NULL);
+   assert(size > 0);
+
+   // set state
+   str[0]     = '\0';
+
+   // calculates zero compression
+   zero_offset = 0;
+   zero_len    = 0;
+   for(pos = 0; (pos < 8); pos++)
+   {
+      if (ip->addr[pos] == 0)
+      {
+         offset = pos;
+         while((ip->addr[pos] == 0) && (pos < 8))
+            pos++;
+         if ((pos - offset) > zero_len)
+         {
+            zero_offset = offset;
+            zero_len    = pos - offset;
+         };
+      };
+   };
+
+   // determines if IPv4 mapped address
+   ipv4mapped = (zero_offset == 0)              ? 1          : 0;
+   ipv4mapped = (zero_len == 5)                 ? ipv4mapped : 0;
+   ipv4mapped = (ip->addr[5] == 0xffff)         ? ipv4mapped : 0;
+   ipv4mapped = (!(cnf->opts & NETCALC_NO_MAP)) ? ipv4mapped : 0;
+
+   // prints full IP address
+   if ((cnf->opts & NETCALC_IPV6_FULL) != 0)
+   {
+      if ((ipv4mapped))
+      {
+         snprintf(
+            str,
+            size,
+            "0:0:0:0:0:ffff:%i.%i.%i.%i",
+            (ip->addr[6] >> 8),
+            (ip->addr[6]  & 0xff),
+            (ip->addr[7] >> 8),
+            (ip->addr[7]  & 0xff)
+         );
+      } else {
+         padding = (cnf->opts & NETCALC_IPV6_EXPAND) ? 4 : 0;
+         for(pos = 0; (pos < 7); pos++)
+         {
+            snprintf(b, sizeof(b), "%0*x:", padding, ip->addr[pos]);
+            strncat(str, b, size);
+         };
+         snprintf(b, sizeof(b), "%0*x", padding, ip->addr[7]);
+         strncat(str, b, size);
+      };
+      return(0);
+   };
+
+   // prints IPv4 mapped address
+   if ((ipv4mapped))
+   {
+      snprintf(
+         str,
+         size,
+         "::ffff:%i.%i.%i.%i",
+         (ip->addr[6] >> 8),
+         (ip->addr[6]  & 0xff),
+         (ip->addr[7] >> 8),
+         (ip->addr[7]  & 0xff)
+      );
+      return(0);
+   };
+
+   // prints IPv6 prefix
+   for(pos = 0; (pos < 8); pos++)
+   {
+      if ((pos == zero_offset) && (zero_len > 1))
+      {
+         strncat(str, ((pos == 0) ? "::" : ":"), size);
+         pos += zero_len - 1;
+         if (pos > 6)
+            strncat(str, ":", size);
+      } else {
+         snprintf(b, sizeof(b), "%x:", ip->addr[pos]);
+         strncat(str, b, size);
+      };
+   };
+   ptr = strrchr(str, ':');
+   ptr[0] = '\0';
+
+   return(0);
+}
+
+
+void netcalc_net_broadcast_r( netcalc_ip * broadcast, netcalc_ip * ip, int32_t cidr )
+{
+   int pos;
+   netcalc_ip wildmask;
+   netcalc_net_wildmask_r(&wildmask, cidr);
+   for(pos = 0; (pos < 8); pos++)
+      broadcast->addr[pos] = ip->addr[pos] | wildmask.addr[pos];
+   return;
+}
+
+
+int netcalc_net_cmp( netcalc_ip * a, netcalc_ip * b, int32_t cidr )
+{
+   int           i;
+   netcalc_ip    m;
+
+   assert(a != NULL);
+   assert(b != NULL);
+
+   netcalc_net_netmask_r(&m, cidr);
+
+   for(i = 0; ( (i < 7) && ((a->addr[i]&m.addr[i]) == (b->addr[i]&m.addr[i])) ); i++);
+
+   if ( (a->addr[i] & m.addr[i]) < (b->addr[i] & m.addr[i]) )
+      return(-1);
+
+   if ( (a->addr[i] & m.addr[i]) > (b->addr[i] & m.addr[i]) )
+      return(1);
+
+   return(0);
+}
+
+
+void netcalc_net_netmask_r( netcalc_ip * netmask, int32_t cidr )
+{
+   int32_t pos;
+   bzero(netmask, sizeof(netcalc_ip));
+   for(pos = 0; (pos < (cidr / 16)); pos++)
+      netmask->addr[pos] = 0xffff;
+   for(cidr %= 16; (cidr > 0); cidr--)
+   {
+      netmask->addr[pos] |= 0x10000;
+      netmask->addr[pos] >>= 1;
+   };
+   return;
+}
+
+
+void netcalc_net_network_r( netcalc_ip * network, netcalc_ip * ip, int32_t cidr )
+{
+   int pos;
+   netcalc_ip netmask;
+   netcalc_net_netmask_r(&netmask, cidr);
+   for(pos = 0; (pos < 8); pos++)
+      network->addr[pos] = ip->addr[pos] & netmask.addr[pos];
+   return;
+}
+
+
+void netcalc_net_wildmask_r( netcalc_ip * wildmask, int32_t cidr )
+{
+   int32_t pos;
+   netcalc_net_netmask_r(wildmask, cidr);
+   for(pos = 0; (pos < 8); pos++)
+      wildmask->addr[pos] = (~wildmask->addr[pos] & 0xffff);
+   return;
+}
+
+
+void netcalc_print_ip( netcalc * cnf, netcalc_ip * ip, int32_t cidr, int header )
+{
+   int          pos;
+   netcalc_ip   netmask;
+   netcalc_ip   broadcast;
+   netcalc_ip   network;
+   netcalc_ip   wildmask;
+   char         str_netmask[56];
+   char         str_broadcast[56];
+   char         str_network[56];
+   char         str_wildmask[56];
+   char         str_subnets[128];
+   uint64_t     count;
+
+   if ((ip))
+   {
+      netcalc_net_netmask_r(   &netmask,       cidr );
+      netcalc_net_wildmask_r(  &wildmask,      cidr );
+      netcalc_net_network_r(   &network,   ip, cidr );
+      netcalc_net_broadcast_r( &broadcast, ip, cidr );
+      netcalc_ip_string( cnf,  &netmask,   str_netmask,   sizeof(str_netmask) );
+      netcalc_ip_string( cnf,  &wildmask,  str_wildmask,  sizeof(str_wildmask) );
+      netcalc_ip_string( cnf,  &network,   str_network,   sizeof(str_network) );
+      netcalc_ip_string( cnf,  &broadcast, str_broadcast, sizeof(str_broadcast) );
+   };
+
+   // network count
+   if (cnf->cidr_incr >= cnf->cidr)
+   {
+      count = 1;
+      for(pos = 0; (pos < (cnf->cidr_incr  - cnf->cidr)); pos++)
+         count *= 2;
+   } else {
+      count = 0;
+   };
+
+   // print IPv4 information
+   if (cnf->family == NETCALC_INET)
+   {
+      if ((header))
+      {
+         snprintf(str_subnets, sizeof(str_subnets), "/%" PRIu32 "s", (cnf->cidr_incr + 32 - 128));
+         // prints field names
+         printf("%-15s",   "Network");
+         printf("  %-15s", "Broadcast");
+         printf("  %-15s", "Netmask");
+         printf("  %-15s", "Wildcard");
+         printf("  %-4s",  "CIDR");
+         printf("  %s",    str_subnets);
+         printf("\n");
+         return;
+      };
+      printf("%-15s",       str_network);
+      printf("  %-15s",     str_broadcast);
+      printf("  %-15s",     str_netmask);
+      printf("  %-15s",     str_wildmask);
+      printf("  %-4i",      cidr + 32 - 128);
+      printf("  %" PRIu64,  count);
+      printf("\n");
+      return;
+   };
+
+   cnf->len_netmask   = (cnf->len_netmask   < (int)strlen(str_netmask))   ? (int)strlen(str_netmask)   : cnf->len_netmask;
+   cnf->len_network   = (cnf->len_network   < (int)strlen(str_network))   ? (int)strlen(str_network)   : cnf->len_network;
+   cnf->len_wildmask  = (cnf->len_wildmask  < (int)strlen(str_wildmask))  ? (int)strlen(str_wildmask)  : cnf->len_wildmask;
+   cnf->len_broadcast = (cnf->len_broadcast < (int)strlen(str_broadcast)) ? (int)strlen(str_broadcast) : cnf->len_broadcast;
+
+   // print IPv6 information
+   if ((header))
+   {
+      snprintf(str_subnets, sizeof(str_subnets), "/%" PRIu32 "s", cnf->cidr_incr);
+      // prints field names
+      printf("%-*s",   cnf->len_network,   "Network");
+      printf("  %-*s", cnf->len_broadcast, "Broadcast");
+      printf("  %-*s", cnf->len_netmask,   "Netmask");
+      printf("  %-*s", cnf->len_wildmask,  "Wildcard");
+      printf("  %-4s",                     "CIDR");
+      printf("  %s",                       str_subnets);
+      printf("\n");
+      return;
+   };
+   printf("%-*s",   cnf->len_network,   str_network);
+   printf("  %-*s", cnf->len_broadcast, str_broadcast);
+   printf("  %-*s", cnf->len_netmask,   str_netmask);
+   printf("  %-*s", cnf->len_wildmask,  str_wildmask);
+   printf("  %-4i",                     cidr);
+   if ((cnf->cidr_incr >= cnf->cidr) && ((cnf->cidr_incr  - cnf->cidr) < 64))
+      printf("  %" PRIu64,                 count);
+   else
+      printf("  n/a");
+   printf("\n");
+
+   return;
 }
 
 
@@ -214,10 +902,13 @@ void netcalc_usage(void)
 {
    printf("Usage: %s [OPTIONS] address1 address2 ... addressN\n", PROGRAM_NAME);
    printf("  -a                        display all matching networks\n");
-   printf("  -c num                    requested network size in CIDR notation\n");
+   printf("  -c cidr                   requested network size in CIDR notation\n");
+   printf("  -f                        print full IPv6 notation (do not compress zeros)\n");
    printf("  -h, --help                print this help and exit\n");
-   printf("  -i num                    requested network size in amount of IP addresses\n");
+   printf("  -i cidr                   increment size of network list\n");
+   printf("  -m                        do not display IPv4 mapped addresses\n");
    printf("  -V, --version             print version number and exit\n");
+   printf("  -x                        print IPv6 expanded notation (print leading zeros)\n");
    printf("\n");
    printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
    return;
@@ -243,19 +934,12 @@ void netcalc_version(void)
 int main(int argc, char * argv[])
 {
    int           c;
-   int           opt;
+   int           rc;
    int           opt_index;
-   uint64_t      cidr;
-   uint64_t      opt_cidr_high;
-   uint64_t      opt_ip_count;
-   uint64_t      ipv4;
-   uint64_t      ipv4_low;
-   uint64_t      ipv4_high;
-   uint64_t      network;
-   uint64_t      broadcast;
-   uint64_t      netmask;
+   netcalc *     cnf;
+   netcalc_ip *  ip;
 
-   static char   short_opt[] = "ac:hi:V";
+   static char   short_opt[] = "6ac:fhi:mVx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -263,10 +947,8 @@ int main(int argc, char * argv[])
       {NULL,            0,           0, 0  }
    };
 
-   // set defaults
-   opt           = 0;
-   opt_cidr_high = 33;
-   opt_ip_count  = 0;
+   if ((rc = netcalc_init(&cnf)) != 0)
+      return(1);
 
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -274,29 +956,68 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
-            break;
+         break;
+
+         case '6':
+         cnf->family = NETCALC_INET6;
+         break;
+
          case 'a':
-            opt = opt | NETCALC_OPT_ALL_NETWORKS;
-            break;
+         cnf->opts |= NETCALC_ALL_NETWORKS;
+         cnf->len_wildmask  = 39;
+         cnf->len_broadcast = 39;
+         break;
+
          case 'c':
-            opt_cidr_high = strtoll(optarg, NULL, 0);
-            break;
+         cnf->cidr_limit = (int32_t)strtol(optarg, NULL, 0);
+         if ((cnf->cidr_limit < 0) || (cnf->cidr_limit > 128))
+         {
+            fprintf(stderr, "%s: invalid CIDR\n", PROGRAM_NAME);
+            netcalc_free(cnf);
+            return(1);
+         };
+         break;
+
+         case 'f':
+         cnf->opts |= NETCALC_IPV6_FULL;
+         break;
+
          case 'h':
-            netcalc_usage();
-            return(0);
+         netcalc_usage();
+         return(0);
+
          case 'i':
-            opt_ip_count = strtoll(optarg, NULL, 0);
-            break;
+         cnf->cidr_incr =  (int32_t)strtol(optarg, NULL, 0);
+         if ((cnf->cidr_incr < 0) || (cnf->cidr_incr > 128))
+         {
+            fprintf(stderr, "%s: invalid CIDR\n", PROGRAM_NAME);
+            netcalc_free(cnf);
+            return(1);
+         };
+         break;
+
+         case 'm':
+         cnf->opts |= NETCALC_NO_MAP;
+         break;
+
          case 'V':
-            netcalc_version();
-            return(0);
+         netcalc_version();
+         return(0);
+
+         case 'x':
+         cnf->opts |= NETCALC_IPV6_EXPAND;
+         cnf->opts |= NETCALC_IPV6_FULL;
+         cnf->opts |= NETCALC_NO_MAP;
+         break;
+
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
       };
    };
 
@@ -307,71 +1028,89 @@ int main(int argc, char * argv[])
       return(1);
    };
 
-   // determines the high and low IP address in the list
-   ipv4_high = 0;
-   ipv4_low  = 0;
    for(c = optind; c < argc; c++)
    {
-      if (netcalc_is_ipv4(argv[c], &ipv4, &opt_cidr_high))
+      if ((rc = netcalc_ip_parse(cnf, &ip, argv[c])) != 0)
       {
-         printf("%s: invalid IPv4 address: %s\n", PROGRAM_NAME, argv[c]);
+         netcalc_free(cnf);
          return(1);
       };
-      if (c == optind)
+
+      // initialize bounds
+      if (!(cnf->lower))
       {
-         ipv4_low  = ipv4;
-         ipv4_high = ipv4;
+         if ((cnf->lower = malloc(sizeof(netcalc_ip))) == NULL)
+         {
+            fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+            netcalc_ip_free(ip);
+            netcalc_free(cnf);
+            return(1);
+         };
+         memcpy(cnf->lower, ip, sizeof(netcalc_ip));
       };
-      if (ipv4 < ipv4_low)
-         ipv4_low = ipv4;
-      if (ipv4 > ipv4_high)
-         ipv4_high = ipv4;
+      if (!(cnf->upper))
+      {
+         if ((cnf->upper = malloc(sizeof(netcalc_ip))) == NULL)
+         {
+            fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+            netcalc_ip_free(ip);
+            netcalc_free(cnf);
+            return(1);
+         };
+         memcpy(cnf->upper, ip, sizeof(netcalc_ip));
+      };
+
+      // updates bounds
+      if (netcalc_ip_cmp(ip, cnf->lower) < 0)
+      {
+         netcalc_ip_free(cnf->lower);
+         cnf->lower = ip;
+      } else if (netcalc_ip_cmp(ip, cnf->upper) > 0) {
+         netcalc_ip_free(cnf->upper);
+         cnf->upper = ip;
+      } else {
+         netcalc_ip_free(ip);
+      };
    };
 
-   // calculates the smallest network which matches criteria
-   cidr    = 32LL;
-   netmask = 0x00;
-   while ( ((~netmask & ipv4_high) != (~netmask & ipv4_low)) ||
-           ((opt_cidr_high < cidr)) ||
-           (((uint64_t)opt_ip_count > (netmask+1))) )
+   if (cnf->family == NETCALC_INET)
    {
-      netmask = (netmask << 1) | 0x01;
-      cidr--;
+      cnf->cidr_limit  = ((cnf->cidr_limit == -1)      ? 32        : cnf->cidr_limit) + 128 - 32;
+      cnf->cidr_incr   = ((cnf->cidr_incr  == -1)      ? 32        : cnf->cidr_incr)  + 128 - 32;
+      cnf->cidr        = (cnf->cidr < cnf->cidr_limit) ? cnf->cidr : cnf->cidr_limit;
+   } else {
+      cnf->cidr_limit  = (cnf->cidr_limit == -1) ? 64 : cnf->cidr_limit;
+      cnf->cidr_incr   = (cnf->cidr_incr  == -1) ? 64 : cnf->cidr_incr;
+      cnf->cidr        = (cnf->cidr < cnf->cidr_limit) ? cnf->cidr : cnf->cidr_limit;
    };
-   netmask = ~netmask;
-   network = netmask & ipv4_high;
 
-   // prints field names
-   printf("%-18s", "Network");
-   printf("%-8s", "CIDR");
-   printf("%-18s", "Netmask");
-   printf("%-18s", "Broadcast");
-   printf("%s", "IP Count");
-   printf("\n");
+   // calculate inclusive CIDR
+   while ((rc = netcalc_net_cmp(cnf->lower, cnf->upper, cnf->cidr)) != 0)
+      cnf->cidr--;
 
-   // prints list of matching networks
-   while(cidr >= 0)
+   // print header
+   netcalc_print_ip(cnf, cnf->lower, cnf->cidr, 1);
+   netcalc_print_ip(cnf, cnf->lower, cnf->cidr, 0);
+
+   // print all matching subnets
+   if ((cnf->opts & NETCALC_ALL_NETWORKS))
    {
-      // calculates network and broadcast
-      network   = network & netmask;
-      broadcast = network | (~netmask);
-
-      // prints information
-      printf("%-18s", netcalc_ipv4tostr(network));
-      printf("%-8" PRIu64, cidr);
-      printf("%-18s", netcalc_ipv4tostr(netmask));
-      printf("%-18s", netcalc_ipv4tostr(broadcast));
-      printf("%" PRIu64, (~netmask + 1));
-      printf("\n");
-
-      // moves to next netmask/cidr
-      if (!(opt & NETCALC_OPT_ALL_NETWORKS))
-         return(0);
-      netmask = ~((~netmask << 1) | 0x01);
-      cidr--;
+      if (cnf->family == NETCALC_INET6)
+      {
+         while(cnf->cidr > 0)
+         {
+            cnf->cidr--;
+            netcalc_print_ip(cnf, cnf->lower, cnf->cidr, 0);
+         };
+      } else {
+         while(cnf->cidr > (128-32))
+         {
+            cnf->cidr--;
+            netcalc_print_ip(cnf, cnf->lower, cnf->cidr, 0);
+         };
+      };
    };
 
-   // Okay, time to rest after a job well done
    return(0);
 }
 
