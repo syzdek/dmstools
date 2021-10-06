@@ -126,6 +126,8 @@ struct _netcalc
    int32_t               cidr_limit;
    int32_t               cidr_incr;
    int32_t               family;
+   int32_t               display;
+   int32_t               pad32;
    uint64_t              opts;
    size_t                count;
    netcalc_ip *          lower;
@@ -315,6 +317,7 @@ int netcalc_init( netcalc ** cnfp )
    (*cnfp)->cidr_limit    = -1;
    (*cnfp)->cidr_incr     = -1;
    (*cnfp)->family        = NETCALC_INET;
+   (*cnfp)->display       = NETCALC_INET;
 
    (*cnfp)->len_netmask   = 7;
    (*cnfp)->len_network   = 7;
@@ -604,7 +607,7 @@ int netcalc_ip_parse_ipv6_mapped_ipv4( netcalc * cnf, netcalc_ip * ip, char * no
 
 int netcalc_ip_string( netcalc * cnf, netcalc_ip * ip, char * str, size_t size )
 {
-   if (cnf->family == NETCALC_INET)
+   if (cnf->display == NETCALC_INET)
       return(netcalc_ip_string_ipv4(cnf, ip, str, size));
    return(netcalc_ip_string_ipv6(cnf, ip, str, size));
 }
@@ -841,7 +844,7 @@ void netcalc_print_ip( netcalc * cnf, netcalc_ip * ip, int32_t cidr, int header 
    };
 
    // print IPv4 information
-   if (cnf->family == NETCALC_INET)
+   if (cnf->display == NETCALC_INET)
    {
       if ((header))
       {
@@ -962,7 +965,7 @@ int main(int argc, char * argv[])
          break;
 
          case '6':
-         cnf->family = NETCALC_INET6;
+         cnf->display = NETCALC_INET6;
          break;
 
          case 'a':
@@ -1077,15 +1080,16 @@ int main(int argc, char * argv[])
    };
 
    // sets defaults and adjusts cidr
+   cnf->display        = (cnf->family == NETCALC_INET6) ? NETCALC_INET6 : cnf->display;
    if (cnf->family == NETCALC_INET)
    {
-      cnf->cidr_limit  = ((cnf->cidr_limit == -1)      ? 32        : cnf->cidr_limit) + 128 - 32;
-      cnf->cidr_incr   = ((cnf->cidr_incr  == -1)      ? 32        : cnf->cidr_incr)  + 128 - 32;
-      cnf->cidr        = (cnf->cidr < cnf->cidr_limit) ? cnf->cidr : cnf->cidr_limit;
+      cnf->cidr_limit  = ((cnf->cidr_limit == -1)       ? 32            : cnf->cidr_limit) + 128 - 32;
+      cnf->cidr_incr   = ((cnf->cidr_incr  == -1)       ? 32            : cnf->cidr_incr)  + 128 - 32;
+      cnf->cidr        = (cnf->cidr < cnf->cidr_limit)  ? cnf->cidr     : cnf->cidr_limit;
    } else {
-      cnf->cidr_limit  = (cnf->cidr_limit == -1) ? 64 : cnf->cidr_limit;
-      cnf->cidr_incr   = (cnf->cidr_incr  == -1) ? 64 : cnf->cidr_incr;
-      cnf->cidr        = (cnf->cidr < cnf->cidr_limit) ? cnf->cidr : cnf->cidr_limit;
+      cnf->cidr_limit  = (cnf->cidr_limit == -1)        ? 64            : cnf->cidr_limit;
+      cnf->cidr_incr   = (cnf->cidr_incr  == -1)        ? 64            : cnf->cidr_incr;
+      cnf->cidr        = (cnf->cidr < cnf->cidr_limit)  ? cnf->cidr     : cnf->cidr_limit;
    };
 
    // calculate inclusive CIDR
