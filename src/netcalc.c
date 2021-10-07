@@ -296,6 +296,18 @@ netcalc_results_default(
 
 
 void
+netcalc_results_list(
+         netcalc *                     cnf );
+
+
+void
+netcalc_results_list_add(
+         netcalc *                     cnf,
+         netcalc_ip *                  network,
+         netcalc_ip *                  incr );
+
+
+void
 netcalc_results_verbose(
          netcalc *                     cnf );
 
@@ -982,8 +994,8 @@ void netcalc_print_ip( netcalc * cnf, netcalc_ip * ip, int32_t cidr, uint64_t op
       {
          snprintf(str_subnets, sizeof(str_subnets), "/%" PRIu32 "s", (cnf->cidr_incr + 32 - 128));
          // prints field names
-         if ((cnf->opts & NETCALC_VERBOSE))
-            printf( "%-15s  ", "Address");
+         if ((cnf->opts & (NETCALC_VERBOSE|NETCALC_LIST)))
+            printf( "%-18s  ", "Address");
          printf(    "%-15s  ", "Network");
          printf(    "%-15s  ", "Broadcast");
          printf(    "%-15s  ", "Netmask");
@@ -993,8 +1005,8 @@ void netcalc_print_ip( netcalc * cnf, netcalc_ip * ip, int32_t cidr, uint64_t op
          printf(    "\n");
          return;
       };
-      if ((cnf->opts & NETCALC_VERBOSE))
-         printf( "%-15s  ",   str_address );
+      if ((cnf->opts & (NETCALC_VERBOSE|NETCALC_LIST)))
+         printf( "%-18s  ",   str_address );
       printf(    "%-15s  ",   str_network );
       printf(    "%-15s  ",   str_broadcast );
       printf(    "%-15s  ",   str_netmask );
@@ -1013,7 +1025,7 @@ void netcalc_print_ip( netcalc * cnf, netcalc_ip * ip, int32_t cidr, uint64_t op
    {
       snprintf(str_subnets, sizeof(str_subnets), "/%" PRIu32 "s", cnf->cidr_incr);
       // prints field names
-      if ((cnf->opts & NETCALC_VERBOSE))
+      if ((cnf->opts & (NETCALC_VERBOSE|NETCALC_LIST)))
          printf( "%-*s  ", cnf->len_address,   "Address" );
       printf(    "%-*s  ", cnf->len_network,   "Network" );
       printf(    "%-*s  ", cnf->len_broadcast, "Broadcast" );
@@ -1024,7 +1036,7 @@ void netcalc_print_ip( netcalc * cnf, netcalc_ip * ip, int32_t cidr, uint64_t op
       printf(    "\n");
       return;
    };
-   if ((cnf->opts & NETCALC_VERBOSE))
+   if ((cnf->opts & (NETCALC_VERBOSE|NETCALC_LIST)))
       printf( "%-*s  ", cnf->len_address,   str_address);
    printf(    "%-*s  ", cnf->len_network,   str_network);
    printf(    "%-*s  ", cnf->len_broadcast, str_broadcast);
@@ -1106,6 +1118,77 @@ void netcalc_results_default( netcalc * cnf )
 }
 
 
+void netcalc_results_list( netcalc * cnf )
+{
+   int             rc;
+   int32_t         cidr;
+   int32_t         pos;
+   netcalc_ip      network;
+   netcalc_ip      incr;
+
+   memcpy(&network, cnf->superblock, sizeof(netcalc_ip));
+   network.cidr = cnf->cidr_incr;
+
+   bzero(&incr, sizeof(netcalc_ip));
+   if (cnf->cidr_incr > 0)
+   {
+      cidr               = cnf->cidr_incr-1;
+      incr.cidr          = cnf->cidr_incr;
+      incr.addr[cidr/16] = 0x01 << (15-(cidr%16));
+   };
+
+   netcalc_print_space(cnf, cnf->superblock, cnf->cidr);
+   netcalc_print_space(cnf, &network,        network.cidr);
+   rc = netcalc_net_cmp(&network, cnf->superblock, cnf->cidr);
+   while((rc == 0) && (network.addr[0] < 0x10000))
+   {
+      netcalc_print_space(cnf, &network, cnf->cidr_incr);
+      for(pos = 7; (pos > 0); pos--)
+      {
+         network.addr[pos] += incr.addr[pos];
+         if (network.addr[pos] > 0xffff)
+         {
+            network.addr[pos-1]++;
+            network.addr[pos-0] &= 0xffff;
+         };
+      };
+      rc = netcalc_net_cmp(&network, cnf->superblock, cnf->cidr);
+   };
+
+   memcpy(&network, cnf->superblock, sizeof(netcalc_ip));
+   network.cidr = cnf->cidr_incr;
+
+   netcalc_print_ip(cnf, NULL,            cnf->cidr,             0);
+   netcalc_print_ip(cnf, cnf->superblock, cnf->superblock->cidr, NETCALC_SUPERBLOCK);
+   rc = netcalc_net_cmp(&network, cnf->superblock, cnf->cidr);
+   while((rc == 0) && (network.addr[0] < 0x10000))
+   {
+      netcalc_print_ip(cnf, &network, cnf->cidr_incr, 0);
+      for(pos = 7; (pos > 0); pos--)
+      {
+         network.addr[pos] += incr.addr[pos];
+         if (network.addr[pos] > 0xffff)
+         {
+            network.addr[pos-1]++;
+            network.addr[pos-0] &= 0xffff;
+         };
+      };
+      rc = netcalc_net_cmp(&network, cnf->superblock, cnf->cidr);
+   };
+
+   return;
+}
+
+
+void netcalc_results_list_add( netcalc * cnf, netcalc_ip * network, netcalc_ip * incr )
+{
+   assert(cnf     != NULL);
+   assert(network != NULL);
+   assert(incr    != NULL);
+   return;
+}
+
+
 void netcalc_results_verbose( netcalc * cnf )
 {
    size_t   pos;
@@ -1129,14 +1212,15 @@ void netcalc_results_verbose( netcalc * cnf )
 void netcalc_usage(void)
 {
    printf("Usage: %s [OPTIONS] address1 address2 ... addressN\n", PROGRAM_NAME);
-   printf("  -a                     display all inclusive networks (incompatible with -v)\n");
+   printf("  -a                     display all inclusive networks (incompatible with -v and -l)\n");
    printf("  -c cidr                requested network size in CIDR notation\n");
    printf("  -f                     print full IPv6 notation (do not compress zeros)\n");
    printf("  -h, --help             print this help and exit\n");
    printf("  -i cidr                increment size of network list\n");
+   printf("  -l                     display incremental networks (incompatible with -a and -v)\n");
    printf("  -m                     do not display IPv4 mapped addresses\n");
    printf("  -V, --version          print version number and exit\n");
-   printf("  -v, --verbose          display all input networks (incompatible with -a)\n");
+   printf("  -v, --verbose          display all input networks (incompatible with -a and -l)\n");
    printf("  -x                     print IPv6 expanded notation (print leading zeros)\n");
    printf("\n");
    printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
@@ -1169,7 +1253,7 @@ int main(int argc, char * argv[])
    netcalc_ip *  ip;
    size_t        pos;
 
-   static char   short_opt[] = "6ac:fhi:mVvx";
+   static char   short_opt[] = "6ac:fhi:lmVvx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -1326,6 +1410,8 @@ int main(int argc, char * argv[])
    // display results
    if ((cnf->opts & NETCALC_VERBOSE))
       netcalc_results_verbose(cnf);
+   else if ((cnf->opts & NETCALC_LIST))
+      netcalc_results_list(cnf);
    else
       netcalc_results_default(cnf);
 
