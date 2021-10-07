@@ -1298,6 +1298,7 @@ int main(int argc, char * argv[])
 
          case 'h':
          netcalc_usage();
+         netcalc_free(cnf);
          return(0);
 
          case 'i':
@@ -1322,6 +1323,7 @@ int main(int argc, char * argv[])
 
          case 'V':
          netcalc_version();
+         netcalc_free(cnf);
          return(0);
 
          case 'v':
@@ -1338,11 +1340,13 @@ int main(int argc, char * argv[])
 
          case '?':
          fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         netcalc_free(cnf);
          return(1);
 
          default:
          fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
          fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         netcalc_free(cnf);
          return(1);
       };
    };
@@ -1351,6 +1355,7 @@ int main(int argc, char * argv[])
    {
       fprintf(stderr, "%s: missing required argument\n", PROGRAM_NAME);
       fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+      netcalc_free(cnf);
       return(1);
    };
 
@@ -1414,6 +1419,8 @@ int main(int argc, char * argv[])
       netcalc_results_list(cnf);
    else
       netcalc_results_default(cnf);
+
+   netcalc_free(cnf);
 
    return(0);
 }
