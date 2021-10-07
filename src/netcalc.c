@@ -458,7 +458,6 @@ void netcalc_ip_free( netcalc_ip * ip )
 
 int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
 {
-   int             rc;
    netcalc_ip *    ip;
    char *          ptr;
    char *          endptr;
@@ -495,16 +494,16 @@ int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
    };
 
    // parses string
-   if ((ptr = strchr(str, ':')) == NULL)
+   if (strchr(str, ':') == NULL)
    {
-      if ((rc = netcalc_ip_parse_ipv4(cnf, ip, str)) != 0)
+      if (netcalc_ip_parse_ipv4(cnf, ip, str) != 0)
       {
          netcalc_ip_free(ip);
          free(str);
          return(1);
       };
    } else {
-      if ((rc = netcalc_ip_parse_ipv6(cnf, ip, str)) != 0)
+      if (netcalc_ip_parse_ipv6(cnf, ip, str) != 0)
       {
          netcalc_ip_free(ip);
          free(str);
@@ -1247,7 +1246,6 @@ void netcalc_version(void)
 int main(int argc, char * argv[])
 {
    int           c;
-   int           rc;
    int           opt_index;
    netcalc *     cnf;
    netcalc_ip *  ip;
@@ -1261,7 +1259,7 @@ int main(int argc, char * argv[])
       {NULL,            0,           0, 0  }
    };
 
-   if ((rc = netcalc_init(&cnf)) != 0)
+   if (netcalc_init(&cnf) != 0)
       return(1);
 
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
@@ -1361,13 +1359,13 @@ int main(int argc, char * argv[])
 
    for(c = optind; c < argc; c++)
    {
-      if ((rc = netcalc_ip_parse(cnf, &ip, argv[c])) != 0)
+      if (netcalc_ip_parse(cnf, &ip, argv[c]) != 0)
       {
          netcalc_free(cnf);
          return(1);
       };
 
-      if ((rc = netcalc_ip_append(cnf, ip)) != 0)
+      if (netcalc_ip_append(cnf, ip) != 0)
       {
          netcalc_ip_free(ip);
          netcalc_free(cnf);
@@ -1408,7 +1406,7 @@ int main(int argc, char * argv[])
    };
 
    // calculate inclusive CIDR
-   while ((rc = netcalc_net_cmp(cnf->lower, cnf->upper, cnf->cidr)) != 0)
+   while (netcalc_net_cmp(cnf->lower, cnf->upper, cnf->cidr) != 0)
       cnf->cidr--;
    netcalc_net_network_r(cnf->superblock, cnf->lower, cnf->cidr);
 
