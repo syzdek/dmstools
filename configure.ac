@@ -1,6 +1,6 @@
 #
 #   DMS Tools and Utilities
-#   Copyright (C) 2008, 2009, 2010 David M. Syzdek <david@syzdek.net>
+#   Copyright (C) 2008, 2009, 2010, 2021 David M. Syzdek <david@syzdek.net>
 #
 #   @SYZDEK_LICENSE_HEADER_START@
 #
@@ -37,10 +37,10 @@
 AC_PREREQ(2.65)
 
 AC_COPYRIGHT([Copyright (c) 2008, 2009, 2010, 2011, 2013, 2021 David M. Syzdek <david@syzdek.net>.])
-AC_REVISION($Revision: 1.13 $)
-AC_INIT([DMS Tools and Utilities],[1.3],[david@syzdek.net],[dmstools])
+AC_REVISION(0.2)
+AC_INIT([DMS Tools and Utilities],[1.4],[david@syzdek.net],[dmstools])
 
-AC_SUBST([RELEASE_MONTH],     ["July 2014"])
+AC_SUBST([RELEASE_MONTH],     ["October 2021"])
 AC_SUBST([PACKAGE_COPYRIGHT], ["Copyright (C) 2008, 2009, 2010, 2011, 2013, 2021 David M. Syzdek."])
 AC_DEFINE_UNQUOTED(PACKAGE_COPYRIGHT, ["$PACKAGE_COPYRIGHT"], ["Copyright info"])
 
