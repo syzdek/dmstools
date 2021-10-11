@@ -63,7 +63,7 @@ AM_INIT_AUTOMAKE(gnu std-options subdir-objects foreign)
 # Compilers                                                       
 AC_PROG_CC
 #AC_PROG_OBJC
-#AC_PROG_CXX
+AC_PROG_CXX
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
@@ -99,6 +99,7 @@ AC_PROG_CPP
 # check for common functions
 AC_FUNC_FORK
 AC_FUNC_MALLOC
+AC_FUNC_OBSTACK
 AC_FUNC_REALLOC
 AC_FUNC_STRERROR_R
 AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
@@ -130,6 +131,7 @@ AC_CHECK_FUNCS([strchr],         [], [AC_MSG_ERROR([missing required functions])
 AC_CHECK_FUNCS([strdup],         [], [AC_MSG_ERROR([missing required functions])])
 AC_CHECK_FUNCS([strerror],       [], [AC_MSG_ERROR([missing required functions])])
 AC_CHECK_FUNCS([strncasecmp],    [], [AC_MSG_ERROR([missing required functions])])
+AC_CHECK_FUNCS([strrchr],        [], [AC_MSG_ERROR([missing required functions])])
 AC_CHECK_FUNCS([strtol],         [], [AC_MSG_ERROR([missing required functions])])
 AC_CHECK_FUNCS([strtoul],        [], [AC_MSG_ERROR([missing required functions])])
 AC_CHECK_FUNCS([strtoumax],      [], [AC_MSG_ERROR([missing required functions])])
