@@ -70,26 +70,6 @@
 
 ///////////////////
 //               //
-//  i18l Support //
-//               //
-///////////////////
-
-#ifdef HAVE_GETTEXT
-#   include <gettext.h>
-#   include <libintl.h>
-#   define _(String) gettext (String)
-#   define gettext_noop(String) String
-#   define N_(String) gettext_noop (String)
-#else
-#   define _(String) (String)
-#   define N_(String) String
-#   define textdomain(Domain)
-#   define bindtextdomain(Package, Directory)
-#endif
-
-
-///////////////////
-//               //
 //  Definitions  //
 //               //
 ///////////////////
@@ -233,13 +213,11 @@ int main(int argc, char * argv[])
             my_version();
             return(0);
          case '?':
-            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
          default:
-            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
-                  "Try `%s --help' for more information.\n"
-               ),  PROGRAM_NAME, c, PROGRAM_NAME
-            );
+            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
       };
    };
@@ -249,9 +227,8 @@ int main(int argc, char * argv[])
 
    if ((argc - optind) < 1)
    {
-      fprintf(stderr, _("%s: missing required argument\n"
-                        "Try `%s --help' for more information.\n"),
-                        PROGRAM_NAME, PROGRAM_NAME);
+      fprintf(stderr, "%s: missing required argument\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
       return(1);
    };
 
@@ -321,37 +298,31 @@ int main(int argc, char * argv[])
 /// displays usage information
 void my_usage()
 {
-   // TRANSLATORS: The following strings provide usage for command. These
-   // strings are displayed if the program is passed `--help' on the command
-   // line. The two strings referenced are: PROGRAM_NAME, and
-   // PACKAGE_BUGREPORT
-   printf(_("Usage: %s num1 num2 ... numX\n"
-         "  -A                        enable ASCII output\n"
-         "  -a                        assume binary notation for input\n"
-         "  -B                        enable binary output\n"
-         "  -b                        assume binary notation for input\n"
-         "  -D                        enable decimal output\n"
-         "  -d                        assume decimal notation for input\n"
-         "  -h, --help                print this help and exit\n"
-         "  -l                        print minimum number of bytes in hex and binary\n"
-         "  -O                        enable octal output\n"
-         "  -o                        assume octal notation for input\n"
-         "  -R                        display binary in little endian byte order\n"
-         "  -r                        display binary in little endian bit nad byte order\n"
-         "  -s                        display binary value in 8 bit blocks\n"
-         "  -X                        enable hexadecimal output\n"
-         "  -x                        assume hexadecimal notation for input\n"
-         "  -V, --version             print version number and exit\n"
-         "\n"
-         "Input Notation:\n"
-         "  NNNNNNNN                  input number is in decimal\n"
-         "  0xNNNNNNNN                input number is in hexadecimal\n"
-         "  0NNNNNNNN                 input number is in octal\n"
-         "  00NNNNNNNN                input number is in binary\n"
-         "\n"
-         "Report bugs to <%s>.\n"
-      ), PROGRAM_NAME, PACKAGE_BUGREPORT
-   );
+   printf("Usage: %s num1 num2 ... numX\n", PROGRAM_NAME);
+   printf("  -A                        enable ASCII output\n");
+   printf("  -a                        assume binary notation for input\n");
+   printf("  -B                        enable binary output\n");
+   printf("  -b                        assume binary notation for input\n");
+   printf("  -D                        enable decimal output\n");
+   printf("  -d                        assume decimal notation for input\n");
+   printf("  -h, --help                print this help and exit\n");
+   printf("  -l                        print minimum number of bytes in hex and binary\n");
+   printf("  -O                        enable octal output\n");
+   printf("  -o                        assume octal notation for input\n");
+   printf("  -R                        display binary in little endian byte order\n");
+   printf("  -r                        display binary in little endian bit nad byte order\n");
+   printf("  -s                        display binary value in 8 bit blocks\n");
+   printf("  -X                        enable hexadecimal output\n");
+   printf("  -x                        assume hexadecimal notation for input\n");
+   printf("  -V, --version             print version number and exit\n");
+   printf("\n");
+   printf("Input Notation:\n");
+   printf("  NNNNNNNN                  input number is in decimal\n");
+   printf("  0xNNNNNNNN                input number is in hexadecimal\n");
+   printf("  0NNNNNNNN                 input number is in octal\n");
+   printf("  00NNNNNNNN                input number is in binary\n");
+   printf("\n");
+   printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
    return;
 }
 
@@ -359,18 +330,12 @@ void my_usage()
 /// displays version information
 void my_version(void)
 {
-   // TRANSLATORS: The following strings provide version and copyright
-   // information if the program is passed --version on the command line.
-   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
-   // PACKAGE_VERSION.
-   printf(_("%s (%s) %s\n"
-         "Written by David M. Syzdek.\n"
-         "\n"
-         "%s\n"
-         "This is free software; see the source for copying conditions.  There is NO\n"
-         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
-      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_COPYRIGHT
-   );
+   printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
+   printf("Written by David M. Syzdek.\n");
+   printf("\n");
+   printf("%s\n", PACKAGE_COPYRIGHT);
+   printf("This is free software; see the source for copying conditions.  There is NO\n");
+   printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
    return;
 }
 
