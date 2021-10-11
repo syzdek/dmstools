@@ -161,64 +161,81 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
-            break;
+         break;
+
          case 'A':
-            opt |= MY_OPT_ASCII;
-            break;
+         opt |= MY_OPT_ASCII;
+         break;
+
          case 'a':
-            base = -1;
-            //opt |= (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT|);
-            break;
+         base = -1;
+         //opt |= (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT|);
+         break;
+
          case 'B':
-            opt |= MY_OPT_BIN;
-            break;
+         opt |= MY_OPT_BIN;
+         break;
+
          case 'b':
-            base = 2;
-            break;
+         base = 2;
+         break;
+
          case 'D':
-            opt |= MY_OPT_DEC;
-            break;
+         opt |= MY_OPT_DEC;
+         break;
+
          case 'd':
-            base = 10;
-            break;
+         base = 10;
+         break;
+
          case 'h':
-            my_usage();
-            return(0);
+         my_usage();
+         return(0);
          case 'l':
-            opt |= MY_OPT_LIMIT;
-            break;
+         opt |= MY_OPT_LIMIT;
+         break;
+
          case 'O':
-            opt |= MY_OPT_OCT;
-            break;
+         opt |= MY_OPT_OCT;
+         break;
+
          case 'o':
-            base = 8;
-            break;
+         base = 8;
+         break;
+
          case 'R':
-            opt |= MY_OPT_LEBYTE;
-            break;
+         opt |= MY_OPT_LEBYTE;
+         break;
+
          case 'r':
-            opt |= MY_OPT_LEBYTE;
-            opt |= MY_OPT_LEBIT;
-            break;
+         opt |= MY_OPT_LEBYTE;
+         opt |= MY_OPT_LEBIT;
+         break;
+
          case 's':
-            opt = MY_TOGGLE(opt, MY_OPT_SPACE);
-            break;
+         opt = MY_TOGGLE(opt, MY_OPT_SPACE);
+         break;
+
          case 'X':
-            opt |= MY_OPT_HEX;
-            break;
+         opt |= MY_OPT_HEX;
+         break;
+
          case 'x':
-            base = 16;
-            break;
+         base = 16;
+         break;
+
          case 'V':
-            my_version();
-            return(0);
+         my_version();
+         return(0);
+
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
       };
    };
 
