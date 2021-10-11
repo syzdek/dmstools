@@ -51,26 +51,13 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
 # automake targets
-bin_PROGRAMS				= src/bindump \
-					  src/bitcopy \
-					  src/bitops \
-					  src/colors \
-					  src/dmsversion \
-					  src/macaddrinfo \
-					  src/netcalc \
-					  src/numconvert \
-					  src/typedef-info
+bin_PROGRAMS				=
 include_HEADERS				= include/dms.h \
 					  include/dmsversion.h
 lib_LTLIBRARIES				= lib/libdms.la
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
-man_MANS				= doc/bitops.1 \
-					  doc/bindump.1 \
-					  doc/codetagger.1 \
-					  doc/macaddrinfo.1 \
-					  doc/numconvert.1 \
-					  doc/posixregex.1
+man_MANS				=
 
 
 # macros for lib/libotadm.la
@@ -91,104 +78,125 @@ lib_libdms_la_SOURCES			= include/dms.h \
 # macros for src/bindump
 src_bindump_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_bindump_CPPFLAGS			= -DPROGRAM_NAME="\"bindump\"" $(AM_CPPFLAGS)
-src_bindump_SOURCES			= $(noinst_HEADERS) \
-					  src/bindump.c
+src_bindump_SOURCES			= $(noinst_HEADERS) src/bindump.c
+if WANT_BINDUMP
+   bin_PROGRAMS				+= src/bindump
+   man_MANS				+= doc/bindump.1
+endif
 
 
-# macros for src/bitops
+# macros for src/bitcopy
 src_bitcopy_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_bitcopy_CPPFLAGS			= -DPROGRAM_NAME="\"bitcopy\"" $(AM_CPPFLAGS)
-src_bitcopy_SOURCES			= $(noinst_HEADERS) \
-					  src/bitcopy.c
+src_bitcopy_SOURCES			= $(noinst_HEADERS) src/bitcopy.c
+if WANT_BITCOPY
+   bin_PROGRAMS				+= src/bitcopy
+endif
 
 
 # macros for src/bitops
 src_bitops_DEPENDENCIES			= $(lib_LTLIBRARIES) Makefile
 src_bitops_CPPFLAGS			= -DPROGRAM_NAME="\"bitops\"" $(AM_CPPFLAGS)
-src_bitops_SOURCES			= $(noinst_HEADERS) \
-					  src/bitops.c
+src_bitops_SOURCES			= $(noinst_HEADERS) src/bitops.c
+if WANT_BITOPS
+   bin_PROGRAMS				+= src/bitops
+   man_MANS				+= doc/bitops.1
+endif
 
 
 # macros for src/codetagger
 src_codetagger_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_codetagger_CPPFLAGS			= -DPROGRAM_NAME="\"codetagger\"" $(AM_CPPFLAGS)
-src_codetagger_SOURCES			= $(noinst_HEADERS) \
-					  src/codetagger.c
-if ! IS_WIN32
-bin_PROGRAMS += src/codetagger
+src_codetagger_SOURCES			= $(noinst_HEADERS) src/codetagger.c
+if WANT_CODETAGGER
+   bin_PROGRAMS				+= src/codetagger
+   man_MANS				+= doc/codetagger.1
 endif
 
 
 # macros for src/colors
 src_colors_DEPENDENCIES			= $(lib_LTLIBRARIES) Makefile
 src_colors_CPPFLAGS			= -DPROGRAM_NAME="\"colors\"" $(AM_CPPFLAGS)
-src_colors_SOURCES			= $(noinst_HEADERS) \
-					  src/colors.c
-
-
-# macros for src/endian
-src_endian_DEPENDENCIES			= $(lib_LTLIBRARIES) Makefile
-src_endian_CPPFLAGS			= -DPROGRAM_NAME="\"endian\"" $(AM_CPPFLAGS)
-src_endian_SOURCES			= $(noinst_HEADERS) \
-					  src/endian.c
-bin_PROGRAMS += src/endian
+src_colors_SOURCES			= $(noinst_HEADERS) src/colors.c
+if WANT_COLORS
+   bin_PROGRAMS				+= src/colors
+endif
 
 
 # macros for src/dmsversion
 src_dmsversion_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_dmsversion_CPPFLAGS			= -DPROGRAM_NAME="\"dmsversion\"" $(AM_CPPFLAGS)
 src_dmsversion_LDADD			= $(AM_LDADD) lib/libdms.la
-src_dmsversion_SOURCES			= $(noinst_HEADERS) \
-					  src/dmsversion.c
+src_dmsversion_SOURCES			= $(noinst_HEADERS) src/dmsversion.c
+if WANT_DMSVERSION
+   bin_PROGRAMS				+= src/dmsversion
+endif
 
+
+# macros for src/endian
+src_endian_DEPENDENCIES			= $(lib_LTLIBRARIES) Makefile
+src_endian_CPPFLAGS			= -DPROGRAM_NAME="\"endian\"" $(AM_CPPFLAGS)
+src_endian_SOURCES			= $(noinst_HEADERS) src/endian.c
+if WANT_ENDIAN
+   bin_PROGRAMS				+= src/endian
+endif
 
 
 # macros for src/netcalc
 src_macaddrinfo_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_macaddrinfo_CPPFLAGS		= -DPROGRAM_NAME="\"macaddrinfo\"" $(AM_CPPFLAGS)
-src_macaddrinfo_SOURCES			= $(noinst_HEADERS) \
-					  src/macaddrinfo.c
+src_macaddrinfo_SOURCES			= $(noinst_HEADERS) src/macaddrinfo.c
+if WANT_MACADDRINFO
+   bin_PROGRAMS				+= src/macaddrinfo
+   man_MANS				+= doc/macaddrinfo.1
+endif
 
 
 # macros for src/netcalc
 src_netcalc_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_netcalc_CPPFLAGS			= -DPROGRAM_NAME="\"netcalc\"" $(AM_CPPFLAGS)
-src_netcalc_SOURCES			= $(noinst_HEADERS) \
-					  src/netcalc.c
+src_netcalc_SOURCES			= $(noinst_HEADERS) src/netcalc.c
+if WANT_NETCALC
+   bin_PROGRAMS				+= src/netcalc
+endif
 
 
 # macros for src/numconvert
 src_numconvert_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_numconvert_CPPFLAGS			= -DPROGRAM_NAME="\"numconvert\"" $(AM_CPPFLAGS)
-src_numconvert_SOURCES			= $(noinst_HEADERS) \
-					  src/numconvert.c
+src_numconvert_SOURCES			= $(noinst_HEADERS) src/numconvert.c
+if WANT_NUMCONVERT
+   bin_PROGRAMS				+= src/numconvert
+   man_MANS				+= doc/numconvert.1
+endif
 
 
 # macros for src/posixregex
 src_posixregex_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_posixregex_CPPFLAGS			= -DPROGRAM_NAME="\"posixregex\"" $(AM_CPPFLAGS)
-src_posixregex_SOURCES			= $(noinst_HEADERS) \
-					  src/posixregex.c
-if HAVE_REGEX
-bin_PROGRAMS += src/posixregex
+src_posixregex_SOURCES			= $(noinst_HEADERS) src/posixregex.c
+if WANT_POSIXREGEX
+   bin_PROGRAMS				+= src/posixregex
+   man_MANS				+= doc/posixregex.1
 endif
 
 
 # macros for src/suicide
 src_suicide_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_suicide_CPPFLAGS			= -DPROGRAM_NAME="\"suicide\"" $(AM_CPPFLAGS)
-src_suicide_SOURCES			= $(noinst_HEADERS) \
-					  src/suicide.c
-if HAVE_SIGNAL
-bin_PROGRAMS += src/suicide
+src_suicide_SOURCES			= $(noinst_HEADERS) src/suicide.c
+if WANT_SUICIDE
+   bin_PROGRAMS				+= src/suicide
 endif
 
 
 # macros for src/typedef-info
 src_typedef_info_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
 src_typedef_info_CPPFLAGS		= -DPROGRAM_NAME="\"typedef-info\"" $(AM_CPPFLAGS)
-src_typedef_info_SOURCES		= $(noinst_HEADERS) \
-					  src/typedef-info.c
+src_typedef_info_SOURCES		= $(noinst_HEADERS) src/typedef-info.c
+if WANT_TYPEDEF_INFO
+   bin_PROGRAMS				+= src/typedef-info
+endif
 
 
 # lists
@@ -228,6 +236,8 @@ CLEANFILES				= \
 					  include/dmsversion.h \
 					  @PACKAGE_TARNAME@-*.tar.* \
 					  @PACKAGE_TARNAME@-*.zip
+DISTCHECK_CONFIGURE_FLAGS		= --enable-strictwarnings \
+					  --enable-all
 
 
 # Makefile includes

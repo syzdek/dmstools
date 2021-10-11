@@ -183,9 +183,21 @@ AC_BINDLE_GIT_PACKAGE_VERSION([contrib/bindletools/build-aux/git-package-version
 AC_BINDLE_ENABLE_WARNINGS([-Wno-unknown-pragmas], [])
 AC_BINDLE_WITH_PERL
 AC_DMS_REGEX
-AC_DMS_SIGNAL
-AC_DMS_WIN32
-
+AC_DMS_TOOL_ALL
+AC_DMS_TOOL_BINDUMP
+AC_DMS_TOOL_BITCOPY
+AC_DMS_TOOL_BITOPS
+AC_DMS_TOOL_CODETAGGER
+AC_DMS_TOOL_COLORS
+AC_DMS_TOOL_DMSVERSION
+AC_DMS_TOOL_ENDIAN
+AC_DMS_TOOL_MACADDRINFO
+AC_DMS_TOOL_NETCALC
+AC_DMS_TOOL_NUMCONVERT
+AC_DMS_TOOL_POSIXREGEX
+AC_DMS_TOOL_RECURSE
+AC_DMS_TOOL_SUICIDE
+AC_DMS_TOOL_TYPEDEF_INFO
 
 # Creates outputs
 AC_CONFIG_FILES([Makefile])
@@ -194,6 +206,21 @@ AC_OUTPUT
 # Show local config
 AC_MSG_NOTICE([ ])
 AC_MSG_NOTICE([   Please send suggestions to:   $PACKAGE_BUGREPORT])
+AC_MSG_NOTICE([ ])
+AC_MSG_NOTICE([   build bindump          $EBINDUMP])
+AC_MSG_NOTICE([   build bitcopy          $EBITCOPY])
+AC_MSG_NOTICE([   build bitops           $EBITOPS])
+AC_MSG_NOTICE([   build codetagger       $ECODETAGGER])
+AC_MSG_NOTICE([   build colors           $ECOLORS])
+AC_MSG_NOTICE([   build dmsversion       $EDMSVERSION])
+AC_MSG_NOTICE([   build endian           $EENDIAN])
+AC_MSG_NOTICE([   build macaddrinfo      $EMACADDRINFO])
+AC_MSG_NOTICE([   build netcalc          $ENETCALC])
+AC_MSG_NOTICE([   build numconvert       $ENUMCONVERT])
+AC_MSG_NOTICE([   build posixregex       $EPOSIXREGEX])
+AC_MSG_NOTICE([   build recurse          $ERECURSE])
+AC_MSG_NOTICE([   build suicide          $ESUICIDE])
+AC_MSG_NOTICE([   build typedef-info     $ETYPEDEF_INFO])
 AC_MSG_NOTICE([ ])
 AC_MSG_NOTICE([   run `make all'])
 AC_MSG_NOTICE([ ])
