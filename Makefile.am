@@ -42,11 +42,15 @@ DIST_SUBDIRS				=
 # Global flags
 AM_LIBS					=
 AM_LDFLAGS				=
-AM_CFLAGS				= -O2 -W -Wall -Werror $(CFLAGS_WARNINGS)
-AM_CXXFLAGS				= -O2 -W -Wall -Werror
-AM_OBJCFLAGS				= -O2 -W -Wall -Werror
-AM_CPPFLAGS				= -O2 -W -Wall -Werror -DHAVE_COMMON_H=1 -I$(top_builddir)/include -I$(top_srcdir)/include
-ACLOCAL_AMFLAGS				= -I m4 -I contrib/bindletools/m4 -W all -W error
+AM_CFLAGS				= -O2 $(CFLAGS_WARNINGS)
+AM_CXXFLAGS				= -O2 @AM_CXXFLAGS@
+AM_OBJCFLAGS				= -O2 @AM_OBJCFLAGS@
+AM_CPPFLAGS				= -O2 \
+					  -DHAVE_CONFIG_H=1 \
+					  -DHAVE_COMMON_H=1 \
+					  -I$(top_builddir)/include \
+					  -I$(top_srcdir)/include
+ACLOCAL_AMFLAGS				= -I m4 -W all -W error
 DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 
@@ -58,6 +62,20 @@ lib_LTLIBRARIES				= lib/libdms.la
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
 man_MANS				=
+EXTRA					= src/bindump \
+					  src/bitcopy \
+					  src/bitops \
+					  src/codetagger \
+					  src/colors \
+					  src/dmsversion \
+					  src/endian \
+					  src/macaddrinfo \
+					  src/netcalc \
+					  src/numconvert \
+					  src/posixregex \
+					  src/recurse \
+					  src/suicide \
+					  src/typedef-info
 
 
 # macros for lib/libotadm.la
@@ -73,6 +91,49 @@ lib_libdms_la_SOURCES			= include/dms.h \
 					  lib/libdms.h \
 					  lib/libdms_version.c \
 					  lib/libdms_version.h
+
+
+# lists
+AM_INSTALLCHECK_STD_OPTIONS_EXEMPT	=
+BUILT_SOURCES				= include/dmsversion.h
+TESTS					=
+XFAIL_TESTS				=
+EXTRA_MANS				=
+EXTRA_DIST				= autogen.sh \
+					  build-aux/git-tar-name.txt \
+					  doc/bindump.1.in \
+					  doc/bitops.1.in \
+					  doc/macaddrinfo.1.in \
+					  doc/numconvert.1.in \
+					  doc/posixregex.1.in \
+					  include/dmsversion.h.in \
+					  lib/libdms.sym \
+					  m4/dmstools_gcc.m4 \
+					  m4/dmstools_git.m4 \
+					  $(srcdir)/build-aux/dmstools.tags \
+					  $(srcdir)/doc/Doxyfile \
+					  $(srcdir)/doc/codetagger.1.in \
+					  $(srcdir)/examples/Makefile \
+					  $(srcdir)/examples/example-c.tags \
+					  $(srcdir)/examples/example-defaults.tags \
+					  $(srcdir)/examples/example-html.tags \
+					  $(srcdir)/examples/example.c \
+					  $(srcdir)/examples/example.html \
+					  $(srcdir)/examples/example.txt \
+					  $(srcdir)/build-aux/Makefile-xcode \
+					  $(srcdir)/dmstools.xcodeproj/project.pbxproj
+CLEANFILES				= \
+					  $(builddir)/a.out   $(srcdir)/a.out \
+					  $(builddir)/*/a.out $(srcdir)/*/a.out \
+					  autoscan.log        $(srcdir)/autoscan.log \
+					  config.h.in~        $(srcdir)/config.h.in~ \
+					  configure.scan      $(srcdir)/configure.scan \
+					  $(man_MANS) \
+					  include/dmsversion.h \
+					  @PACKAGE_TARNAME@-*.tar.* \
+					  @PACKAGE_TARNAME@-*.zip
+DISTCHECK_CONFIGURE_FLAGS		= --enable-strictwarnings \
+					  --enable-all
 
 
 # macros for src/bindump
@@ -199,47 +260,6 @@ if WANT_TYPEDEF_INFO
 endif
 
 
-# lists
-BUILT_SOURCES				= include/dmsversion.h
-TESTS					=
-XFAIL_TESTS				=
-EXTRA_DIST				= autogen.sh \
-					  build-aux/git-tar-name.txt \
-					  doc/bindump.1.in \
-					  doc/bitops.1.in \
-					  doc/macaddrinfo.1.in \
-					  doc/numconvert.1.in \
-					  doc/posixregex.1.in \
-					  include/dmsversion.h.in \
-					  lib/libdms.sym \
-					  m4/dmstools_gcc.m4 \
-					  m4/dmstools_git.m4 \
-					  $(srcdir)/build-aux/dmstools.tags \
-					  $(srcdir)/doc/Doxyfile \
-					  $(srcdir)/doc/codetagger.1.in \
-					  $(srcdir)/examples/Makefile \
-					  $(srcdir)/examples/example-c.tags \
-					  $(srcdir)/examples/example-defaults.tags \
-					  $(srcdir)/examples/example-html.tags \
-					  $(srcdir)/examples/example.c \
-					  $(srcdir)/examples/example.html \
-					  $(srcdir)/examples/example.txt \
-					  $(srcdir)/build-aux/Makefile-xcode \
-					  $(srcdir)/dmstools.xcodeproj/project.pbxproj
-CLEANFILES				= \
-					  $(builddir)/a.out   $(srcdir)/a.out \
-					  $(builddir)/*/a.out $(srcdir)/*/a.out \
-					  autoscan.log        $(srcdir)/autoscan.log \
-					  config.h.in~        $(srcdir)/config.h.in~ \
-					  configure.scan      $(srcdir)/configure.scan \
-					  $(man_MANS) \
-					  include/dmsversion.h \
-					  @PACKAGE_TARNAME@-*.tar.* \
-					  @PACKAGE_TARNAME@-*.zip
-DISTCHECK_CONFIGURE_FLAGS		= --enable-strictwarnings \
-					  --enable-all
-
-
 # Makefile includes
 GIT_PACKAGE_VERSION_DIR=include
 SUBST_EXPRESSIONS =  \
@@ -248,6 +268,7 @@ include $(srcdir)/contrib/bindletools/build-aux/makefile-bindle.am
 include $(srcdir)/contrib/bindletools/build-aux/makefile-autotools.am
 include $(srcdir)/contrib/bindletools/build-aux/makefile-subst.am
 include $(srcdir)/contrib/bindletools/build-aux/makefile-version.am
+
 
 # custom targets
 PHONY:
@@ -279,6 +300,8 @@ include/dmsversion.h: Makefile $(srcdir)/include/dmsversion.h.in
 install-exec-local:
 
 install-data-local: 
+
+install-data-hook:
 
 uninstall-local:
 
