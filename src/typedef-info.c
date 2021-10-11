@@ -99,7 +99,6 @@
 #include <sys/utsname.h>
 #include <sys/un.h>
 #include <sys/resource.h>
-#include <sgtty.h>
 //#include <ucontext.h>
 //#include <printf.h>
 //#include <obstack.h>
