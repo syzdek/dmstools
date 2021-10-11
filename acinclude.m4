@@ -219,31 +219,6 @@ AC_DEFUN([AC_DMS_TOOL_COLORS],[dnl
 ])dnl
 
 
-# AC_DMS_TOOL_DMSVERSION
-# ______________________________________________________________________________
-AC_DEFUN([AC_DMS_TOOL_DMSVERSION],[dnl
-
-   AC_REQUIRE([AC_DMS_TOOL_ALL])
-
-   enableval=""
-   AC_ARG_ENABLE(
-      dmsversion,
-      [AS_HELP_STRING([--enable-dmsversion], [enable building dmsversion])],
-      [ EDMSVERSION=$enableval ],
-      [ EDMSVERSION=$enableval ]
-   )
-
-   if test "x${EDMSVERSION}" == "x";then
-      EDMSVERSION="${EALL}"
-   fi
-   if test "x${EDMSVERSION}" == "xauto";then
-      EDMSVERSION=no
-   fi
-
-   AM_CONDITIONAL([WANT_DMSVERSION],   [test "$EDMSVERSION" = "yes"])
-])dnl
-
-
 # AC_DMS_TOOL_ENDIAN
 # ______________________________________________________________________________
 AC_DEFUN([AC_DMS_TOOL_ENDIAN],[dnl

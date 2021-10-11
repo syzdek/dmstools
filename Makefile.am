@@ -56,9 +56,8 @@ DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
 # automake targets
 bin_PROGRAMS				=
-include_HEADERS				= include/dms.h \
-					  include/dmsversion.h
-lib_LTLIBRARIES				= lib/libdms.la
+include_HEADERS				=
+lib_LTLIBRARIES				=
 noinst_PROGRAMS				=
 noinst_HEADERS				= src/common.h
 man_MANS				=
@@ -67,7 +66,6 @@ EXTRA					= src/bindump \
 					  src/bitops \
 					  src/codetagger \
 					  src/colors \
-					  src/dmsversion \
 					  src/endian \
 					  src/macaddrinfo \
 					  src/netcalc \
@@ -78,24 +76,9 @@ EXTRA					= src/bindump \
 					  src/typedef-info
 
 
-# macros for lib/libotadm.la
-lib_libdms_la_DEPENDENCIES		= Makefile lib/libdms.sym
-lib_libdms_la_CFLAGS			= $(AM_CFLAGS)
-lib_libdms_la_LIBADD			= $(AM_LIBS)
-lib_libdms_la_LDFLAGS			= -rpath '$(libdir)' \
-					  -version-info $(LIB_VERSION_INFO) \
-					  $(AM_LDFLAGS) \
-					  -export-symbols $(srcdir)/lib/libdms.sym
-lib_libdms_la_SOURCES			= include/dms.h \
-					  include/dmsversion.h \
-					  lib/libdms.h \
-					  lib/libdms_version.c \
-					  lib/libdms_version.h
-
-
 # lists
 AM_INSTALLCHECK_STD_OPTIONS_EXEMPT	=
-BUILT_SOURCES				= include/dmsversion.h
+BUILT_SOURCES				=
 TESTS					=
 XFAIL_TESTS				=
 EXTRA_MANS				=
@@ -106,8 +89,6 @@ EXTRA_DIST				= autogen.sh \
 					  doc/macaddrinfo.1.in \
 					  doc/numconvert.1.in \
 					  doc/posixregex.1.in \
-					  include/dmsversion.h.in \
-					  lib/libdms.sym \
 					  m4/dmstools_gcc.m4 \
 					  m4/dmstools_git.m4 \
 					  $(srcdir)/build-aux/dmstools.tags \
@@ -129,7 +110,6 @@ CLEANFILES				= \
 					  config.h.in~        $(srcdir)/config.h.in~ \
 					  configure.scan      $(srcdir)/configure.scan \
 					  $(man_MANS) \
-					  include/dmsversion.h \
 					  @PACKAGE_TARNAME@-*.tar.* \
 					  @PACKAGE_TARNAME@-*.zip
 DISTCHECK_CONFIGURE_FLAGS		= --enable-strictwarnings \
@@ -181,16 +161,6 @@ src_colors_CPPFLAGS			= -DPROGRAM_NAME="\"colors\"" $(AM_CPPFLAGS)
 src_colors_SOURCES			= $(noinst_HEADERS) src/colors.c
 if WANT_COLORS
    bin_PROGRAMS				+= src/colors
-endif
-
-
-# macros for src/dmsversion
-src_dmsversion_DEPENDENCIES		= $(lib_LTLIBRARIES) Makefile
-src_dmsversion_CPPFLAGS			= -DPROGRAM_NAME="\"dmsversion\"" $(AM_CPPFLAGS)
-src_dmsversion_LDADD			= $(AM_LDADD) lib/libdms.la
-src_dmsversion_SOURCES			= $(noinst_HEADERS) src/dmsversion.c
-if WANT_DMSVERSION
-   bin_PROGRAMS				+= src/dmsversion
 endif
 
 
@@ -289,10 +259,6 @@ doc/numconvert.1: Makefile $(srcdir)/doc/numconvert.1.in
 	$(do_subst_dt)
 
 doc/posixregex.1: Makefile $(srcdir)/doc/posixregex.1.in
-	$(do_subst_dt)
-
-include/dmsversion.h: Makefile $(srcdir)/include/dmsversion.h.in
-	$(mkdir_p) include
 	$(do_subst_dt)
 
 

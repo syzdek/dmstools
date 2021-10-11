@@ -189,7 +189,6 @@ AC_DMS_TOOL_BITCOPY
 AC_DMS_TOOL_BITOPS
 AC_DMS_TOOL_CODETAGGER
 AC_DMS_TOOL_COLORS
-AC_DMS_TOOL_DMSVERSION
 AC_DMS_TOOL_ENDIAN
 AC_DMS_TOOL_MACADDRINFO
 AC_DMS_TOOL_NETCALC
@@ -212,7 +211,6 @@ AC_MSG_NOTICE([   build bitcopy          $EBITCOPY])
 AC_MSG_NOTICE([   build bitops           $EBITOPS])
 AC_MSG_NOTICE([   build codetagger       $ECODETAGGER])
 AC_MSG_NOTICE([   build colors           $ECOLORS])
-AC_MSG_NOTICE([   build dmsversion       $EDMSVERSION])
 AC_MSG_NOTICE([   build endian           $EENDIAN])
 AC_MSG_NOTICE([   build macaddrinfo      $EMACADDRINFO])
 AC_MSG_NOTICE([   build netcalc          $ENETCALC])
