@@ -97,26 +97,6 @@
 
 ///////////////////
 //               //
-//  i18l Support //
-//               //
-///////////////////
-
-#ifdef HAVE_GETTEXT
-#   include <gettext.h>
-#   include <libintl.h>
-#   define _(String) gettext (String)
-#   define gettext_noop(String) String
-#   define N_(String) gettext_noop (String)
-#else
-#   define _(String) (String)
-#   define N_(String) String
-#   define textdomain(Domain)
-#   define bindtextdomain(Package, Directory)
-#endif
-
-
-///////////////////
-//               //
 //  Definitions  //
 //               //
 ///////////////////
@@ -248,10 +228,8 @@ int main(int argc, char * argv[])
          case 'n':
             if ((opt.reg_cflags & REG_EXTENDED))
             {
-               fprintf(stderr, _("%s: option `-n' requires option `-b'\n"
-                     "Try `%s --help' for more information.\n"
-                  ),  PROGRAM_NAME, PROGRAM_NAME
-               );
+               fprintf(stderr, "%s: option `-n' requires option `-b'\n", PROGRAM_NAME);
+               fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
                return(1);
             };
 #ifdef REG_NOSPEC
@@ -277,13 +255,11 @@ int main(int argc, char * argv[])
             opt.verbosity++;
             break;
          case '?':
-            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
          default:
-            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
-                  "Try `%s --help' for more information.\n"
-               ),  PROGRAM_NAME, c, PROGRAM_NAME
-            );
+            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
       };
    };
@@ -310,10 +286,8 @@ int main(int argc, char * argv[])
       opt.re_str = getenv("POSIXREGEX");
    if (!(opt.re_str))
    {
-      fprintf(stderr, _("%s: missing required argument `-- r'\n"
-            "Try `%s --help' for more information.\n"
-         ), PROGRAM_NAME, PROGRAM_NAME
-      );
+      fprintf(stderr, "%s: missing required argument `-- r'\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
       return(1);
    };
 
@@ -406,29 +380,23 @@ int main(int argc, char * argv[])
 /// displays POSIX regular expressions
 void my_posixregex(void)
 {
-   // TRANSLATORS: The following strings provide a table of POSIX regular
-   // expersion key words, key word values, and a description of the key
-   // word.  The table is displayed if the program is passed --posixregex
-   // on the command line.
-   printf(_("POSIX        ASCII           Description\n"
-          "[:alnum:]    [A-Za-z0-9]     Alphanumeric characters\n"
-          "[:alpha:]    [A-Za-z]        Alphabetic characters\n"
-          "[:blank:]    [ \\t]           Space and tab\n"
-          "[:cntrl:]    [\\x00-\\x1F\\x7F] Control characters\n"
-          "[:digit:]    [0-9]           Digits\n"
-          "[:graph:]    [\\x21-\\x7E]     Visible characters\n"
-          "[:lower:]    [a-z]           Lowercase letters\n"
-          "[:print:]    [\\x20-\\x7E]     Visible characters and spaces\n"
-          "[:space:]    [ \\t\\r\\n\\v\\f]   Whitespace characters\n"
-          "[:upper:]    [A-Z]           Uppercase letters\n"
-          "[:xdigit:]   [A-Fa-f0-9]     Hexadecimal digits\n"
-          "[:punct:]    [-!\"#$%%&'()*+,./:;<=>?@[\\]_`{|}~]   Punctuation characters\n"
-          "\n"
-          "Example Uses:\n"
-          "    posixregex -r '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string\n"
-          "    posixregex -r '\\$([[:digit:]]+)\\.([[:digit:]]{2,2})' 'Your change is $7.45.'\n"
-      )
-   );
+   printf("POSIX        ASCII           Description\n");
+   printf("[:alnum:]    [A-Za-z0-9]     Alphanumeric characters\n");
+   printf("[:alpha:]    [A-Za-z]        Alphabetic characters\n");
+   printf("[:blank:]    [ \\t]           Space and tab\n");
+   printf("[:cntrl:]    [\\x00-\\x1F\\x7F] Control characters\n");
+   printf("[:digit:]    [0-9]           Digits\n");
+   printf("[:graph:]    [\\x21-\\x7E]     Visible characters\n");
+   printf("[:lower:]    [a-z]           Lowercase letters\n");
+   printf("[:print:]    [\\x20-\\x7E]     Visible characters and spaces\n");
+   printf("[:space:]    [ \\t\\r\\n\\v\\f]   Whitespace characters\n");
+   printf("[:upper:]    [A-Z]           Uppercase letters\n");
+   printf("[:xdigit:]   [A-Fa-f0-9]     Hexadecimal digits\n");
+   printf("[:punct:]    [-!\"#$%%&'()*+,./:;<=>?@[\\]_`{|}~]   Punctuation characters\n");
+   printf("\n");
+   printf("Example Uses:\n");
+   printf("    posixregex -r '^([[:alpha:]]+)://(([[:alnum:]]+)(:([[:alnum:]]+)){0,1}@){0,1}([-.a-z]+)(:([[:digit:]]+))*/([-/[:alnum:]]*)(\\?(.*)){0,1}$'  http://jdoe:password@www.foo.org:123/path/to/file?query_string\n");
+   printf("    posixregex -r '\\$([[:digit:]]+)\\.([[:digit:]]{2,2})' 'Your change is $7.45.'\n");
    return;
 }
 
@@ -436,29 +404,23 @@ void my_posixregex(void)
 /// displays usage
 void my_usage(void)
 {
-// TRANSLATORS: The following strings provide usage for command. These
-   // strings are displayed if the program is passed `--help' on the command
-   // line. The two strings referenced are: PROGRAM_NAME, and
-   // PACKAGE_BUGREPORT
-   printf(_("Usage: %s [OPTIONS] string1 string2 ... stringN\n"
-         "  -b                        use obsolete ``basic'' REs (REG_BASIC)\n"
-         "  -h, --help                print this help and exit\n"
-         "  -i                        ignore upper/lower case distinctions. (REG_ICASE)\n"
-         "  -l                        enable newline-sensitive matching (REG_NEWLINE)\n"
-         "  -n                        turn off recoginition of special characters (REG_NOSPEC)\n"
-         "  -p, --posixregex          print regular expression patterns\n"
-         "  -q, --quiet, --silent     do not print messages\n"
-         "  -r regex                  regular expression to use for testing strings\n"
-         "  -s                        display sub string which matches entire regular expression\n"
-         "  -v, --verbose             print verbose messages\n"
-         "  -V, --version             print version number and exit\n"
-         "\n"
-         "Variables:\n"
-         "  POSIXREGEX                default regular expression to use for testing strings\n"
-         "\n"
-         "Report bugs to <%s>.\n"
-      ), PROGRAM_NAME, PACKAGE_BUGREPORT
-   );
+   printf("Usage: %s [OPTIONS] string1 string2 ... stringN\n", PROGRAM_NAME);
+   printf("  -b                        use obsolete ``basic'' REs (REG_BASIC)\n");
+   printf("  -h, --help                print this help and exit\n");
+   printf("  -i                        ignore upper/lower case distinctions. (REG_ICASE)\n");
+   printf("  -l                        enable newline-sensitive matching (REG_NEWLINE)\n");
+   printf("  -n                        turn off recoginition of special characters (REG_NOSPEC)\n");
+   printf("  -p, --posixregex          print regular expression patterns\n");
+   printf("  -q, --quiet, --silent     do not print messages\n");
+   printf("  -r regex                  regular expression to use for testing strings\n");
+   printf("  -s                        display sub string which matches entire regular expression\n");
+   printf("  -v, --verbose             print verbose messages\n");
+   printf("  -V, --version             print version number and exit\n");
+   printf("\n");
+   printf("Variables:\n");
+   printf("  POSIXREGEX                default regular expression to use for testing strings\n");
+   printf("\n");
+   printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
    return;
 }
 
@@ -466,12 +428,8 @@ void my_usage(void)
 /// display incompatible usage
 void my_usage_incompatible(char x, char y)
 {
-   fprintf(stderr,
-      _(
-         "%s: incompatible options `-%c' and `-%c'\n"
-         "Try `%s --help' for more information.\n"
-      ),  PROGRAM_NAME, x, y, PROGRAM_NAME
-   );
+   fprintf(stderr, "%s: incompatible options `-%c' and `-%c'\n", PROGRAM_NAME, x, y);
+   fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
    return;
 }
 
@@ -479,18 +437,12 @@ void my_usage_incompatible(char x, char y)
 /// displays version
 void my_version(void)
 {
-   // TRANSLATORS: The following strings provide version and copyright
-   // information if the program is passed --version on the command line.
-   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
-   // PACKAGE_VERSION.
-   printf(_("%s (%s) %s\n"
-         "Written by David M. Syzdek.\n"
-         "\n"
-         "%s\n"
-         "This is free software; see the source for copying conditions.  There is NO\n"
-         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
-      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_COPYRIGHT
-   );
+   printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
+   printf("Written by David M. Syzdek.\n");
+   printf("\n");
+   printf("%s\n", PACKAGE_COPYRIGHT);
+   printf("This is free software; see the source for copying conditions.  There is NO\n");
+   printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
    return;
 }
 
