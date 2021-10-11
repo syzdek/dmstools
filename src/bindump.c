@@ -74,26 +74,6 @@
 
 ///////////////////
 //               //
-//  i18l Support //
-//               //
-///////////////////
-
-#ifdef HAVE_GETTEXT
-#   include <gettext.h>
-#   include <libintl.h>
-#   define _(String) gettext (String)
-#   define gettext_noop(String) String
-#   define N_(String) gettext_noop (String)
-#else
-#   define _(String) (String)
-#   define N_(String) String
-#   define textdomain(Domain)
-#   define bindtextdomain(Package, Directory)
-#endif
-
-
-///////////////////
-//               //
 //  Definitions  //
 //               //
 ///////////////////
@@ -281,13 +261,11 @@ int main(int argc, char * argv[])
             opts = opts & (~MY_OPT_XTERM);
             break;
          case '?':
-            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
          default:
-            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
-                  "Try `%s --help' for more information.\n"
-               ),  PROGRAM_NAME, c, PROGRAM_NAME
-            );
+            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
       };
    };
@@ -304,10 +282,8 @@ int main(int argc, char * argv[])
          file1.filename = "-";
          break;
       default:
-         fprintf(stderr, _("%s: missing required argument\n"
-               "Try `%s --help' for more information.\n"
-            ),  PROGRAM_NAME, PROGRAM_NAME
-         );
+         fprintf(stderr, "%s: missing required argument\n", PROGRAM_NAME);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
          return(1);
    };
    if ((file1.filename) && (file2.filename))
@@ -750,23 +726,17 @@ ssize_t my_read(BinDumpFile * file, size_t offset, size_t len, unsigned verbose)
 /// displays usage information
 void my_usage()
 {
-   // TRANSLATORS: The following strings provide usage for command. These
-   // strings are displayed if the program is passed `--help' on the command
-   // line. The two strings referenced are: PROGRAM_NAME, and
-   // PACKAGE_BUGREPORT
-   printf(_("Usage: %s [options] file\n"
-         "  -d                        print only differing data\n"
-         "  -h, --help                print this help and exit\n"
-         "  -l bytes                  length of data to display\n"
-         "  -o bytes                  offset to start reading data\n"
-         "  -r                        display in reverse bit order\n"
-         "  -V, --version             print verbose messages\n"
-         "  -v, --verbose             print version number and exit\n"
-         "  -x                        disables Xterm output\n"
-         "\n"
-         "Report bugs to <%s>.\n"
-      ), PROGRAM_NAME, PACKAGE_BUGREPORT
-   );
+   printf("Usage: %s [options] file\n", PROGRAM_NAME);
+   printf("  -d                        print only differing data\n");
+   printf("  -h, --help                print this help and exit\n");
+   printf("  -l bytes                  length of data to display\n");
+   printf("  -o bytes                  offset to start reading data\n");
+   printf("  -r                        display in reverse bit order\n");
+   printf("  -V, --version             print verbose messages\n");
+   printf("  -v, --verbose             print version number and exit\n");
+   printf("  -x                        disables Xterm output\n");
+   printf("\n");
+   printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
    return;
 }
 
@@ -774,18 +744,12 @@ void my_usage()
 /// displays version information
 void my_version(void)
 {
-   // TRANSLATORS: The following strings provide version and copyright
-   // information if the program is passed --version on the command line.
-   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
-   // PACKAGE_VERSION.
-   printf(_("%s (%s) %s\n"
-         "Written by David M. Syzdek.\n"
-         "\n"
-         "%s\n"
-         "This is free software; see the source for copying conditions.  There is NO\n"
-         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
-      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_COPYRIGHT
-   );
+   printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
+   printf("Written by David M. Syzdek.\n");
+   printf("\n");
+   printf("%s\n", PACKAGE_COPYRIGHT);
+   printf("This is free software; see the source for copying conditions.  There is NO\n");
+   printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
    return;
 }
 
