@@ -99,14 +99,6 @@
 #include <sys/utsname.h>
 #include <sys/un.h>
 #include <sys/resource.h>
-//#include <ucontext.h>
-//#include <printf.h>
-//#include <obstack.h>
-//#include <sys/timex.h>
-//#include <malloc.h>
-//#include <utmp.h>
-//#include <argp.h>
-//#include <gconv.h>
 #include <wctype.h>
 
 
