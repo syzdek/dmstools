@@ -78,26 +78,6 @@
 
 ///////////////////
 //               //
-//  i18l Support //
-//               //
-///////////////////
-
-#ifdef HAVE_GETTEXT
-#   include <gettext.h>
-#   include <libintl.h>
-#   define _(String) gettext (String)
-#   define gettext_noop(String) String
-#   define N_(String) gettext_noop (String)
-#else
-#   define _(String) (String)
-#   define N_(String) String
-#   define textdomain(Domain)
-#   define bindtextdomain(Package, Directory)
-#endif
-
-
-///////////////////
-//               //
 //  Definitions  //
 //               //
 ///////////////////
@@ -593,7 +573,7 @@ int codetagger_parse_tag_file(CodeTagger * cnf)
    };
 
    // loops through looking for tags
-   codetagger_verbose(cnf, _("indexing \"%s\"\n"), cnf->tagFile);
+   codetagger_verbose(cnf, "indexing \"%s\"\n", cnf->tagFile);
    for(i = 0; i < (int)lineCount; i++)
    {
       if (!(regexec(&regex, data[i], (size_t)5, match, 0)))
@@ -672,7 +652,7 @@ CodeTaggerData * codetagger_retrieve_tag_data(CodeTagger * cnf, const char * tag
       if (!(strcasecmp(tagName, cnf->tagList[i]->name)))
          return(cnf->tagList[i]);
 
-   codetagger_verbose(cnf, _(PROGRAM_NAME ": %s: %i: unknown tag \"%s\"\n"), fileName, lineNumber, tagName);
+   codetagger_verbose(cnf, PROGRAM_NAME ": %s: %i: unknown tag \"%s\"\n", fileName, lineNumber, tagName);
 
    return(NULL);
 }
@@ -886,7 +866,7 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename,
 
    codetagger_debug(cnf);
    codetagger_debug_ext(cnf, filename);
-   codetagger_verbose(cnf, _("processing \"%s\"\n"), filename);
+   codetagger_verbose(cnf, "processing \"%s\"\n", filename);
 
    changed = 0;
 
@@ -1029,29 +1009,23 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename,
 /// displays usage
 void codetagger_usage(void)
 {
-   // TRANSLATORS: The following strings provide usage for command. These
-   // strings are displayed if the program is passed `--help' on the command
-   // line. The two strings referenced are: PROGRAM_NAME, and
-   // PACKAGE_BUGREPORT
-   printf(_("Usage: %s [OPTIONS] files\n"
-         "  -a                        include hidden files\n"
-         "  -c                        continue on error\n"
-         "  -d                        enter debug mode\n"
-         "  -f                        force writes\n"
-         "  -h, --help                print this help and exit\n"
-         "  -i file                   file containing tags\n"
-         "  -L                        follow symbolic links\n"
-         "  -l str                    left enclosing string for tags\n"
-         "  -q, --quiet, --silent     do not print messages\n"
-         "  -r str                    right enclosing string for tags\n"
-         "  -R                        recursively follow directories\n"
-         "  -t, --test                show what would be done\n"
-         "  -v, --verbose             print verbose messages\n"
-         "  -V, --version             print version number and exit\n"
-         "\n"
-         "Report bugs to <%s>.\n"
-      ), PROGRAM_NAME, PACKAGE_BUGREPORT
-   );
+   printf("Usage: %s [OPTIONS] files\n", PROGRAM_NAME);
+   printf("  -a                        include hidden files\n");
+   printf("  -c                        continue on error\n");
+   printf("  -d                        enter debug mode\n");
+   printf("  -f                        force writes\n");
+   printf("  -h, --help                print this help and exit\n");
+   printf("  -i file                   file containing tags\n");
+   printf("  -L                        follow symbolic links\n");
+   printf("  -l str                    left enclosing string for tags\n");
+   printf("  -q, --quiet, --silent     do not print messages\n");
+   printf("  -r str                    right enclosing string for tags\n");
+   printf("  -R                        recursively follow directories\n");
+   printf("  -t, --test                show what would be done\n");
+   printf("  -v, --verbose             print verbose messages\n");
+   printf("  -V, --version             print version number and exit\n");
+   printf("\n");
+   printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
    return;
 }
 
@@ -1080,18 +1054,12 @@ void codetagger_verbose(CodeTagger * cnf, const char * fmt, ...)
 /// displays version information
 void codetagger_version(void)
 {
-   // TRANSLATORS: The following strings provide version and copyright
-   // information if the program is passed --version on the command line.
-   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
-   // PACKAGE_VERSION.
-   printf(_("%s (%s) %s\n"
-         "Written by David M. Syzdek.\n"
-         "\n"
-         "%s\n"
-         "This is free software; see the source for copying conditions.  There is NO\n"
-         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
-      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_COPYRIGHT
-   );
+   printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
+   printf("Written by David M. Syzdek.\n");
+   printf("\n");
+   printf("%s\n", PACKAGE_COPYRIGHT);
+   printf("This is free software; see the source for copying conditions.  There is NO\n");
+   printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
    return;
 }
 
@@ -1137,7 +1105,7 @@ int codetagger_process_tag(CodeTagger * cnf, char * tagName, char ** data, size_
    tagCount++;
    if (!(tag = (CodeTaggerData *) malloc(sizeof(CodeTaggerData))))
    {
-      fprintf(stderr, _(PROGRAM_NAME ": out of virtual memory\n"));
+      fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
       return(-1);
    };
    memset(tag, 0, sizeof(CodeTaggerData));
@@ -1145,7 +1113,7 @@ int codetagger_process_tag(CodeTagger * cnf, char * tagName, char ** data, size_
    // allocates memory for array
    if (!(ptr = realloc(cnf->tagList, sizeof(CodeTaggerData) * (tagCount + 1))))
    {
-      fprintf(stderr, _(PROGRAM_NAME ": out of virtual memory\n"));
+      fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
       codetagger_free_tag(cnf, tag);
       return(-1);
    };
@@ -1156,7 +1124,7 @@ int codetagger_process_tag(CodeTagger * cnf, char * tagName, char ** data, size_
    // saves tag name
    if (!(tag->name = strdup(tagName)))
    {
-      fprintf(stderr, _(PROGRAM_NAME ": out of virtual memory\n"));
+      fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
       codetagger_free_tag(cnf, tag);
       return(-1);
    };
@@ -1302,13 +1270,11 @@ int main(int argc, char * argv[])
             cnf.opts &= cnf.opts & (~CODETAGGER_OPT_QUIET);
             break;
          case '?':
-            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
          default:
-            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
-                  "Try `%s --help' for more information.\n"
-               ),  PROGRAM_NAME, c, PROGRAM_NAME
-            );
+            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
       };
    };
@@ -1321,10 +1287,8 @@ int main(int argc, char * argv[])
    };
    if (!(cnf.tagFile ))
    {
-      fprintf(stderr, _("%s: missing required option `-f'\n"
-            "Try `%s --help' for more information.\n"
-         ), PROGRAM_NAME, PROGRAM_NAME
-      );
+      fprintf(stderr, "%s: missing required option `-f'\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
       return(1);
    };
 
@@ -1349,7 +1313,7 @@ int main(int argc, char * argv[])
 
    if (!(cnf.tagCount))
    {
-      fprintf(stderr, _(PROGRAM_NAME ": no tag definitions were found in \"%s\"\n"), cnf.tagFile);
+      fprintf(stderr, "%s: no tag definitions were found in \"%s\"\n", PROGRAM_NAME, cnf.tagFile);
       return(1);
    };
 
