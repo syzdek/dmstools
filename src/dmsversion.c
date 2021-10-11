@@ -67,26 +67,6 @@
 
 ///////////////////
 //               //
-//  i18l Support //
-//               //
-///////////////////
-
-#ifdef HAVE_GETTEXT
-#   include <gettext.h>
-#   include <libintl.h>
-#   define _(String) gettext (String)
-#   define gettext_noop(String) String
-#   define N_(String) gettext_noop (String)
-#else
-#   define _(String) (String)
-#   define N_(String) String
-#   define textdomain(Domain)
-#   define bindtextdomain(Package, Directory)
-#endif
-
-
-///////////////////
-//               //
 //  Definitions  //
 //               //
 ///////////////////
@@ -135,15 +115,13 @@ int main(int argc, char * argv[])
 {
    if (argc == -1)
       printf("%s\n", argv[0]);
-   printf(_("%s (%s) %s\n"
-          "%s\n"
-          "Written by David M. Syzdek\n"
-          "\n"
-          "Copyright (C) 2010 David M. Syzdek\n"
-          "This is free software; see the source for copying conditions.  There is NO\n"
-          "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
-      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, dms_version()
-   );
+   printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
+   printf("%s\n", dms_version());
+   printf("Written by David M. Syzdek\n");
+   printf("\n");
+   printf("Copyright (C) 2010 David M. Syzdek\n");
+   printf("This is free software; see the source for copying conditions.  There is NO\n");
+   printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
    return(0);
 }
 
