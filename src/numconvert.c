@@ -132,6 +132,7 @@ int main(int argc, char * argv[])
 {
    int       c;
    int       base;
+   int       optbase;
    int       opt_index;
    char      buff[9];
    int32_t   opt;
@@ -169,7 +170,6 @@ int main(int argc, char * argv[])
 
          case 'a':
          base = -1;
-         //opt |= (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT|);
          break;
 
          case 'B':
@@ -252,26 +252,36 @@ int main(int argc, char * argv[])
    for(x = optind; x < argc; x++)
    {
       len = 0;
-      if (!(base))
+      optbase = base;
+      if (!(optbase))
       {
-         base = 10;
+         optbase = 10;
          if (!(strncmp("00", argv[x], (size_t)2)))
-            base = 2;
+            optbase = 2;
          else if (!(strncmp("0x", argv[x], (size_t)2)))
-            base = 16;
+            optbase = 16;
          else if (!(strncmp("0", argv[x], (size_t)1)))
-            base = 8;
+            optbase = 8;
          else
-            for(y = 0; ((uint32_t)y) < strlen(argv[x]); y++)
-               if ( ((argv[x][y] >= 'a') && (argv[x][y] <= 'z')) ||
-                    ((argv[x][y] >= 'A') && (argv[x][y] <= 'Z')) )
-                  base = 16;
+         {
+            optbase = 10;
+            for(y = 0; ( ((uint32_t)y) < strlen(argv[x]) && (optbase > 0) ); y++)
+            {
+               c = argv[x][y];
+               if ((c >= 'a') && (c <= 'z'))
+                  optbase = 16;
+               else if ((c >= 'A') && (c <= 'Z'))
+                  optbase = 16;
+               else if ((c < '0') || (c > '9'))
+                  optbase = 16;
+            };
+         };
       };
       max = sizeof(intmax_t);
-      if (base == -1)
+      if (optbase == -1)
          num = argv[x][0];
       else
-         num = strtoumax(argv[x], NULL, base);
+         num = strtoumax(argv[x], NULL, optbase);
       if (opt & MY_OPT_LIMIT)
       {
          max = 1;
