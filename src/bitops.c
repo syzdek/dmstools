@@ -70,26 +70,6 @@
 
 ///////////////////
 //               //
-//  i18l Support //
-//               //
-///////////////////
-
-#ifdef HAVE_GETTEXT
-#   include <gettext.h>
-#   include <libintl.h>
-#   define _(String) gettext (String)
-#   define gettext_noop(String) String
-#   define N_(String) gettext_noop (String)
-#else
-#   define _(String) (String)
-#   define N_(String) String
-#   define textdomain(Domain)
-#   define bindtextdomain(Package, Directory)
-#endif
-
-
-///////////////////
-//               //
 //  Definitions  //
 //               //
 ///////////////////
@@ -213,13 +193,11 @@ int main(int argc, char * argv[])
             opts = MY_OPT_HEX;
             break;
          case '?':
-            fprintf(stderr, _("Try `%s --help' for more information.\n"), PROGRAM_NAME);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
          default:
-            fprintf(stderr, _("%s: unrecognized option `--%c'\n"
-                  "Try `%s --help' for more information.\n"
-               ),  PROGRAM_NAME, c, PROGRAM_NAME
-            );
+            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
             return(1);
       };
    };
@@ -384,25 +362,19 @@ const char * my_spaces(char * dst)
 /// displays usage information
 void my_usage()
 {
-   // TRANSLATORS: The following strings provide usage for command. These
-   // strings are displayed if the program is passed `--help' on the command
-   // line. The two strings referenced are: PROGRAM_NAME, and
-   // PACKAGE_BUGREPORT
-   printf(_("Usage: %s [options] num1 num2\n"
-         "  -B                        display output in binary notation\n"
-         "  -D                        display output in decimal notation\n"
-         "  -O                        display output in octal notation\n"
-         "  -X                        display output in hexadecimal notation\n"
-         "\n"
-         "Input Notation:\n"
-         "  00NNNNNNNN                input number is in binary\n"
-         "  NNNNNNNN                  input number is in decimal\n"
-         "  0xNNNNNNNN                input number is in hexadecimal\n"
-         "  0NNNNNNNN                 input number is in octal\n"
-         "\n"
-         "Report bugs to <%s>.\n"
-      ), PROGRAM_NAME, PACKAGE_BUGREPORT
-   );
+   printf("Usage: %s [options] num1 num2\n", PROGRAM_NAME);
+   printf("  -B                        display output in binary notation\n");
+   printf("  -D                        display output in decimal notation\n");
+   printf("  -O                        display output in octal notation\n");
+   printf("  -X                        display output in hexadecimal notation\n");
+   printf("\n");
+   printf("Input Notation:\n");
+   printf("  00NNNNNNNN                input number is in binary\n");
+   printf("  NNNNNNNN                  input number is in decimal\n");
+   printf("  0xNNNNNNNN                input number is in hexadecimal\n");
+   printf("  0NNNNNNNN                 input number is in octal\n");
+   printf("\n");
+   printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
    return;
 }
 
@@ -410,18 +382,12 @@ void my_usage()
 /// displays version information
 void my_version(void)
 {
-   // TRANSLATORS: The following strings provide version and copyright
-   // information if the program is passed --version on the command line.
-   // The three strings referenced are: PROGRAM_NAME, PACKAGE_NAME,
-   // PACKAGE_VERSION.
-   printf(_("%s (%s) %s\n"
-         "Written by David M. Syzdek.\n"
-         "\n"
-         "%s\n"
-         "This is free software; see the source for copying conditions.  There is NO\n"
-         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
-      ), PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_COPYRIGHT
-   );
+   printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
+   printf("Written by David M. Syzdek.\n");
+   printf("\n");
+   printf("%s\n", PACKAGE_COPYRIGHT);
+   printf("This is free software; see the source for copying conditions.  There is NO\n");
+   printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
    return;
 }
 
