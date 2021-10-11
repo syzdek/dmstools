@@ -275,6 +275,8 @@ int main(int argc, char * argv[])
    {
       case 2:
          file2.filename = argv[optind+1];
+         file1.filename = argv[optind+0];
+         break;
       case 1:
          file1.filename = argv[optind+0];
          break;
