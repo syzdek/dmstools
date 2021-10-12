@@ -37,19 +37,30 @@
 .SH NAME
 numconvert \- displays values using multiple numeral systems
 .SH SYNOPSIS
-\fBnumconvert\fR [\fB-BbDdlOoRrsXx\fR] [\fInumber1 number2 ... numberN\fR] 
+\fBnumconvert\fR [\fB-a\fR | \fB-b\fR | \fB-d\fR \fB | \fB-o\fR | \fB-x\fR] [\fB-ABDlOqRrsX\fR] [\fB-f\fR \fIorder\fR] \fInumber1\fR [\fInumber2\fR [\fInumberN\fR]]
 .sp
-\fBnumconvert\fR [\fB--help\fR | \fB-h\fR] [\fB--version\fR | \fB-V\fR]
+\fBnumconvert\fR [\fB--help\fR | \fB-h\fR]
+.sp
+\fBnumconvert\fR [\fB--version\fR | \fB-V\fR]
 
 .SH DESCRIPTION
-The \fBnumconvert\fR utility is a filter which displays numbers using different
-numeral systems.  Input strings which are prefixed with \fI0x\fR are assumed to be
- hexidecimal numerals.  Input strings which are prefixed with a single `\fI0\fR'
-character are assumed to be octal numerals.  Input strings which are prefixed with
-`\fI00\fR' are assumed to be binary numerals.  All other strings are assumed
-to be in decimal numerals.
+The \fBnumconvert\fR utility converts values between numeral systems.
+\fBnumconvert\fR uses prefiexes to determine the input notation of a value if
+an input notation option is not specified. Strings with the prefix \fI0x\fR
+are treated as hexadecimal input; \fI00\fR and \fI0b\fR as binary input; and
+\fI0\fR followed by a non-zero numeric character as octal input.  If the input
+does not use a known prefix, the input will be treat as decimal if the input
+string contains only decimal numerals.  If \fBnumconvert\fR is unable to
+determine the numeral system of the input, the input will be treated as an
+ASCII string.
 
 .SH OPTIONS
+.TP
+\fB-A\fR
+Display the values as an ASCII character
+.TP
+\fB-a\fR
+Process input as individual ASCII characters
 .TP
 \fB-B\fR
 Display the values as binary numerals.
@@ -63,17 +74,25 @@ Display the values as decimal numerals.
 \fB-d\fR
 Process input strings as decimal numerals.
 .TP
+\fB-f\fR \fIorder\fR
+Set order of output values if specifing multiple formats. Use '\fIa\fR' for
+ASCII; '\fIb\fR' for binary; '\fId\fR' for decimal; '\fIo\fR' for octal;
+and '\fIx\fR' for hexadecimal. The default order is '\fIabxod\fR'.
+.TP
 \fB\-h\fR, \fB--help\fR
 Displays usage information and exits.
 .TP
 \fB-l\fR
-Display hexadecimal and binary numerals using the least amount of digits possible.
+Display values with padding for maximum values instead of assuming 32 bit values.
 .TP
 \fB-O\fR
 Display the values as octal numerals.
 .TP
 \fB-o\fR
 Process input strings as octal numerals.
+.TP
+\fB-q\fR
+Suppress column names in output.
 .TP
 \fB-R\fR
 Display binary numerals in little endian byte order.
@@ -93,11 +112,53 @@ Display the values as hexadecimal numerals.
 \fB-x\fR
 Process input strings as hexadecimal numerals.
 
+.SH EXAMPLES
+The following example converts values to ASCII, binary, hexadecimal,
+and decimal:
+.sp
+.RS
+numconvert -A -B -X -D 0001000001 0102 67
+.br
+TXT,                              Binary,        Hex,    Decimal
+.br
+\'A\', 00000000 00000000 00000000 01000001, 0x00000041,         65
+.br
+\'B\', 00000000 00000000 00000000 01000010, 0x00000042,         66
+.br
+\'C\', 00000000 00000000 00000000 01000011, 0x00000043,         67
+.RE
+
+The following example inteprets the input as decimal and displays the values
+as binary,  hexadecimal, and decimal:
+.RS
+numconvert -d -B -X -D 0001000001 0102 67
+.br
+                             Binary,        Hex,    Decimal
+.br
+00000000 00001111 01000010 01000001, 0x000F4241,    1000001
+.br
+00000000 00000000 00000000 01100110, 0x00000066,        102
+.br
+00000000 00000000 00000000 01000011, 0x00000043,         67
+.RE
+
+The following example changes the order of the output:
+.RS
+numconvert -d -B -X -D -f \'dxb\' 0001000001 0102 67
+.br
+   Decimal,        Hex,                              Binary
+.br
+   1000001, 0x000F4241, 00000000 00001111 01000010 01000001
+.br
+       102, 0x00000066, 00000000 00000000 00000000 01100110
+.br
+        67, 0x00000043, 00000000 00000000 00000000 01000011
+.RE
+
 .SH "REPORTING BUGS"
 Report bugs to David M. Syzdek <@PACKAGE_BUGREPORT@>.
 
 .SH "SEE ALSO"
 .BR bitops (1),
-.BR codetagger (1),
-.BR numconvert (1)
+.BR bindump (1),
 .\" end of man page
