@@ -148,7 +148,7 @@ int main(int argc, char * argv[])
    const char *   order;
 
    // getopt options
-   static char   short_opt[] = "AaBbDdf:hlOoqRrsVXx";
+   static char   short_opt[] = "AaBbDdf:hlOoqRrwVXx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -230,7 +230,7 @@ int main(int argc, char * argv[])
          opt |= MY_OPT_LEBIT;
          break;
 
-         case 's':
+         case 'w':
          opt = MY_TOGGLE(opt, MY_OPT_SPACE);
          break;
 
@@ -521,7 +521,7 @@ void my_usage()
    printf("  -q                        suppress column names\n");
    printf("  -R                        display binary in little endian byte order\n");
    printf("  -r                        display binary in little endian bit nad byte order\n");
-   printf("  -s                        display binary value in 8 bit blocks\n");
+   printf("  -w                        display output without spacing\n");
    printf("  -X                        enable hexadecimal output\n");
    printf("  -x                        assume hexadecimal notation for input\n");
    printf("  -V, --version             print version number and exit\n");
