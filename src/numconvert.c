@@ -113,7 +113,7 @@
 int main(int argc, char * argv[]);
 
 // print value
-void my_print(int32_t opt, uintmax_t byte);
+void my_print(int32_t opt, uintmax_t byte, const char * order);
 
 //displays usage information
 void my_usage(void);
@@ -133,18 +133,19 @@ void my_version(void);
 /// @param[in] argv   array of arguments
 int main(int argc, char * argv[])
 {
-   int       c;
-   int       base;
-   int       optbase;
-   int       opt_index;
-   int32_t   opt;
-   intmax_t  x;
-   intmax_t  y;
-   uintmax_t num;
-   char *    endptr;
+   int            c;
+   int            base;
+   int            optbase;
+   int            opt_index;
+   int32_t        opt;
+   intmax_t       x;
+   intmax_t       y;
+   uintmax_t      num;
+   char *         endptr;
+   const char *   order;
 
    // getopt options
-   static char   short_opt[] = "AaBbDdhlOoRrsVXx";
+   static char   short_opt[] = "AaBbDdf:hlOoRrsVXx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -154,6 +155,7 @@ int main(int argc, char * argv[])
 
    opt    = MY_OPT_SPACE;
    base   = 0;
+   order  = "abxod";
 
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -187,9 +189,14 @@ int main(int argc, char * argv[])
          base = 10;
          break;
 
+         case 'f':
+         order = optarg;
+         break;
+
          case 'h':
          my_usage();
          return(0);
+
          case 'l':
          opt |= MY_OPT_LIMIT;
          break;
@@ -282,7 +289,7 @@ int main(int argc, char * argv[])
       {
          case -1:
          for(y = 0; (y < (int)strlen(argv[x])); y++)
-            my_print(opt, (intmax_t)argv[x][y]);
+            my_print(opt, (intmax_t)argv[x][y], order);
          break;
 
          default:
@@ -297,7 +304,7 @@ int main(int argc, char * argv[])
                default: fprintf(stderr, "%s:%i: invalid hexadecimal number\n", PROGRAM_NAME, (int)(x - optind + 1)); return(1);
             };
          };
-         my_print(opt, num);
+         my_print(opt, num, order);
          break;
       };
    };
@@ -307,9 +314,10 @@ int main(int argc, char * argv[])
 
 
 // print value
-void my_print(int32_t opt, uintmax_t num)
+void my_print(int32_t opt, uintmax_t num, const char * order)
 {
    char      buff[9];
+   unsigned  pos;
    intmax_t  y;
    intmax_t  z;
    uintmax_t len;
@@ -319,50 +327,84 @@ void my_print(int32_t opt, uintmax_t num)
    max = sizeof(intmax_t);
    len = 0;
 
-      if (opt & MY_OPT_LIMIT)
-      {
-         max = 1;
-         for(y = 0; y < (intmax_t)sizeof(intmax_t); y++)
-            if ( (num >> (y*8)) & 0xFF )
-               max = (y+1);
-      };
-
-   // print ASCII value
-   if (opt & MY_OPT_ASCII)
-      len = printf((len ? ((opt & MY_OPT_SPACE) ? ", '%c'" : ",'%c'") : "'%c'"), ((((num & 0xFF) >= 32) && ((num & 0xFF) <= 126)) ? (char)(num & 0xFF) : '.'));
-
-   // print binary value
-   if (opt & MY_OPT_BIN)
+   // determine padding
+   if (opt & MY_OPT_LIMIT)
    {
-      if (len) printf((opt & MY_OPT_SPACE) ? ", " : ",");
-      for(y = 0; ((uint32_t)y) < max; y++)
-      {
-         if (opt & MY_OPT_LEBYTE)
-            byte = num >> (8*y);
-         else
-            byte = num >> (8*(max-y-1));
-         if (opt & MY_OPT_LEBIT)
-            for(z = 0; z < 8; z++)
-               buff[z] = (byte & (0x01 << z)) ? '1' : '0';
-         if (!(opt & MY_OPT_LEBIT))
-            for(z = 0; z < 8; z++)
-               buff[z] = (byte & (0x01 << (7-z))) ? '1' : '0';
-         buff[z] = '\0';
-         printf("%s", buff);
-         if ((opt & MY_OPT_SPACE) && (((uint32_t)y+1) < max))
-            printf(" ");
-      };
-      len = 1;
+      max = 1;
+      for(y = 0; y < (intmax_t)sizeof(intmax_t); y++)
+         if ( (num >> (y*8)) & 0xFF )
+            max = (y+1);
+      if (max < 2)
+         max = 4;
    };
 
-   // print hexadecimal value
-   if (opt & MY_OPT_HEX) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0x%0*jX" : ",0x%0*jX") : "0x%0*jX"), (unsigned)(max*2), num);
+   for(pos = 0; (pos < strlen(order)); pos++)
+   {
+      switch(order[pos])
+      {
+         // print ASCII value
+         case 'A':
+         case 'a':
+         if ((opt & MY_OPT_ASCII) == 0)
+            break;
+         len = printf((len ? ((opt & MY_OPT_SPACE) ? ", '%c'" : ",'%c'") : "'%c'"), ((((num & 0xFF) >= 32) && ((num & 0xFF) <= 126)) ? (char)(num & 0xFF) : '.'));
+         break;
 
-   // print octal value
-   if (opt & MY_OPT_OCT) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0%jo"    : ",0%jo")    : "0%jo"),    num);
+         // print binary value
+         case 'B':
+         case 'b':
+         if ((opt & MY_OPT_BIN) == 0)
+            break;
+         if (len)
+            printf((opt & MY_OPT_SPACE) ? ", " : ",");
+         for(y = 0; ((uint32_t)y) < max; y++)
+         {
+            if (opt & MY_OPT_LEBYTE)
+               byte = num >> (8*y);
+            else
+               byte = num >> (8*(max-y-1));
+            if (opt & MY_OPT_LEBIT)
+               for(z = 0; z < 8; z++)
+                  buff[z] = (byte & (0x01 << z)) ? '1' : '0';
+            if (!(opt & MY_OPT_LEBIT))
+               for(z = 0; z < 8; z++)
+                  buff[z] = (byte & (0x01 << (7-z))) ? '1' : '0';
+            buff[z] = '\0';
+            printf("%s", buff);
+            if ((opt & MY_OPT_SPACE) && (((uint32_t)y+1) < max))
+               printf(" ");
+         };
+         len = 1;
+         break;
 
-   // print decimal value
-   if (opt & MY_OPT_DEC) len = printf((len ? ((opt & MY_OPT_SPACE) ? ", %ju"     : ",%ju")     : "%ju"),     num);
+         // print hexadecimal value
+         case 'X':
+         case 'x':
+         if ((opt & MY_OPT_HEX) == 0)
+            break;
+         len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0x%0*jX" : ",0x%0*jX") : "0x%0*jX"), (unsigned)(max*2), num);
+         break;
+
+         // print octal value
+         case 'O':
+         case 'o':
+         if ((opt & MY_OPT_OCT) == 0)
+            break;
+         len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0%jo"    : ",0%jo")    : "0%jo"),    num);
+         break;
+
+         // print decimal value
+         case 'D':
+         case 'd':
+         if ((opt & MY_OPT_DEC) == 0)
+            break;
+         len = printf((len ? ((opt & MY_OPT_SPACE) ? ", %ju"     : ",%ju")     : "%ju"),     num);
+         break;
+
+         default:
+         break;
+      };
+   };
 
    printf("\n");
 
@@ -380,6 +422,7 @@ void my_usage()
    printf("  -b                        assume binary notation for input\n");
    printf("  -D                        enable decimal output\n");
    printf("  -d                        assume decimal notation for input\n");
+   printf("  -f order                  order of output values (default: \"abxod\")\n");
    printf("  -h, --help                print this help and exit\n");
    printf("  -l                        print minimum number of bytes in hex and binary\n");
    printf("  -O                        enable octal output\n");
