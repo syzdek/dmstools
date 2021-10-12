@@ -99,6 +99,7 @@
 #define MY_OPT_LEBIT    0x0040  ///< print binary in little endian bit order
 #define MY_OPT_LIMIT    0x0080  ///< print hex and binary with least amount of digits
 #define MY_OPT_ASCII    0x0100
+#define MY_OPT_HEADER   0x0200
 
 #define MY_TOGGLE(value, bit) ( (value&bit) ? (value&(~bit)) : (value|bit))
 
@@ -137,6 +138,7 @@ int main(int argc, char * argv[])
    int            base;
    int            optbase;
    int            opt_index;
+   int            bases;
    int32_t        opt;
    intmax_t       x;
    intmax_t       y;
@@ -156,6 +158,7 @@ int main(int argc, char * argv[])
    opt    = MY_OPT_SPACE;
    base   = 0;
    order  = "abxod";
+   bases  = 0;
 
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -167,6 +170,7 @@ int main(int argc, char * argv[])
 
          case 'A':
          opt |= MY_OPT_ASCII;
+         bases++;
          break;
 
          case 'a':
@@ -175,6 +179,7 @@ int main(int argc, char * argv[])
 
          case 'B':
          opt |= MY_OPT_BIN;
+         bases++;
          break;
 
          case 'b':
@@ -183,6 +188,7 @@ int main(int argc, char * argv[])
 
          case 'D':
          opt |= MY_OPT_DEC;
+         bases++;
          break;
 
          case 'd':
@@ -203,6 +209,7 @@ int main(int argc, char * argv[])
 
          case 'O':
          opt |= MY_OPT_OCT;
+         bases++;
          break;
 
          case 'o':
@@ -224,6 +231,7 @@ int main(int argc, char * argv[])
 
          case 'X':
          opt |= MY_OPT_HEX;
+         bases++;
          break;
 
          case 'x':
@@ -246,7 +254,10 @@ int main(int argc, char * argv[])
    };
 
    if (!(opt & (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT|MY_OPT_ASCII)))
+   {
       opt |= (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT|MY_OPT_ASCII);
+      bases = 5;
+   };
 
    if ((argc - optind) < 1)
    {
@@ -254,6 +265,9 @@ int main(int argc, char * argv[])
       fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
       return(1);
    };
+
+   if ( ((argc - optind) > 1) || (bases > 1) )
+      my_print(opt|MY_OPT_HEADER, 0, order);
 
    for(x = optind; x < argc; x++)
    {
@@ -316,7 +330,7 @@ int main(int argc, char * argv[])
 // print value
 void my_print(int32_t opt, uintmax_t num, const char * order)
 {
-   char      buff[9];
+   char      buff[56];
    unsigned  pos;
    intmax_t  y;
    intmax_t  z;
@@ -345,18 +359,30 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
          // print ASCII value
          case 'A':
          case 'a':
-         if ((opt & MY_OPT_ASCII) == 0)
+         if (!(opt & MY_OPT_ASCII))
             break;
+         if (len)
+            printf((opt & MY_OPT_SPACE) ? ", " : ",");
+         if ((opt & MY_OPT_HEADER))
+         {
+            len = printf("%s", "TXT");
+            break;
+         };
          len = printf((len ? ((opt & MY_OPT_SPACE) ? ", '%c'" : ",'%c'") : "'%c'"), ((((num & 0xFF) >= 32) && ((num & 0xFF) <= 126)) ? (char)(num & 0xFF) : '.'));
          break;
 
          // print binary value
          case 'B':
          case 'b':
-         if ((opt & MY_OPT_BIN) == 0)
+         if (!(opt & MY_OPT_BIN))
             break;
          if (len)
             printf((opt & MY_OPT_SPACE) ? ", " : ",");
+         if ((opt & MY_OPT_HEADER))
+         {
+            len = printf("%*s", ((!(opt & MY_OPT_SPACE)) ? 0 : (((int)max*8) + ((int)max-1))), "Binary");
+            break;
+         };
          for(y = 0; ((uint32_t)y) < max; y++)
          {
             if (opt & MY_OPT_LEBYTE)
@@ -382,7 +408,14 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
          case 'x':
          if ((opt & MY_OPT_HEX) == 0)
             break;
-         len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0x%0*jX" : ",0x%0*jX") : "0x%0*jX"), (unsigned)(max*2), num);
+         if (len)
+            printf((opt & MY_OPT_SPACE) ? ", " : ",");
+         if ((opt & MY_OPT_HEADER))
+         {
+            len = printf("%*s", (unsigned)(max*2)+2, "Hex");
+            break;
+         };
+         len = printf("0x%0*jX", (unsigned)(max*2), num);
          break;
 
          // print octal value
@@ -390,7 +423,15 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
          case 'o':
          if ((opt & MY_OPT_OCT) == 0)
             break;
-         len = printf((len ? ((opt & MY_OPT_SPACE) ? ", 0%jo"    : ",0%jo")    : "0%jo"),    num);
+         if (len)
+            printf((opt & MY_OPT_SPACE) ? ", " : ",");
+         if ((opt & MY_OPT_HEADER))
+         {
+            len = printf("%*s", ((int)max*3), "Octal");
+            break;
+         };
+         snprintf(buff, sizeof(buff), "0%jo", num);
+         len = printf("%*s", ((3*(int)max)), buff);
          break;
 
          // print decimal value
@@ -398,7 +439,14 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
          case 'd':
          if ((opt & MY_OPT_DEC) == 0)
             break;
-         len = printf((len ? ((opt & MY_OPT_SPACE) ? ", %ju"     : ",%ju")     : "%ju"),     num);
+         if (len)
+            printf((opt & MY_OPT_SPACE) ? ", " : ",");
+         if ((opt & MY_OPT_HEADER))
+         {
+            len = printf("%*s", (((int)max/4)*10), "Decimal");
+            break;
+         };
+         len = printf("%*ju", (((int)max/4)*10), num);
          break;
 
          default:
