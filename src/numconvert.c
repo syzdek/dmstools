@@ -341,19 +341,12 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
    uintmax_t max;
    uintmax_t byte;
 
-   max = sizeof(intmax_t);
    len = 0;
 
    // determine padding
+   max = sizeof(intmax_t);
    if (opt & MY_OPT_LIMIT)
-   {
-      max = 1;
-      for(y = 0; y < (intmax_t)sizeof(intmax_t); y++)
-         if ( (num >> (y*8)) & 0xFF )
-            max = (y+1);
-      if (max < 2)
-         max = 4;
-   };
+      max = 4;
 
    for(pos = 0; (pos < strlen(order)); pos++)
    {
