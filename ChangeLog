@@ -5,8 +5,11 @@ Copyright (C) 2008, 2009, 2010, 2021 David M. Syzdek <david@syzdek.net>
 1.5
 	- autotools: adding flags to enable/disable individual tools (syzdek)
 	- bindump: resolving compiler warnings (syzdek)
-	- libdms.la: removing library (syzdek)
 	- dmsvesion: removing tool (syzdek)
+	- libdms.la: removing library (syzdek)
+	- numconvert: adding support for strings (syzdek)
+	- numconvert: adding errors for numbers with invalid syntax (syzdek)
+	- numconvert: adding ability to change column order (syzdek)
 
 1.4     2021/10/06 (syzdek)
 	- macaddrinfo: adding OUI for Microsoft (syzdek)
