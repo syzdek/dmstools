@@ -439,6 +439,7 @@ void my_usage()
    printf("  0xNNNNNNNN                input number is in hexadecimal\n");
    printf("  0NNNNNNNN                 input number is in octal\n");
    printf("  00NNNNNNNN                input number is in binary\n");
+   printf("  0bNNNNNNNN                input number is in binary\n");
    printf("\n");
    printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
    return;
