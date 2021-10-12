@@ -2,6 +2,10 @@
 DMS Tools and Utilities
 Copyright (C) 2008, 2009, 2010, 2021 David M. Syzdek <david@syzdek.net>
 
+1.6
+	- numconvert: fixing output for char (syzdek)
+	- numconvert: fixing padding in  output (syzdek)
+
 1.5	2021/10/11 (syzdek)
 	- autotools: adding flags to enable/disable individual tools (syzdek)
 	- bindump: resolving compiler warnings (syzdek)
