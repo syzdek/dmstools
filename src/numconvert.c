@@ -411,7 +411,7 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
             len = printf("%s", "TXT");
             break;
          };
-         len = printf((len ? ((opt & MY_OPT_SPACE) ? ", '%c'" : ",'%c'") : "'%c'"), ((((num & 0xFF) >= 32) && ((num & 0xFF) <= 126)) ? (char)(num & 0xFF) : '.'));
+         len = printf("'%c'", (((num >= 32) && (num <= 126)) ? (char)num : '.'));
          break;
 
          // print binary value
