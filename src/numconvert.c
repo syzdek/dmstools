@@ -100,6 +100,7 @@
 #define MY_OPT_LIMIT    0x0080  ///< print hex and binary with least amount of digits
 #define MY_OPT_ASCII    0x0100
 #define MY_OPT_HEADER   0x0200
+#define MY_OPT_QUIET    0x0400
 
 #define MY_TOGGLE(value, bit) ( (value&bit) ? (value&(~bit)) : (value|bit))
 
@@ -147,7 +148,7 @@ int main(int argc, char * argv[])
    const char *   order;
 
    // getopt options
-   static char   short_opt[] = "AaBbDdf:hlOoRrsVXx";
+   static char   short_opt[] = "AaBbDdf:hlOoqRrsVXx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -216,6 +217,10 @@ int main(int argc, char * argv[])
          base = 8;
          break;
 
+         case 'q':
+         opt |= MY_OPT_QUIET;
+         break;
+
          case 'R':
          opt |= MY_OPT_LEBYTE;
          break;
@@ -267,7 +272,8 @@ int main(int argc, char * argv[])
    };
 
    if ( ((argc - optind) > 1) || (bases > 1) )
-      my_print(opt|MY_OPT_HEADER, 0, order);
+      if (!(opt & MY_OPT_QUIET))
+         my_print(opt|MY_OPT_HEADER, 0, order);
 
    for(x = optind; x < argc; x++)
    {
@@ -472,6 +478,7 @@ void my_usage()
    printf("  -l                        print output assuming 64 bit numbers instead of 32 bit numbers\n");
    printf("  -O                        enable octal output\n");
    printf("  -o                        assume octal notation for input\n");
+   printf("  -q                        suppress column names\n");
    printf("  -R                        display binary in little endian byte order\n");
    printf("  -r                        display binary in little endian bit nad byte order\n");
    printf("  -s                        display binary value in 8 bit blocks\n");
