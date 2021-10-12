@@ -455,7 +455,7 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
             printf((opt & MY_OPT_SPACE) ? ", " : ",");
          if ((opt & MY_OPT_HEADER))
          {
-            len = printf("%*s", (unsigned)(max*2)+2, "Hex");
+            len = printf("%*s", ((!(opt & MY_OPT_SPACE)) ? 0 : (unsigned)(max*2)+2), "Hex");
             break;
          };
          len = printf("0x%0*jX", (unsigned)(max*2), num);
@@ -470,11 +470,11 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
             printf((opt & MY_OPT_SPACE) ? ", " : ",");
          if ((opt & MY_OPT_HEADER))
          {
-            len = printf("%*s", ((int)max*3), "Octal");
+            len = printf("%*s", ((!(opt & MY_OPT_SPACE)) ? 0 : ((int)max*3)), "Octal");
             break;
          };
          snprintf(buff, sizeof(buff), "0%jo", num);
-         len = printf("%*s", ((3*(int)max)), buff);
+         len = printf("%*s", ((!(opt & MY_OPT_SPACE)) ? 0 : ((3*(int)max))), buff);
          break;
 
          // print decimal value
@@ -486,10 +486,10 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
             printf((opt & MY_OPT_SPACE) ? ", " : ",");
          if ((opt & MY_OPT_HEADER))
          {
-            len = printf("%*s", (((int)max/4)*10), "Decimal");
+            len = printf("%*s", ((!(opt & MY_OPT_SPACE)) ? 0 : (((int)max/4)*10)), "Decimal");
             break;
          };
-         len = printf("%*ju", (((int)max/4)*10), num);
+         len = printf("%*ju", ((!(opt & MY_OPT_SPACE)) ? 0 : (((int)max/4)*10)), num);
          break;
 
          default:
