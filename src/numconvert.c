@@ -288,13 +288,10 @@ int main(int argc, char * argv[])
             optbase = 8;
          else
          {
-            for(y = 0; ( ((uint32_t)y) < strlen(argv[x]) && (optbase != -1) ); y++)
-            {
-               if      ( (optbase < 10) && ((argv[x][y] >= '0') && (argv[x][y] <= '9')) ) optbase = 10;
-               else if ( (optbase < 16) && ((argv[x][y] >= 'a') && (argv[x][y] <= 'f')) ) optbase = 16;
-               else if ( (optbase < 16) && ((argv[x][y] >= 'a') && (argv[x][y] <= 'F')) ) optbase = 16;
-               else optbase = -1;
-            };
+            optbase = 10;
+            for(y = 0; ( ((uint32_t)y) < strlen(argv[x]) && (optbase == 10) ); y++)
+               if ((argv[x][y] < '0') || (argv[x][y] > '9'))
+                  optbase = -1;
          };
       };
 
