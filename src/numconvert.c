@@ -158,8 +158,8 @@ int main(int argc, char * argv[])
 
    opt    = MY_OPT_SPACE | MY_OPT_LIMIT;
    base   = 0;
-   order  = "abxod";
    bases  = 0;
+   order  = NULL;
 
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
    {
@@ -257,6 +257,53 @@ int main(int argc, char * argv[])
          return(1);
       };
    };
+
+   if ((order))
+   {
+      bases = 0;
+      for(x = 0; (x < (int)strlen(order)); x++)
+      {
+         switch(order[x])
+         {
+            case 'B':
+            case 'b':
+            opt |= MY_OPT_BIN;
+            bases++;
+            break;
+
+            case 'D':
+            case 'd':
+            opt |= MY_OPT_DEC;
+            bases++;
+            break;
+
+            case 'X':
+            case 'x':
+            opt |= MY_OPT_HEX;
+            bases++;
+            break;
+
+            case 'O':
+            case 'o':
+            opt |= MY_OPT_OCT;
+            bases++;
+            break;
+
+            case 'A':
+            case 'a':
+            opt |= MY_OPT_ASCII;
+            bases++;
+            break;
+
+            default:
+            fprintf(stderr, "%s: unknown order option -- %c\n", PROGRAM_NAME, order[x]);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+            return(1);
+         };
+      };
+   };
+   if (!(order))
+      order  = "abxod";
 
    if (!(opt & (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT|MY_OPT_ASCII)))
    {
