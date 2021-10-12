@@ -90,15 +90,15 @@
 #define PACKAGE_VERSION ""
 #endif
 
-#define MY_OPT_BIN      0x01
-#define MY_OPT_DEC      0x02
-#define MY_OPT_HEX      0x04
-#define MY_OPT_OCT      0x08
-#define MY_OPT_SPACE    0x10
-#define MY_OPT_LEBYTE   0x20  ///< print binary in little endian byte order
-#define MY_OPT_LEBIT    0x40  ///< print binary in little endian bit order
-#define MY_OPT_LIMIT    0x80  ///< print hex and binary with least amount of digits
-#define MY_OPT_ASCII    0x100
+#define MY_OPT_BIN      0x0001
+#define MY_OPT_DEC      0x0002
+#define MY_OPT_HEX      0x0004
+#define MY_OPT_OCT      0x0008
+#define MY_OPT_SPACE    0x0010
+#define MY_OPT_LEBYTE   0x0020  ///< print binary in little endian byte order
+#define MY_OPT_LEBIT    0x0040  ///< print binary in little endian bit order
+#define MY_OPT_LIMIT    0x0080  ///< print hex and binary with least amount of digits
+#define MY_OPT_ASCII    0x0100
 
 #define MY_TOGGLE(value, bit) ( (value&bit) ? (value&(~bit)) : (value|bit))
 
