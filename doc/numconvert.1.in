@@ -37,7 +37,7 @@
 .SH NAME
 numconvert \- displays values using multiple numeral systems
 .SH SYNOPSIS
-\fBnumconvert\fR [\fB-a\fR | \fB-b\fR | \fB-d\fR \fB | \fB-o\fR | \fB-x\fR] [\fB-ABDlOqRrsX\fR] [\fB-f\fR \fIorder\fR] \fInumber1\fR [\fInumber2\fR [\fInumberN\fR]]
+\fBnumconvert\fR [\fB-a\fR | \fB-b\fR | \fB-d\fR \fB | \fB-o\fR | \fB-x\fR] [\fB-ABDlOqRrSswX\fR] [\fB-f\fR \fIorder\fR] \fInumber1\fR [\fInumber2\fR [\fInumberN\fR]]
 .sp
 \fBnumconvert\fR [\fB--help\fR | \fB-h\fR]
 .sp
@@ -100,7 +100,13 @@ Display binary numerals in little endian byte order.
 \fB-r\fR
 Display binary numerals in little endian byte order and little endian bit order
 .TP
+\fB-S\fR
+Display the values as a string.
+.TP
 \fB-s\fR
+Process input strings as a ASCII string.
+.TP
+\fB-w\fR
 Do not print spaces when displaying numerals.
 .TP
 \fB\-V\fR, \fB--version\fR

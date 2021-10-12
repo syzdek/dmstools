@@ -101,6 +101,7 @@
 #define MY_OPT_ASCII    0x0100
 #define MY_OPT_HEADER   0x0200
 #define MY_OPT_QUIET    0x0400
+#define MY_OPT_STR      0x0800
 
 #define MY_TOGGLE(value, bit) ( (value&bit) ? (value&(~bit)) : (value|bit))
 
@@ -142,13 +143,13 @@ int main(int argc, char * argv[])
    int            bases;
    int32_t        opt;
    intmax_t       x;
-   intmax_t       y;
+   size_t         y;
    uintmax_t      num;
    char *         endptr;
    const char *   order;
 
    // getopt options
-   static char   short_opt[] = "AaBbDdf:hlOoqRrwVXx";
+   static char   short_opt[] = "AaBbDdf:hlOoqRrSswVXx";
    static struct option long_opt[] =
    {
       {"help",          no_argument, 0, 'h'},
@@ -230,6 +231,15 @@ int main(int argc, char * argv[])
          opt |= MY_OPT_LEBIT;
          break;
 
+         case 'S':
+         opt |= MY_OPT_STR;
+         bases++;
+         break;
+
+         case 's':
+         base = 128;
+         break;
+
          case 'w':
          opt = MY_TOGGLE(opt, MY_OPT_SPACE);
          break;
@@ -295,6 +305,12 @@ int main(int argc, char * argv[])
             bases++;
             break;
 
+            case 'S':
+            case 's':
+            opt |= MY_OPT_STR;
+            bases++;
+            break;
+
             default:
             fprintf(stderr, "%s: unknown order option -- %c\n", PROGRAM_NAME, order[x]);
             fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
@@ -303,7 +319,7 @@ int main(int argc, char * argv[])
       };
    };
    if (!(order))
-      order  = "abxod";
+      order  = ((opt & MY_OPT_STR)) ? (((opt & MY_OPT_ASCII)) ? "sabxod" : "sbxod") : "abxod";
 
    if (!(opt & (MY_OPT_BIN|MY_OPT_DEC|MY_OPT_HEX|MY_OPT_OCT|MY_OPT_ASCII)))
    {
@@ -344,7 +360,7 @@ int main(int argc, char * argv[])
             optbase = 10;
             for(y = 0; ( ((uint32_t)y) < strlen(argv[x]) && (optbase == 10) ); y++)
                if ((argv[x][y] < '0') || (argv[x][y] > '9'))
-                  optbase = -1;
+                  optbase = 128;
          };
       };
 
@@ -352,8 +368,23 @@ int main(int argc, char * argv[])
       switch(optbase)
       {
          case -1:
-         for(y = 0; (y < (int)strlen(argv[x])); y++)
+         for(y = 0; (y < strlen(argv[x])); y++)
             my_print(opt, (intmax_t)argv[x][y], order);
+         break;
+
+         case 128:
+         for(y = 0; (y < strlen(argv[x])); y++)
+         {
+            if ((y % sizeof(uintmax_t)) == 0)
+            {
+               if (y != 0)
+                  my_print(opt, num, order);
+               num = 0;
+            };
+            num <<= 8;
+            num  |= argv[x][y];
+         };
+         my_print(opt, num, order);
          break;
 
          default:
@@ -382,11 +413,13 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
 {
    char      buff[56];
    unsigned  pos;
-   intmax_t  y;
-   intmax_t  z;
+   char      c;
+   uintmax_t y;
+   uintmax_t z;
    uintmax_t len;
    uintmax_t max;
    uintmax_t byte;
+   uintmax_t mask;
 
    len = 0;
 
@@ -412,6 +445,35 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
             break;
          };
          len = printf("'%c'", (((num >= 32) && (num <= 126)) ? (char)num : '.'));
+         break;
+
+         // print ASCII string value
+         case 'S':
+         case 's':
+         if (!(opt & MY_OPT_STR))
+            break;
+         if (len)
+            printf((opt & MY_OPT_SPACE) ? ", " : ",");
+         if ((opt & MY_OPT_HEADER))
+         {
+            len = printf("%*s", (int)((!(opt & MY_OPT_SPACE)) ? 0 : (max+2)), "String");
+            break;
+         };
+         mask = ~((uintmax_t)0);
+         for(y = 2; ((mask > 0) && ((mask & num))); y++)
+            mask <<= 8;
+         y = (y < (max+2)) ? (max+2) : y;
+         byte      = num;
+         buff[y]   = '\0';
+         buff[0]   = '"';
+         buff[y-1] = '"';
+         for(z = y-1; (z > 1); z--)
+         {
+            c           = byte & 0xff;
+            buff[z-1]   = ((c >= 32) && (c <= 126)) ? c : '.';
+            byte      >>= 8;
+         };
+         len = printf("%*s", (int)(max+2), buff);
          break;
 
          // print binary value
@@ -521,6 +583,8 @@ void my_usage()
    printf("  -q                        suppress column names\n");
    printf("  -R                        display binary in little endian byte order\n");
    printf("  -r                        display binary in little endian bit nad byte order\n");
+   printf("  -S                        enable ASCII string output\n");
+   printf("  -s                        assume ASCII string notation for input\n");
    printf("  -w                        display output without spacing\n");
    printf("  -X                        enable hexadecimal output\n");
    printf("  -x                        assume hexadecimal notation for input\n");
