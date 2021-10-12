@@ -155,7 +155,7 @@ int main(int argc, char * argv[])
       {NULL,            0,           0, 0  }
    };
 
-   opt    = MY_OPT_SPACE;
+   opt    = MY_OPT_SPACE | MY_OPT_LIMIT;
    base   = 0;
    order  = "abxod";
    bases  = 0;
@@ -204,7 +204,7 @@ int main(int argc, char * argv[])
          return(0);
 
          case 'l':
-         opt |= MY_OPT_LIMIT;
+         opt = MY_TOGGLE(opt, MY_OPT_LIMIT);
          break;
 
          case 'O':
@@ -472,7 +472,7 @@ void my_usage()
    printf("  -d                        assume decimal notation for input\n");
    printf("  -f order                  order of output values (default: \"abxod\")\n");
    printf("  -h, --help                print this help and exit\n");
-   printf("  -l                        print minimum number of bytes in hex and binary\n");
+   printf("  -l                        print output assuming 64 bit numbers instead of 32 bit numbers\n");
    printf("  -O                        enable octal output\n");
    printf("  -o                        assume octal notation for input\n");
    printf("  -R                        display binary in little endian byte order\n");
