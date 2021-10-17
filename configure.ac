@@ -38,7 +38,7 @@ AC_PREREQ(2.65)
 
 AC_COPYRIGHT([Copyright (c) 2008, 2009, 2010, 2011, 2013, 2021 David M. Syzdek <david@syzdek.net>.])
 AC_REVISION(0.2)
-AC_INIT([DMS Tools and Utilities],[1.5],[david@syzdek.net],[dmstools])
+AC_INIT([DMS Tools and Utilities],[1.6],[david@syzdek.net],[dmstools])
 
 AC_SUBST([RELEASE_MONTH],     ["October 2021"])
 AC_SUBST([PACKAGE_COPYRIGHT], ["Copyright (C) 2008, 2009, 2010, 2011, 2013, 2021 David M. Syzdek."])
