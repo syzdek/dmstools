@@ -122,6 +122,10 @@ CLEANFILES				= $(builddir)/a.out   $(srcdir)/a.out \
 					  config.h.in~        $(srcdir)/config.h.in~ \
 					  configure.scan      $(srcdir)/configure.scan \
 					  $(man_MANS) \
+					  $(bin_SCRIPTS) \
+					  $(sbin_SCRIPTS) \
+					  $(noinst_SCRIPTS) \
+					  $(EXTRA_PROGRAMS) \
 					  include/bindle_prefix.h \
 					  @PACKAGE_TARNAME@-*.tar.* \
 					  @PACKAGE_TARNAME@-*.zip
@@ -243,14 +247,22 @@ if WANT_TYPEDEF_INFO
 endif
 
 
+# macros for src/urldesc
+src_urldesc_DEPENDENCIES		= $(lib_LTLIBRARIES) lib/libbindle.a Makefile
+src_urldesc_CPPFLAGS			= -DPROGRAM_NAME="\"urldesc\"" $(AM_CPPFLAGS)
+src_urldesc_LDADD			= lib/libbindle.a
+src_urldesc_SOURCES			= $(noinst_HEADERS) src/urldesc.c
+if WANT_URLDESC
+   bin_PROGRAMS				+= src/urldesc
+endif
+
+
 # Makefile includes
 GIT_PACKAGE_VERSION_DIR=include
 SUBST_EXPRESSIONS = -e 's,[@]RELEASE_MONTH[@],@RELEASE_MONTH@,g'
 include contrib/bindletools/build-aux/makefile-subst.am
 include contrib/bindletools/build-aux/makefile-version.am
 include contrib/bindletools/build-aux/makefile-libbindle.am
-include contrib/bindletools/build-aux/makefile-bindle.am
-include contrib/bindletools/build-aux/makefile-autotools.am
 
 
 # custom targets

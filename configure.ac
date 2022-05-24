@@ -197,6 +197,7 @@ AC_DMS_TOOL_POSIXREGEX
 AC_DMS_TOOL_RECURSE
 AC_DMS_TOOL_SUICIDE
 AC_DMS_TOOL_TYPEDEF_INFO
+AC_DMS_TOOL_URLDESC
 
 # Creates outputs
 AC_CONFIG_FILES([Makefile])
@@ -219,6 +220,7 @@ AC_MSG_NOTICE([   build posixregex       $EPOSIXREGEX])
 AC_MSG_NOTICE([   build recurse          $ERECURSE])
 AC_MSG_NOTICE([   build suicide          $ESUICIDE])
 AC_MSG_NOTICE([   build typedef-info     $ETYPEDEF_INFO])
+AC_MSG_NOTICE([   build urldesc          $EURLDESC])
 AC_MSG_NOTICE([ ])
 AC_MSG_NOTICE([   run `make all'])
 AC_MSG_NOTICE([ ])

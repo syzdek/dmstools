@@ -431,4 +431,29 @@ AC_DEFUN([AC_DMS_TOOL_TYPEDEF_INFO],[dnl
 ])dnl
 
 
+# AC_DMS_TOOL_URLDESC
+# ______________________________________________________________________________
+AC_DEFUN([AC_DMS_TOOL_URLDESC],[dnl
+
+   AC_REQUIRE([AC_DMS_TOOL_ALL])
+
+   enableval=""
+   AC_ARG_ENABLE(
+      urldesc,
+      [AS_HELP_STRING([--enable-urldesc], [enable building urldesc])],
+      [ EURLDESC=$enableval ],
+      [ EURLDESC=$enableval ]
+   )
+
+   if test "x${EURLDESC}" == "x";then
+      EURLDESC="${EALL}"
+   fi
+   if test "x${EURLDESC}" == "xauto";then
+      EURLDESC=yes
+   fi
+
+   AM_CONDITIONAL([WANT_URLDESC],   [test "$EURLDESC" = "yes"])
+])dnl
+
+
 # end of M4 file
