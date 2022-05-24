@@ -38,6 +38,8 @@
 SUBDIRS					=
 DIST_SUBDIRS				=
 
+# GNU make options
+V					= 0
 
 # Global flags
 AM_LIBS					=
@@ -53,14 +55,25 @@ AM_CPPFLAGS				= -O2 \
 ACLOCAL_AMFLAGS				= -I m4 -W all -W error
 DEFS					= -DLOCALEDIR="\"$(localedir)\"" @DEFS@
 
+# custom directories
 
 # automake targets
+check_PROGRAMS				=
 bin_PROGRAMS				=
+bin_SCRIPTS				=
 include_HEADERS				=
 lib_LTLIBRARIES				=
+lib_LIBRARIES				=
+sbin_SCRIPTS				=
+sbin_PROGRAMS				=
 noinst_PROGRAMS				=
-noinst_HEADERS				= src/common.h
+noinst_HEADERS				= src/common.h \
+					  include/bindle_prefix.h
+noinst_LTLIBRARIES			=
+noinst_LIBRARIES			= lib/libbindle.a
+noinst_PROGRAMS				=
 man_MANS				=
+EXTRA_PROGRAMS				=
 EXTRA					= src/bindump \
 					  src/bitcopy \
 					  src/bitops \
@@ -78,8 +91,8 @@ EXTRA					= src/bindump \
 
 # lists
 AM_INSTALLCHECK_STD_OPTIONS_EXEMPT	=
-BUILT_SOURCES				=
-TESTS					=
+BUILT_SOURCES				= include/bindle_prefix.h
+TESTS					= $(LIBBINDLE_TESTS)
 XFAIL_TESTS				=
 EXTRA_MANS				=
 EXTRA_DIST				= autogen.sh \
@@ -103,13 +116,13 @@ EXTRA_DIST				= autogen.sh \
 					  $(srcdir)/examples/example.txt \
 					  $(srcdir)/build-aux/Makefile-xcode \
 					  $(srcdir)/dmstools.xcodeproj/project.pbxproj
-CLEANFILES				= \
-					  $(builddir)/a.out   $(srcdir)/a.out \
+CLEANFILES				= $(builddir)/a.out   $(srcdir)/a.out \
 					  $(builddir)/*/a.out $(srcdir)/*/a.out \
 					  autoscan.log        $(srcdir)/autoscan.log \
 					  config.h.in~        $(srcdir)/config.h.in~ \
 					  configure.scan      $(srcdir)/configure.scan \
 					  $(man_MANS) \
+					  include/bindle_prefix.h \
 					  @PACKAGE_TARNAME@-*.tar.* \
 					  @PACKAGE_TARNAME@-*.zip
 DISTCHECK_CONFIGURE_FLAGS		= --enable-strictwarnings \
@@ -232,12 +245,12 @@ endif
 
 # Makefile includes
 GIT_PACKAGE_VERSION_DIR=include
-SUBST_EXPRESSIONS =  \
-	-e 's,[@]RELEASE_MONTH[@],@RELEASE_MONTH@,g'
-include $(srcdir)/contrib/bindletools/build-aux/makefile-bindle.am
-include $(srcdir)/contrib/bindletools/build-aux/makefile-autotools.am
-include $(srcdir)/contrib/bindletools/build-aux/makefile-subst.am
-include $(srcdir)/contrib/bindletools/build-aux/makefile-version.am
+SUBST_EXPRESSIONS = -e 's,[@]RELEASE_MONTH[@],@RELEASE_MONTH@,g'
+include contrib/bindletools/build-aux/makefile-subst.am
+include contrib/bindletools/build-aux/makefile-version.am
+include contrib/bindletools/build-aux/makefile-libbindle.am
+include contrib/bindletools/build-aux/makefile-bindle.am
+include contrib/bindletools/build-aux/makefile-autotools.am
 
 
 # custom targets

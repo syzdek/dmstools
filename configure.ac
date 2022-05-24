@@ -1,6 +1,6 @@
 #
 #   DMS Tools and Utilities
-#   Copyright (C) 2008, 2009, 2010, 2021 David M. Syzdek <david@syzdek.net>
+#   Copyright (C) 2008, 2009, 2010, 2021, 2022 David M. Syzdek <david@syzdek.net>
 #
 #   @SYZDEK_LICENSE_HEADER_START@
 #
@@ -36,16 +36,15 @@
 
 AC_PREREQ(2.65)
 
-AC_COPYRIGHT([Copyright (c) 2008, 2009, 2010, 2011, 2013, 2021 David M. Syzdek <david@syzdek.net>.])
+AC_COPYRIGHT([Copyright (c) 2008, 2009, 2010, 2011, 2013, 2021, 2022 David M. Syzdek <david@syzdek.net>.])
 AC_REVISION(0.2)
 AC_INIT([DMS Tools and Utilities],[1.6],[david@syzdek.net],[dmstools])
 
 AC_SUBST([RELEASE_MONTH],     ["October 2021"])
-AC_SUBST([PACKAGE_COPYRIGHT], ["Copyright (C) 2008, 2009, 2010, 2011, 2013, 2021 David M. Syzdek."])
+AC_SUBST([PACKAGE_COPYRIGHT], ["Copyright (C) 2008, 2009, 2010, 2011, 2013, 2021, 2022 David M. Syzdek."])
 AC_DEFINE_UNQUOTED(PACKAGE_COPYRIGHT, ["$PACKAGE_COPYRIGHT"], ["Copyright info"])
 
-
-# autoconf options
+# directory locations
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([build-aux/git-tar-name.txt])
 #AC_CONFIG_LIBOBJ_DIR(compat)
@@ -69,6 +68,8 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_USE_SYSTEM_EXTENSIONS # replaces AC_AIX AC_GNU_SOURCE AC_MINIX
 AC_C_BIGENDIAN
+AC_C_INLINE
+AC_C_RESTRICT
 
 # Version Info:
 #    Current    -- the current version number of this API
@@ -155,7 +156,9 @@ AC_CHECK_HEADERS([wchar.h],      [], [AC_MSG_ERROR([missing required headers])])
 AC_CHECK_HEADERS([wctype.h],     [], [AC_MSG_ERROR([missing required headers])])
 
 # check types
-AC_CHECK_TYPES([ptrdiff_t],      [], [AC_MSG_ERROR([missing required data type])])
+AC_CHECK_TYPES([ptrdiff_t],         [], [AC_MSG_ERROR([missing required data type])])
+AC_CHECK_TYPES([atomic_intmax_t],   [], [AC_MSG_ERROR([missing required data type])], [#include <stdatomic.h>])
+AC_CHECK_TYPES([atomic_uintmax_t],  [], [AC_MSG_ERROR([missing required data type])], [#include <stdatomic.h>])
 
 # Symbol checks
 AC_CHECK_DECLS([environ])
@@ -164,14 +167,10 @@ AC_CHECK_LIB([dl],   [dlclose],     [], [AC_MSG_ERROR([missing required library 
 AC_CHECK_LIB([dl],   [dlerror],     [], [AC_MSG_ERROR([missing required library -ldl])])
 AC_CHECK_LIB([dl],   [dlopen],      [], [AC_MSG_ERROR([missing required library -ldl])])
 AC_CHECK_LIB([dl],   [dlsym],       [], [AC_MSG_ERROR([missing required library -ldl])])
-
-
-AC_CHECK_LIB([users],[noobs],,[AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
-
+AC_CHECK_LIB([users],[noobs],       [], [AC_MSG_NOTICE([No noobs found, disabling hand_holding().])])
 
 # GNU Libtool Support
-LT_INIT(dlopen disable-fast-install win32-dll)
-
+LT_INIT(dlopen disable-fast-install)
 
 # initiates bindle tools macros
 AC_BINDLE(contrib/bindletools)
@@ -181,6 +180,7 @@ AC_BINDLE_GIT_PACKAGE_VERSION([contrib/bindletools/build-aux/git-package-version
 
 # custom configure options
 AC_BINDLE_ENABLE_WARNINGS([-Wno-unknown-pragmas], [])
+AC_BINDLE_LIBBINDLE([dmstools_])
 AC_BINDLE_WITH_PERL
 AC_DMS_REGEX
 AC_DMS_TOOL_ALL
