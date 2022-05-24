@@ -341,7 +341,7 @@ my_parse_url(
       return(1);
    };
 
-   if (!(opts & MY_OPT_NORESOLVE))
+   if ( (!(opts & MY_OPT_NORESOLVE)) && ((budp->bud_host)) )
    {
       family = ((opts & MY_OPT_IPV4)) ? AF_INET  : 0;
       family = ((opts & MY_OPT_IPV6)) ? AF_INET6 : family;
