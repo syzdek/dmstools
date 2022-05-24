@@ -251,6 +251,9 @@ main(
          printf("  --query                   print URL query\n");
          printf("  --fragment                print URL fragment\n");
          printf("  --address                 print URL address\n");
+         printf("SYNTAX:\n");
+         printf("  URL       = scheme \":\" [\"//\" authority] path [\"?\" query] [\"#\" fragment]\n");
+         printf("  authority = [userinfo \"@\"] host [\":\" port]\n");
          printf("\n");
          return(0);
 
