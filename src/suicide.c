@@ -312,6 +312,7 @@ int main(int argc, char * argv[])
    p           = getpid();
    pp          = getppid();
    sig         = 0;
+   data        = NULL;
    verbose     = 0;
    opt_index   = 0;
    attempt_catch = 0;
