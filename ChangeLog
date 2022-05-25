@@ -1,9 +1,10 @@
 
 DMS Tools and Utilities
-Copyright (C) 2008, 2009, 2010, 2021 David M. Syzdek <david@syzdek.net>
+Copyright (C) 2008, 2009, 2010, 2021, 2022 David M. Syzdek <david@syzdek.net>
 
 1.7
-        - urldesc: adding utility (syzdek)
+	- urldesc: adding utility (syzdek)
+	- urlencoding: adding utility (syzdek)
 
 1.6	2021/10/17 (syzdek)
 	- numconvert: fixing output for char (syzdek)

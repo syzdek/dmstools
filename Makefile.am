@@ -86,7 +86,9 @@ EXTRA					= src/bindump \
 					  src/posixregex \
 					  src/recurse \
 					  src/suicide \
-					  src/typedef-info
+					  src/typedef-info \
+					  src/urldesc \
+					  src/urlencoding
 
 
 # lists
@@ -254,6 +256,16 @@ src_urldesc_LDADD			= lib/libbindle.a
 src_urldesc_SOURCES			= $(noinst_HEADERS) src/urldesc.c
 if WANT_URLDESC
    bin_PROGRAMS				+= src/urldesc
+endif
+
+
+# macros for src/urlencoding
+src_urlencoding_DEPENDENCIES		= $(lib_LTLIBRARIES) lib/libbindle.a Makefile
+src_urlencoding_CPPFLAGS		= -DPROGRAM_NAME="\"urlencoding\"" $(AM_CPPFLAGS)
+src_urlencoding_LDADD			= lib/libbindle.a
+src_urlencoding_SOURCES			= $(noinst_HEADERS) src/urlencoding.c
+if WANT_URLENCODING
+   bin_PROGRAMS				+= src/urlencoding
 endif
 
 

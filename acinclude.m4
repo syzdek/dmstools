@@ -456,4 +456,29 @@ AC_DEFUN([AC_DMS_TOOL_URLDESC],[dnl
 ])dnl
 
 
+# AC_DMS_TOOL_URLENCODING
+# ______________________________________________________________________________
+AC_DEFUN([AC_DMS_TOOL_URLENCODING],[dnl
+
+   AC_REQUIRE([AC_DMS_TOOL_ALL])
+
+   enableval=""
+   AC_ARG_ENABLE(
+      urlencoding,
+      [AS_HELP_STRING([--enable-urlencoding], [enable building urlencoding])],
+      [ EURLENCODING=$enableval ],
+      [ EURLENCODING=$enableval ]
+   )
+
+   if test "x${EURLENCODING}" == "x";then
+      EURLENCODING="${EALL}"
+   fi
+   if test "x${EURLENCODING}" == "xauto";then
+      EURLENCODING=yes
+   fi
+
+   AM_CONDITIONAL([WANT_URLENCODING],   [test "$EURLENCODING" = "yes"])
+])dnl
+
+
 # end of M4 file
