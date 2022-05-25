@@ -71,7 +71,6 @@ noinst_HEADERS				= src/common.h \
 					  include/bindle_prefix.h
 noinst_LTLIBRARIES			=
 noinst_LIBRARIES			= lib/libbindle.a
-noinst_PROGRAMS				=
 man_MANS				=
 EXTRA_PROGRAMS				=
 EXTRA					= src/bindump \
