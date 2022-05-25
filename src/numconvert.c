@@ -160,6 +160,7 @@ int main(int argc, char * argv[])
    opt    = MY_OPT_SPACE | MY_OPT_LIMIT;
    base   = 0;
    bases  = 0;
+   num    = 0;
    order  = NULL;
 
    while((c = getopt_long(argc, argv, short_opt, long_opt, &opt_index)) != -1)
