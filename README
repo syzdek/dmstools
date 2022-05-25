@@ -57,6 +57,10 @@ The following utilities and tools are included in this package:
 
 	typedef-info - display information about C/C++ data types.
 
+	urldesc - parse URL into components
+
+	urlencoding - encode/decode characters for URL
+
 
 Installing From Source
 ======================
