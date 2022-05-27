@@ -345,7 +345,7 @@ my_parse_url(
    {
       family = ((opts & MY_OPT_IPV4)) ? AF_INET  : 0;
       family = ((opts & MY_OPT_IPV6)) ? AF_INET6 : family;
-      if ((rc = dmstools_urldesc_resolve(budp, family)) != 0)
+      if ((rc = dmstools_urldesc_resolve(budp, family, 0)) != 0)
       {
          my_error(opts, "dmstools_urldesc_resolve(): %s", gai_strerror(rc));
          dmstools_urldesc_free(budp);
