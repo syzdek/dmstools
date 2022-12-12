@@ -1276,8 +1276,6 @@ int main(int argc, char * argv[])
 
          case 'a':
          cnf->opts |=  NETCALC_ALL_NETWORKS;
-         cnf->opts &= ~NETCALC_LIST;
-         cnf->opts &= ~NETCALC_VERBOSE;
          break;
 
          case 'c':
@@ -1310,9 +1308,7 @@ int main(int argc, char * argv[])
          break;
 
          case 'l':
-         cnf->opts &= ~NETCALC_ALL_NETWORKS;
          cnf->opts |=  NETCALC_LIST;
-         cnf->opts &= ~NETCALC_VERBOSE;
          break;
 
          case 'm':
@@ -1325,8 +1321,6 @@ int main(int argc, char * argv[])
          return(0);
 
          case 'v':
-         cnf->opts &= ~NETCALC_ALL_NETWORKS;
-         cnf->opts &= ~NETCALC_LIST;
          cnf->opts |=  NETCALC_VERBOSE;
          break;
 
@@ -1347,6 +1341,29 @@ int main(int argc, char * argv[])
          netcalc_free(cnf);
          return(1);
       };
+   };
+
+   // check for conflicting options
+   if ( ((cnf->opts & NETCALC_ALL_NETWORKS)) && ((cnf->opts & NETCALC_LIST)) )
+   {
+      fprintf(stderr, "%s: incompatible options `-a' and `-l'\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+      netcalc_free(cnf);
+      return(1);
+   };
+   if ( ((cnf->opts & NETCALC_ALL_NETWORKS)) && ((cnf->opts & NETCALC_VERBOSE)) )
+   {
+      fprintf(stderr, "%s: incompatible options `-a' and `-v'\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+      netcalc_free(cnf);
+      return(1);
+   };
+   if ( ((cnf->opts & NETCALC_LIST)) && ((cnf->opts & NETCALC_VERBOSE)) )
+   {
+      fprintf(stderr, "%s: incompatible options `-l' and `-v'\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+      netcalc_free(cnf);
+      return(1);
    };
 
    if (optind >= argc)
