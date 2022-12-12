@@ -1211,6 +1211,7 @@ void netcalc_results_verbose( netcalc * cnf )
 void netcalc_usage(void)
 {
    printf("Usage: %s [OPTIONS] address1 address2 ... addressN\n", PROGRAM_NAME);
+   printf("  -6                     map IPv4 addresses to IPv6 addresses\n");
    printf("  -a                     display all inclusive networks (incompatible with -v and -l)\n");
    printf("  -c cidr                requested network size in CIDR notation\n");
    printf("  -f                     print full IPv6 notation (do not compress zeros)\n");
