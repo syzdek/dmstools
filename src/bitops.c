@@ -128,11 +128,6 @@ main(
 
 
 static const char *
-my_notation(
-         char *                        dst );
-
-
-static const char *
 my_uint2str(
          char *                        dst,
          uint32_t                      num );
@@ -266,35 +261,6 @@ main(
    printf("Unset Bit:   %s & (~%s) == %s\n", my_uint2str(buff1, var1), my_uint2str(buff2, var2), my_uint2str(buff3, (var1 & (~var2))));
    
    return(0);
-}
-
-
-/// prints notation type
-/// @param[in] dst   output buffer
-const char *
-my_notation(
-         char *                        dst )
-{
-   dst[0] = '\0';
-   switch(my_opts)
-   {
-      case MY_OPT_BIN:
-         snprintf(dst, STR_LEN, "binary");
-         return(dst);
-      case MY_OPT_DEC:
-         snprintf(dst, STR_LEN, "decimal");
-         return(dst);
-      case MY_OPT_HEX:
-         snprintf(dst, STR_LEN, "hexadecimal");
-         return(dst);
-      case MY_OPT_OCT:
-         snprintf(dst, STR_LEN, "octal");
-         return(dst);
-      default:
-         snprintf(dst, STR_LEN, "decimal");
-         break;
-   };
-   return(dst);
 }
 
 
