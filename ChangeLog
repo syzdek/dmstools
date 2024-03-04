@@ -2,6 +2,9 @@
 DMS Tools and Utilities
 Copyright (C) 2008, 2009, 2010, 2021, 2022 David M. Syzdek <david@syzdek.net>
 
+1.8
+	- all: fixing prototypes (syzdek)
+
 1.7	2022/05/14 (syzdek)
 	- urldesc: adding utility (syzdek)
 	- urlencoding: adding utility (syzdek)
