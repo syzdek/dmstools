@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (c) 2008 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/common.h common includes and definitions
@@ -65,7 +62,7 @@
 //  Headers  //
 //           //
 ///////////////
-
+// MARK: - Headers
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -77,6 +74,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PACKAGE_BUGREPORT
 #define PACKAGE_BUGREPORT "david@syzdek.net"
