@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2008 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/codetagger.c Utility for making bulk changes to tqgged text files.
@@ -56,6 +53,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_COMMON_H
 #include "common.h"
@@ -81,6 +79,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "codetagger"
@@ -121,6 +120,7 @@
 //  Datatypes  //
 //             //
 /////////////////
+// MARK: - Datatypes
 
 /// tag data
 typedef struct codetagger_data CodeTaggerData;
@@ -152,81 +152,156 @@ struct codetagger_config
 };
 
 
+//////////////
+//          //
+//  Macros  //
+//          //
+//////////////
+// MARK: - Macros
+
+#define codetagger_debug(cnf)           codetagger_debug_trace(cnf, __func__, NULL)
+#define codetagger_debug_ext(cnf, ...)  codetagger_debug_trace(cnf, __func__, __VA_ARGS__)
+
+
 //////////////////
 //              //
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-// resizes file buffers
-int codetagger_buffer_resize PARAMS((CodeTagger * cnf, size_t size,
-   const char * error_prefix));
+static int
+codetagger_buffer_resize(
+         CodeTagger *                  cnf,
+         size_t                        size,
+         const char *                  error_prefix );
 
-// appends source data to buffer of modified file
-int codetagger_buffer_write PARAMS((CodeTagger * cnf, const char * src,
-   size_t len, const char * filename));
 
-// prints debug messages
-#define codetagger_debug(cnf)           codetagger_debug_trace(cnf, __func__, NULL)
-#define codetagger_debug_ext(cnf, ...)  codetagger_debug_trace(cnf, __func__, __VA_ARGS__)
-void codetagger_debug_trace PARAMS((CodeTagger * cnf, const char * func,
-   const char * fmt, ...));
+static int
+codetagger_buffer_write(
+         CodeTagger *                  cnf,
+         const char *                  src,
+         size_t                        len,
+         const char *                  filename );
 
-// prints error message
-void codetagger_error PARAMS((CodeTagger * cnf, const char * fmt, ...));
 
-// creates a regex safe string (escapes chracters meaning full in regex)
-int codetagger_escape_string PARAMS((CodeTagger * cnf, char * buff,
-   const char * str, size_t len));
+static void
+codetagger_debug_trace(
+         CodeTagger *                  cnf,
+         const char *                  func,
+         const char *                  fmt,
+         ... );
 
-// frees memory used to hold file contents
-void codetagger_free_filedata PARAMS((CodeTagger * cnf, char ** lines));
 
-// frees memory used store tag
-void codetagger_free_tag PARAMS((CodeTagger * cnf, CodeTaggerData * tag));
+static void
+codetagger_error(
+         CodeTagger *                  cnf,
+         const char *                  fmt,
+         ... );
 
-// frees memory used store an array of tags
-void codetagger_free_taglist PARAMS((CodeTagger * cnf, CodeTaggerData ** taglist));
 
-// reads file into an array
-char ** codetagger_get_file_contents PARAMS((CodeTagger * cnf, const char * file));
+static int
+codetagger_escape_string(
+         CodeTagger *                  cnf,
+         char *                        buff,
+         const char *                  str,
+         size_t                        len );
 
-// generate array of tags from file
-int codetagger_parse_tag_file PARAMS((CodeTagger * cnf));
 
-// prepares generic regular expressions
-int codetagger_prepare_regex PARAMS((CodeTagger * cnf));
+static void
+codetagger_free_filedata(
+         CodeTagger *                  cnf,
+         char **                       lines );
 
-// retrieves a specific tag from the tag list
-CodeTaggerData * codetagger_retrieve_tag_data PARAMS((CodeTagger * cnf,
-   const char * tagName, const char * fileName, int lineNumber));
 
-// recursively scans directory for files to update
-int codetagger_scan_directory PARAMS((CodeTagger * cnf, const char * origin));
+static void
+codetagger_free_tag(
+         CodeTagger *                  cnf,
+         CodeTaggerData *              tag );
 
-// scan file to determine wether to attempt and update
-int codetagger_scan_file PARAMS((CodeTagger * cnf, const char * file,
-   size_t * countp, char *** queuep, size_t * sizep));
 
-// updates original file by inserting/expanding tags
-int codetagger_update_file PARAMS((CodeTagger * cnf, const char * filename,
-   struct stat * sbp));
+static void
+codetagger_free_taglist(
+         CodeTagger *                  cnf,
+         CodeTaggerData **             taglist );
 
-// displays usage
-void codetagger_usage PARAMS((void));
 
-// prints verbose messages
-void codetagger_verbose PARAMS((CodeTagger * cnf, const char * fmt, ...));
+static char **
+codetagger_get_file_contents(
+         CodeTagger *                  cnf,
+         const char *                  file );
 
-// displays version information
-void codetagger_version PARAMS((void));
 
-// extracts tag data from tag file
-int codetagger_process_tag PARAMS((CodeTagger * cnf, char * name, char ** data,
-   size_t len, int pos));
+static int
+codetagger_parse_tag_file(
+         CodeTagger *                  cnf );
 
-// main statement
-int main PARAMS((int argc, char * argv[]));
+
+static int
+codetagger_prepare_regex(
+         CodeTagger *                  cnf );
+
+
+static CodeTaggerData *
+codetagger_retrieve_tag_data(
+         CodeTagger *                  cnf,
+         const char *                  tagName,
+         const char *                  fileName,
+         int                           lineNumber );
+
+
+static int
+codetagger_scan_directory(
+         CodeTagger *                  cnf,
+         const char *                  origin );
+
+
+static int
+codetagger_scan_file(
+         CodeTagger *                  cnf,
+         const char *                  file,
+         size_t *                      countp,
+         char ***                      queuep,
+         size_t *                      sizep );
+
+
+static int
+codetagger_update_file(
+         CodeTagger *                  cnf,
+         const char *                  filename,
+         struct stat *                 sbp );
+
+
+static void
+codetagger_usage(
+         void );
+
+
+static void
+codetagger_verbose(
+         CodeTagger *                  cnf,
+         const char *                  fmt,
+         ... );
+
+
+static void
+codetagger_version(
+         void );
+
+
+static int
+codetagger_process_tag(
+         CodeTagger *                  cnf,
+         char *                        name,
+         char **                       data,
+         size_t                        len,
+         int                           pos );
+
+
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
 
 /////////////////
@@ -234,12 +309,16 @@ int main PARAMS((int argc, char * argv[]));
 //  Functions  //
 //             //
 /////////////////
+// MARK: - Functions
 
 /// resizes file buffers
 /// @param[in]  cnf   pointer to config data structure
 /// @param[in]  size   requested buffer size
-int codetagger_buffer_resize(CodeTagger * cnf, size_t size,
-   const char * error_prefix)
+int
+codetagger_buffer_resize(
+         CodeTagger *                  cnf,
+         size_t                        size,
+         const char *                  error_prefix )
 {
    void * ptr;
 
@@ -288,8 +367,12 @@ int codetagger_buffer_resize(CodeTagger * cnf, size_t size,
 /// @param[in]  src       source buffer to copy
 /// @param[in]  len       length of data
 /// @param[in]  filename  filename being processed
-int codetagger_buffer_write(CodeTagger * cnf, const char * src, size_t len,
-   const char * filename)
+int
+codetagger_buffer_write(
+         CodeTagger *                  cnf,
+         const char *                  src,
+         size_t                        len,
+         const char *                  filename )
 {
    int err;
 
@@ -310,7 +393,12 @@ int codetagger_buffer_write(CodeTagger * cnf, const char * src, size_t len,
 /// @param[in]  func  name of calling function
 /// @param[in]  fmt   the format string of the message
 /// @param[in]  ...   the format arguments of the message
-void codetagger_debug_trace(CodeTagger * cnf, const char * func, const char * fmt, ...)
+void
+codetagger_debug_trace(
+         CodeTagger *                  cnf,
+         const char *                  func,
+         const char *                  fmt,
+         ... )
 {
    char    buff[1024];
    va_list ap;
@@ -340,7 +428,11 @@ void codetagger_debug_trace(CodeTagger * cnf, const char * func, const char * fm
 /// @param[in]  cnf    pointer to config data structure
 /// @param[in]  fmt    the format string of the message
 /// @param[in]  ...    the format arguments of the message
-void codetagger_error(CodeTagger * cnf, const char * fmt, ...)
+void
+codetagger_error(
+         CodeTagger *                  cnf,
+         const char *                  fmt,
+         ... )
 {
    char    buff[1024];
    va_list ap;
@@ -369,8 +461,12 @@ void codetagger_error(CodeTagger * cnf, const char * fmt, ...)
 /// @param[in]  buff  buffer into which escape the string
 /// @param[in]  str   string to escape and concatenate from
 /// @param[in]  len   size of buffer
-int codetagger_escape_string(CodeTagger * cnf, char * buff, const char * str,
-   size_t len)
+int
+codetagger_escape_string(
+         CodeTagger *                  cnf,
+         char *                        buff,
+         const char *                  str,
+         size_t                        len )
 {
    size_t strpos;
    size_t buffpos;
@@ -395,7 +491,10 @@ int codetagger_escape_string(CodeTagger * cnf, char * buff, const char * str,
 /// frees memory used to hold file contents
 /// @param[in]  cnf    pointer to config data structure
 /// @param[in]  lines  array of lines to free
-void codetagger_free_filedata(CodeTagger * cnf, char ** lines)
+void
+codetagger_free_filedata(
+         CodeTagger *                  cnf,
+         char **                       lines )
 {
    if (!(lines))
       return;
@@ -415,7 +514,10 @@ void codetagger_free_filedata(CodeTagger * cnf, char ** lines)
 /// frees memory used store tag
 /// @param[in]  cnf  pointer to config data structure
 /// @param[in]  tag  tag data structure to free
-void codetagger_free_tag(CodeTagger * cnf, CodeTaggerData * tag)
+void
+codetagger_free_tag(
+         CodeTagger *                  cnf,
+         CodeTaggerData *              tag )
 {
    int i;
 
@@ -444,7 +546,10 @@ void codetagger_free_tag(CodeTagger * cnf, CodeTaggerData * tag)
 /// frees memory used store an array of tags
 /// @param[in]  cnf      pointer to config data structure
 /// @param[in]  taglist  array of tags to free
-void codetagger_free_taglist(CodeTagger * cnf, CodeTaggerData ** taglist)
+void
+codetagger_free_taglist(
+         CodeTagger *                  cnf,
+         CodeTaggerData **             taglist )
 {
    int i;
    codetagger_debug(cnf);
@@ -460,7 +565,10 @@ void codetagger_free_taglist(CodeTagger * cnf, CodeTaggerData ** taglist)
 /// reads file into an array
 /// @param[in]  cnf   pointer to config data structure
 /// @param[in]  file  file name of file to process
-char ** codetagger_get_file_contents(CodeTagger * cnf, const char * file)
+char **
+codetagger_get_file_contents(
+         CodeTagger *                  cnf,
+         const char *                  file )
 {
    int            i;
    int            fd;
@@ -537,7 +645,9 @@ char ** codetagger_get_file_contents(CodeTagger * cnf, const char * file)
 
 /// generate array of tags from file
 /// @param[in]  cnf   pointer to config data structure
-int codetagger_parse_tag_file(CodeTagger * cnf)
+int
+codetagger_parse_tag_file(
+         CodeTagger *                  cnf )
 {
    int           i;
    int           err;
@@ -600,7 +710,9 @@ int codetagger_parse_tag_file(CodeTagger * cnf)
 
 /// prepares generic regular expressions
 /// @param[in]  cnf   pointer to config data structure
-int codetagger_prepare_regex(CodeTagger * cnf)
+int
+codetagger_prepare_regex(
+         CodeTagger *                  cnf )
 {
    int           err;
    char          errmsg[CODETAGGER_STR_LEN];
@@ -632,8 +744,12 @@ int codetagger_prepare_regex(CodeTagger * cnf)
 /// @param[in]  tagName     name of tag to find
 /// @param[in]  fileName    file currently being updated
 /// @param[in]  lineNumber  line number of the current file being updated
-CodeTaggerData * codetagger_retrieve_tag_data(CodeTagger * cnf, const char * tagName,
-   const char * fileName, int lineNumber)
+CodeTaggerData *
+codetagger_retrieve_tag_data(
+         CodeTagger *                  cnf,
+         const char *                  tagName,
+         const char *                  fileName,
+         int                           lineNumber )
 {
    int i;
 
@@ -661,7 +777,10 @@ CodeTaggerData * codetagger_retrieve_tag_data(CodeTagger * cnf, const char * tag
 /// recursively scans directory for files to update
 /// @param[in]  cnf      pointer to config data structure
 /// @param[in]  origin   starting point of the directory recursion
-int codetagger_scan_directory(CodeTagger * cnf, const char * origin)
+int
+codetagger_scan_directory(
+         CodeTagger *                  cnf,
+         const char *                  origin )
 {
    int             err;
    DIR           * d;
@@ -724,20 +843,22 @@ int codetagger_scan_directory(CodeTagger * cnf, const char * origin)
                switch (codetagger_scan_file(cnf, file, &count, &queue, &size))
                {
                   case -1:
-                     free(file);
+                  free(file);
+                  closedir(d);
+                  return(1);
+
+                  case 0:
+                  free(file);
+                  break;
+
+                  default:
+                  free(file);
+                  if (!(cnf->opts & CODETAGGER_OPT_CONTINUE))
+                  {
                      closedir(d);
                      return(1);
-                  case 0:
-                     free(file);
-                     break;
-                  default:
-                     free(file);
-                     if (!(cnf->opts & CODETAGGER_OPT_CONTINUE))
-                     {
-                        closedir(d);
-                        return(1);
-                     };
-                     break;
+                  };
+                  break;
                };
             };
          }
@@ -746,20 +867,22 @@ int codetagger_scan_directory(CodeTagger * cnf, const char * origin)
             switch (codetagger_scan_file(cnf, file, &count, &queue, &size))
             {
                case -1:
-                  free(file);
+               free(file);
+               closedir(d);
+               return(1);
+
+               case 0:
+               free(file);
+               break;
+
+               default:
+               free(file);
+               if (!(cnf->opts & CODETAGGER_OPT_CONTINUE))
+               {
                   closedir(d);
                   return(1);
-               case 0:
-                  free(file);
-                  break;
-               default:
-                  free(file);
-                  if (!(cnf->opts & CODETAGGER_OPT_CONTINUE))
-                  {
-                     closedir(d);
-                     return(1);
-                  };
-                  break;
+               };
+               break;
             };
          };
       };
@@ -782,8 +905,13 @@ int codetagger_scan_directory(CodeTagger * cnf, const char * origin)
 /// @param[in]  countp   pointer to number of directories waiting to be scanned
 /// @param[in]  queuep   pointer to array of directories waiting to be scanned
 /// @param[in]  sizep    pointer to size of array of directories waiting to be scanned
-int codetagger_scan_file(CodeTagger * cnf, const char * file,
-   size_t * countp, char *** queuep, size_t * sizep)
+int
+codetagger_scan_file(
+         CodeTagger *                  cnf,
+         const char *                  file,
+         size_t *                      countp,
+         char ***                      queuep,
+         size_t *                      sizep )
 {
    int             err;
    void          * ptr;
@@ -802,41 +930,39 @@ int codetagger_scan_file(CodeTagger * cnf, const char * file,
    switch(sb.st_mode & (S_IFDIR|S_IFREG|S_IFLNK))
    {
       case S_IFDIR:
-         // adjust size of array
-         if (*countp >= *sizep)
-         {
-            *sizep += 20;
-            if (!(ptr = realloc(*queuep, sizeof(char *) * (*sizep))))
-            {
-               fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
-               return(-1);
-            };
-            *queuep = ptr;
-         };
-
-         // copy path name
-         if (!(ptr = strdup(file)))
+      // adjust size of array
+      if (*countp >= *sizep)
+      {
+         *sizep += 20;
+         if (!(ptr = realloc(*queuep, sizeof(char *) * (*sizep))))
          {
             fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
             return(-1);
          };
-
-         // insert path name at head of array
-         for(u = (*countp); u > 0; u--)
-            (*queuep)[u] = (*queuep)[u-1];
-         (*queuep)[0] = ptr;
-         (*countp)++;
-         break;
+         *queuep = ptr;
+      };
+      // copy path name
+      if (!(ptr = strdup(file)))
+      {
+         fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+         return(-1);
+      };
+      // insert path name at head of array
+      for(u = (*countp); u > 0; u--)
+         (*queuep)[u] = (*queuep)[u-1];
+      (*queuep)[0] = ptr;
+      (*countp)++;
+      break;
 
       case S_IFLNK:  // ignore symbolic links
-         break;
+      break;
 
       case S_IFREG:
-         return(codetagger_update_file(cnf, file, &sb));
+      return(codetagger_update_file(cnf, file, &sb));
 
       default:
-         codetagger_error(cnf, "%s: unknown file type\n", file);
-         return(1);
+      codetagger_error(cnf, "%s: unknown file type\n", file);
+      return(1);
    };
 
    return(0);
@@ -846,8 +972,11 @@ int codetagger_scan_file(CodeTagger * cnf, const char * file,
 /// updates original file by inserting/expanding tags
 /// @param[in]  cnf       pointer to config data structure
 /// @param[in]  filename  name of file to process
-int codetagger_update_file(CodeTagger * cnf, const char * filename,
-   struct stat * sbp)
+int
+codetagger_update_file(
+         CodeTagger *                  cnf,
+         const char *                  filename,
+         struct stat *                 sbp )
 {
    int          fd;
    int          err;
@@ -1007,7 +1136,9 @@ int codetagger_update_file(CodeTagger * cnf, const char * filename,
 
 
 /// displays usage
-void codetagger_usage(void)
+void
+codetagger_usage(
+         void )
 {
    printf("Usage: %s [OPTIONS] files\n", PROGRAM_NAME);
    printf("  -a                        include hidden files\n");
@@ -1034,7 +1165,11 @@ void codetagger_usage(void)
 /// @param[in] cnf   pointer to config data structure
 /// @param[in] fmt   the format string of the message
 /// @param[in] ...   the format arguments of the message
-void codetagger_verbose(CodeTagger * cnf, const char * fmt, ...)
+void
+codetagger_verbose(
+         CodeTagger *                  cnf,
+         const char *                  fmt,
+         ... )
 {
    va_list arg;
 
@@ -1052,7 +1187,9 @@ void codetagger_verbose(CodeTagger * cnf, const char * fmt, ...)
 
 
 /// displays version information
-void codetagger_version(void)
+void
+codetagger_version(
+         void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
@@ -1066,11 +1203,17 @@ void codetagger_version(void)
 
 /// processes tag from tag file
 /// @param[in]  cnf       pointer to config data structure
-/// @param[in]  tagName   name of tag to process
+/// @param[in]  name      name of tag to process
 /// @param[in]  data      data from which to extract the tag
 /// @param[in]  len       length of data array
 /// @param[in]  pos       current position within the data
-int codetagger_process_tag(CodeTagger * cnf, char * tagName, char ** data, size_t len, int pos)
+int
+codetagger_process_tag(
+         CodeTagger *                  cnf,
+         char *                        name,
+         char **                       data,
+         size_t                        len,
+         int                           pos )
 {
    /* declares local vars */
    int           i;
@@ -1086,7 +1229,7 @@ int codetagger_process_tag(CodeTagger * cnf, char * tagName, char ** data, size_
 
    codetagger_debug(cnf);
 
-   if (!(tagName))
+   if (!(name))
       return(-1);
    if (!(data))
       return(-1);
@@ -1122,7 +1265,7 @@ int codetagger_process_tag(CodeTagger * cnf, char * tagName, char ** data, size_
    cnf->tagList[tagCount]   = NULL;
 
    // saves tag name
-   if (!(tag->name = strdup(tagName)))
+   if (!(tag->name = strdup(name)))
    {
       fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
       codetagger_free_tag(cnf, tag);
@@ -1132,7 +1275,7 @@ int codetagger_process_tag(CodeTagger * cnf, char * tagName, char ** data, size_
    // compiles regular expression
    codetagger_escape_string(cnf, regstr, cnf->leftTagString,  CODETAGGER_STR_LEN);
    strncat(regstr,       "(",                 CODETAGGER_STR_LEN);
-   strncat(regstr,       tagName,             CODETAGGER_STR_LEN);
+   strncat(regstr,       name,                CODETAGGER_STR_LEN);
    strncat(regstr,       "END",               CODETAGGER_STR_LEN);
    strncat(regstr,       ")",                 CODETAGGER_STR_LEN);
    codetagger_escape_string(cnf, regstr, cnf->rightTagString, CODETAGGER_STR_LEN);
@@ -1186,7 +1329,10 @@ int codetagger_process_tag(CodeTagger * cnf, char * tagName, char ** data, size_
 /// main statement
 /// @param[in]  argc  number of arguments passed to program
 /// @param[in]  argv  array of arguments passed to program
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int           c;
    int           i;
@@ -1224,58 +1370,74 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
-            break;
+         break;
+
          case 'a':
-            cnf.opts |= CODETAGGER_OPT_HIDDEN;
-            break;
+         cnf.opts |= CODETAGGER_OPT_HIDDEN;
+         break;
+
          case 'c':
-            cnf.opts |= CODETAGGER_OPT_CONTINUE;
-            break;
+         cnf.opts |= CODETAGGER_OPT_CONTINUE;
+         break;
+
          case 'd':
-            cnf.opts |= CODETAGGER_OPT_DEBUG;
-            break;
+         cnf.opts |= CODETAGGER_OPT_DEBUG;
+         break;
+
          case 'f':
-            cnf.opts |= CODETAGGER_OPT_FORCE;
-            break;
+         cnf.opts |= CODETAGGER_OPT_FORCE;
+         break;
+
          case 'h':
-            codetagger_usage();
-            return(0);
+         codetagger_usage();
+         return(0);
+
          case 'i':
-            cnf.tagFile = optarg;
-            break;
+         cnf.tagFile = optarg;
+         break;
+
          case 'L':
-            cnf.opts |= CODETAGGER_OPT_LINKS;
-            break;
+         cnf.opts |= CODETAGGER_OPT_LINKS;
+         break;
+
          case 'l':
-            cnf.leftTagString = optarg;
-            break;
+         cnf.leftTagString = optarg;
+         break;
+
          case 'q':
-            cnf.opts |= CODETAGGER_OPT_QUIET;
-            cnf.opts &= cnf.opts & (~CODETAGGER_OPT_VERBOSE);
-            break;
+         cnf.opts |= CODETAGGER_OPT_QUIET;
+         cnf.opts &= cnf.opts & (~CODETAGGER_OPT_VERBOSE);
+         break;
+
          case 'R':
-            cnf.opts |= CODETAGGER_OPT_RECURSE;
-            break;
+         cnf.opts |= CODETAGGER_OPT_RECURSE;
+         break;
+
          case 'r':
-            cnf.rightTagString = optarg;
-            break;
+         cnf.rightTagString = optarg;
+         break;
+
          case 't':
-            cnf.opts |= CODETAGGER_OPT_TEST;
-            break;
+         cnf.opts |= CODETAGGER_OPT_TEST;
+         break;
+
          case 'V':
-            codetagger_version();
-            return(0);
+         codetagger_version();
+         return(0);
+
          case 'v':
-            cnf.opts |= CODETAGGER_OPT_VERBOSE;
-            cnf.opts &= cnf.opts & (~CODETAGGER_OPT_QUIET);
-            break;
+         cnf.opts |= CODETAGGER_OPT_VERBOSE;
+         cnf.opts &= cnf.opts & (~CODETAGGER_OPT_QUIET);
+         break;
+
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
       };
    };
 
@@ -1323,10 +1485,11 @@ int main(int argc, char * argv[])
       {
          case -1: return(1);
          case 0:  break;
+
          default:
-            if (!(cnf.opts & CODETAGGER_OPT_CONTINUE))
-               return(1);
-            break;
+         if (!(cnf.opts & CODETAGGER_OPT_CONTINUE))
+            return(1);
+         break;
       };
 
    codetagger_free_taglist(&cnf, cnf.tagList);
