@@ -357,7 +357,7 @@ int32_t my_make_littleendian(uint32_t data)
 
 
 /// displays usage information
-void my_usage()
+void my_usage(void)
 {
    printf("Usage: %s [options]\n", PROGRAM_NAME);
    printf("  -B bytes                  size of buffer to use\n");

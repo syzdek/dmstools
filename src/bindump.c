@@ -726,7 +726,7 @@ ssize_t my_read(BinDumpFile * file, size_t offset, size_t len, unsigned verbose)
 
 
 /// displays usage information
-void my_usage()
+void my_usage(void)
 {
    printf("Usage: %s [options] file\n", PROGRAM_NAME);
    printf("  -d                        print only differing data\n");

@@ -334,7 +334,6 @@ uint32_t my_strtouint(const char * str)
 
 
 /// prints number
-/// @param[in] opt   output options
 const char * my_spaces(char * dst)
 {
    dst[0] = '\0';
@@ -360,7 +359,7 @@ const char * my_spaces(char * dst)
 
 
 /// displays usage information
-void my_usage()
+void my_usage(void)
 {
    printf("Usage: %s [options] num1 num2\n", PROGRAM_NAME);
    printf("  -B                        display output in binary notation\n");

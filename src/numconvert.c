@@ -567,7 +567,7 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
 
 
 /// displays usage information
-void my_usage()
+void my_usage(void)
 {
    printf("Usage: %s num1 num2 ... numX\n", PROGRAM_NAME);
    printf("  -A                        enable ASCII output\n");

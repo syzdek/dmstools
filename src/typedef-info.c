@@ -697,7 +697,7 @@ void my_print_data(struct my_data * data)
 
 
 /// displays usage information
-void my_usage()
+void my_usage(void)
 {
    printf("Usage: %s [options] [typedef]\n", PROGRAM_NAME);
    printf("  -d                        sort by object definition\n");

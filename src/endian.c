@@ -187,7 +187,7 @@ int main(int argc, char * argv[])
 
 
 /// displays usage information
-void my_usage()
+void my_usage(void)
 {
    printf("Usage: %s\n", PROGRAM_NAME);
    printf("\n");
