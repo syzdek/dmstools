@@ -662,7 +662,7 @@ void mau_cmd_update_usage(void)
 }
 
 
-int mau_conv_eui2mac(mau_config * cnf, const maueui64_t eui, maueui64_t addr)
+int mau_conv_eui2mac(mau_config * cnf, const maueui64_t eui, mauaddr_t addr)
 {
    assert(cnf != NULL);
    addr[0] = (eui[0] ^ 0x02);
