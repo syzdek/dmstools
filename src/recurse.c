@@ -2,8 +2,7 @@
  *
  *  DMS Tools and Utilities
  *  Copyright (C) 2008 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -29,8 +28,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/recurse.c  simple recursive directory listing utility
@@ -57,6 +54,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_COMMON_H
 #include "common.h"
@@ -75,6 +73,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PACKAGE_BUGREPORT
 #define PACKAGE_BUGREPORT "david@syzdek.net"
@@ -103,21 +102,39 @@
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-int main(int argc, char * argv[]);
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
-void my_version(void);
 
-void my_usage(void);
+static void
+my_version( void );
 
-int my_work(const char * file, void * data);
 
-int recurse_directory(char * origin, int opts, void * data,
-   int (*func)(const char * file, int opts, void * data));
+static void
+my_usage( void );
 
-int recurse_file(const char * file, int opts, void * data,
-   int (*func)(const char * file, int opts, void * data), unsigned * countp,
-   char *** queuep, unsigned * sizep);
+
+static int
+recurse_directory(
+         char *                        origin,
+         int                           opts,
+         void *                        data,
+         int (*func)(const char * file, int opts, void * data) );
+
+
+static int
+recurse_file(
+         const char *                  file,
+         int                           opts,
+         void *                        data,
+         int (*func)(const char * file, int opts, void * data),
+         unsigned *                    countp,
+         char ***                      queuep,
+         unsigned *                    sizep );
 
 
 /////////////////
@@ -125,6 +142,7 @@ int recurse_file(const char * file, int opts, void * data,
 //  Functions  //
 //             //
 /////////////////
+// MARK: - Functions
 
 int main(int argc, char * argv[])
 {
@@ -155,41 +173,52 @@ int main(int argc, char * argv[])
       {
          case -1:       /* no more arguments */
          case 0:        /* long option toggles */
-            break;
+         break;
+
          case 'a':
-            opts |= MY_OPT_HIDDEN;
-            break;
+         opts |= MY_OPT_HIDDEN;
+         break;
+
          case 'c':
-            opts |= MY_OPT_CONTINUE;
-            break;
+         opts |= MY_OPT_CONTINUE;
+         break;
+
          case 'f':
-            opts |= MY_OPT_FORCE;
-            break;
+         opts |= MY_OPT_FORCE;
+         break;
+
          case 'h':
-            my_usage();
-            return(0);
+         my_usage();
+         return(0);
+
          case 'L':
-            opts |= MY_OPT_LINKS;
-            break;
+         opts |= MY_OPT_LINKS;
+         break;
+
          case 'q':
-            opts |= MY_OPT_QUIET;
-            break;
+         opts |= MY_OPT_QUIET;
+         break;
+
          case 'r':
-            opts |= MY_OPT_RECURSE;
-            break;
+         opts |= MY_OPT_RECURSE;
+         break;
+
          case 'v':
-            opts |= MY_OPT_VERBOSE;
-            break;
+         opts |= MY_OPT_VERBOSE;
+         break;
+
          case 'V':
-            my_version();
-            return(0);
+         my_version();
+         return(0);
+
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
       };
    };
 
@@ -205,17 +234,19 @@ int main(int argc, char * argv[])
       {
          case -1: return(1);
          case 0:  break;
+
          default:
-            if (!(opts & MY_OPT_CONTINUE))
-               return(1);
-            break;
+         if (!(opts & MY_OPT_CONTINUE))
+            return(1);
+         break;
       };
    return(0);
 }
 
 
 // displays usage
-void my_usage(void)
+void
+my_usage( void )
 {
    printf("Usage: %s [OPTIONS] file1 file2 ... fileN\n", PROGRAM_NAME);
    printf("  -a                        include entries whose names begin with a dot (.).\n");
@@ -236,7 +267,8 @@ void my_usage(void)
 
 
 /// displays version
-void my_version(void)
+void
+my_version( void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
@@ -250,8 +282,12 @@ void my_version(void)
 }
 
 
-int recurse_directory(char * origin, int opts, void * data,
-   int (*func)(const char * file, int opts, void * data))
+int
+recurse_directory(
+         char *                        origin,
+         int                           opts,
+         void *                        data,
+         int (*func)(const char * file, int opts, void * data) )
 {
    int             err;
    DIR           * d;
@@ -318,20 +354,22 @@ int recurse_directory(char * origin, int opts, void * data,
                switch (recurse_file(file, opts, data, func, &count, &queue, &size))
                {
                   case -1:
-                     free(file);
+                  free(file);
+                  closedir(d);
+                  return(1);
+
+                  case 0:
+                  free(file);
+                  break;
+
+                  default:
+                  free(file);
+                  if (!(opts & MY_OPT_CONTINUE))
+                  {
                      closedir(d);
                      return(1);
-                  case 0:
-                     free(file);
-                     break;
-                  default:
-                     free(file);
-                     if (!(opts & MY_OPT_CONTINUE))
-                     {
-                        closedir(d);
-                        return(1);
-                     };
-                     break;
+                  };
+                  break;
                };
             };
          }
@@ -340,20 +378,22 @@ int recurse_directory(char * origin, int opts, void * data,
             switch (recurse_file(file, opts, data, func, &count, &queue, &size))
             {
                case -1:
-                  free(file);
+               free(file);
+               closedir(d);
+               return(1);
+
+               case 0:
+               free(file);
+               break;
+
+               default:
+               free(file);
+               if (!(opts & MY_OPT_CONTINUE))
+               {
                   closedir(d);
                   return(1);
-               case 0:
-                  free(file);
-                  break;
-               default:
-                  free(file);
-                  if (!(opts & MY_OPT_CONTINUE))
-                  {
-                     closedir(d);
-                     return(1);
-                  };
-                  break;
+               };
+               break;
             };
          };
       };
@@ -370,9 +410,15 @@ int recurse_directory(char * origin, int opts, void * data,
 }
 
 
-int recurse_file(const char * file, int opts, void * data,
-   int (*func)(const char * file, int opts, void * data), unsigned * countp,
-   char *** queuep, unsigned * sizep)
+int
+recurse_file(
+         const char *                  file,
+         int                           opts,
+         void *                        data,
+         int (*func)(const char * file, int opts, void * data),
+         unsigned *                    countp,
+         char ***                      queuep,
+         unsigned *                    sizep )
 {
    int             err;
    void          * ptr;
@@ -392,47 +438,44 @@ int recurse_file(const char * file, int opts, void * data,
    switch(sb.st_mode & (S_IFDIR|S_IFREG|S_IFLNK))
    {
       case S_IFDIR:
-         // adjust size of array
-         if (*countp >= *sizep)
-         {
-            *sizep += 20;
-            if (!(ptr = realloc(*queuep, sizeof(char *) * (*sizep))))
-            {
-               fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
-               return(-1);
-            };
-            *queuep = ptr;
-         };
-
-         // copy path name
-         if (!(ptr = strdup(file)))
+      // adjust size of array
+      if (*countp >= *sizep)
+      {
+         *sizep += 20;
+         if (!(ptr = realloc(*queuep, sizeof(char *) * (*sizep))))
          {
             fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
             return(-1);
          };
-
-         // insert path name at head of array
-         for(u = (*countp); u > 0; u--)
-            (*queuep)[u] = (*queuep)[u-1];
-         (*queuep)[0] = ptr;
-         (*countp)++;
-         break;
+         *queuep = ptr;
+      };
+      // copy path name
+      if (!(ptr = strdup(file)))
+      {
+         fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
+         return(-1);
+      };
+      // insert path name at head of array
+      for(u = (*countp); u > 0; u--)
+         (*queuep)[u] = (*queuep)[u-1];
+      (*queuep)[0] = ptr;
+      (*countp)++;
+      break;
 
       case S_IFLNK:  // ignore symbolic links
-         break;
+      break;
 
       case S_IFREG:
-         if (opts & MY_OPT_VERBOSE)
-            printf("%s\n", file);
-         if (func)
-            return(func(file, opts, data));
-         break;
+      if (opts & MY_OPT_VERBOSE)
+         printf("%s\n", file);
+      if (func)
+         return(func(file, opts, data));
+      break;
 
       default:
-         if ( ((!(opts & MY_OPT_QUIET))&&(opts & MY_OPT_CONTINUE)) || (!(opts & MY_OPT_CONTINUE)) )
-            fprintf(stderr, "%s: %s: unknown file type\n", PROGRAM_NAME, file);
-         return(1);
-         break;
+      if ( ((!(opts & MY_OPT_QUIET))&&(opts & MY_OPT_CONTINUE)) || (!(opts & MY_OPT_CONTINUE)) )
+         fprintf(stderr, "%s: %s: unknown file type\n", PROGRAM_NAME, file);
+      return(1);
    };
 
    return(0);
