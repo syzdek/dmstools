@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2010 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/bindump.c simple utility for quick bitwise operations
@@ -56,6 +53,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -77,6 +75,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "bindump"
@@ -113,16 +112,11 @@
 //  Datatypes  //
 //             //
 /////////////////
+// MARK: - Datatypes
 
 /// contains the state information for a file.
 typedef struct bindump_file BinDumpFile;
 
-
-/////////////////
-//             //
-//  Structs    //
-//             //
-/////////////////
 
 /// contains the state information for a file.
 struct bindump_file
@@ -142,42 +136,78 @@ struct bindump_file
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-// main statement
-int main PARAMS((int argc, char * argv[]));
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
-// closes a file
-int my_close PARAMS((BinDumpFile * file, unsigned verbose));
 
-// preforms lseek on file
-int my_lseek PARAMS((BinDumpFile * file, size_t offset, unsigned verbose));
+static int
+my_close(
+         BinDumpFile *                 file,
+         unsigned                      verbose );
 
-// determines the max number of bytes to dislpay
-size_t my_max PARAMS((ssize_t code, size_t len));
 
-// opens a file
-int my_open PARAMS((BinDumpFile * file, unsigned verbose));
+int
+my_lseek(
+         BinDumpFile *                 file,
+         size_t                        offset,
+         unsigned                      verbose );
 
-// displays the diff between two files
-size_t my_print_diff PARAMS((BinDumpFile * file1, BinDumpFile * file2,
-   size_t offset, size_t len, unsigned opts));
 
-// displays one line 8 byte chunk of data
-size_t my_print_dump PARAMS((BinDumpFile * file, size_t offset, size_t len,
-   unsigned opts));
+static size_t my_max(
+         ssize_t                       code,
+         size_t                        len );
 
-// performs read upon file
-ssize_t my_read PARAMS((BinDumpFile * file, size_t offset, size_t len,
-   unsigned verbose));
 
-//displays usage information
-void my_usage PARAMS((void));
+static int
+my_open(
+         BinDumpFile *                 file,
+         unsigned                      verbose );
 
-// displays version information
-void my_version PARAMS((void));
 
-// displays data in binary notation
-char * my_byte2str PARAMS((signed data, char * buff, unsigned opts));
+static size_t
+my_print_diff(
+         BinDumpFile *                 file1,
+         BinDumpFile *                 file2,
+         size_t                        offset,
+         size_t                        len,
+         unsigned                      opts );
+
+
+static size_t
+my_print_dump(
+         BinDumpFile *                 file,
+         size_t                        offset,
+         size_t                        len,
+         unsigned                      opts );
+
+
+static ssize_t
+my_read(
+         BinDumpFile *                 file,
+         size_t                        offset,
+         size_t                        len,
+         unsigned                      verbose );
+
+
+static void
+my_usage(
+         void );
+
+
+static void
+my_version(
+         void );
+
+
+static char *
+my_byte2str(
+         signed                        data,
+         char *                        buff,
+         unsigned                      opts );
 
 
 /////////////////
@@ -185,11 +215,15 @@ char * my_byte2str PARAMS((signed data, char * buff, unsigned opts));
 //  Functions  //
 //             //
 /////////////////
+// MARK: - Functions
 
 /// main statement
 /// @param[in] argc   number of arguments
 /// @param[in] argv   array of arguments
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int         c;
    int         opt_index;
@@ -234,39 +268,49 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
-            break;
+         break;
+
          case 'd':
-            opts = opts & (~MY_OPT_ALL);
-            break;
+         opts = opts & (~MY_OPT_ALL);
+         break;
+
          case 'h':
-            my_usage();
-            return(0);
+         my_usage();
+         return(0);
+
          case 'l':
-            len = strtoul(optarg, NULL, 0);
-            break;
+         len = strtoul(optarg, NULL, 0);
+         break;
+
          case 'o':
-            offset = strtoul(optarg, NULL, 0);
-            offset_mod = (offset % 8);
-            break;
+         offset = strtoul(optarg, NULL, 0);
+         offset_mod = (offset % 8);
+         break;
+
          case 'r':
-            opts = opts | MY_OPT_REVERSEBIT;
-            break;
+         opts = opts | MY_OPT_REVERSEBIT;
+         break;
+
          case 'V':
-            my_version();
-            return(0);
+         my_version();
+         return(0);
+
          case 'v':
-            verbose++;
-            break;
+         verbose++;
+         break;
+
          case 'x':
-            opts = opts & (~MY_OPT_XTERM);
-            break;
+         opts = opts & (~MY_OPT_XTERM);
+         break;
+
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
       };
    };
 
@@ -274,19 +318,22 @@ int main(int argc, char * argv[])
    switch(argc - optind)
    {
       case 2:
-         file2.filename = argv[optind+1];
-         file1.filename = argv[optind+0];
-         break;
+      file2.filename = argv[optind+1];
+      file1.filename = argv[optind+0];
+      break;
+
       case 1:
-         file1.filename = argv[optind+0];
-         break;
+      file1.filename = argv[optind+0];
+      break;
+
       case 0:
-         file1.filename = "-";
-         break;
+      file1.filename = "-";
+      break;
+
       default:
-         fprintf(stderr, "%s: missing required argument\n", PROGRAM_NAME);
-         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-         return(1);
+      fprintf(stderr, "%s: missing required argument\n", PROGRAM_NAME);
+      fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+      return(1);
    };
    if ((file1.filename) && (file2.filename))
       if (!(strcmp(file1.filename, file2.filename)))
@@ -391,7 +438,10 @@ int main(int argc, char * argv[])
 /// closes a file
 /// @param[in]  file       file to use for operations
 /// @param[in]  verbose    verbose level of messages to display
-int my_close(BinDumpFile * file, unsigned verbose)
+int
+my_close(
+         BinDumpFile *                 file,
+         unsigned                      verbose )
 {
    if (file->fd == -1)
       return(1);
@@ -413,7 +463,11 @@ int my_close(BinDumpFile * file, unsigned verbose)
 /// @param[in]  file       file to use for operations
 /// @param[in]  offset     offset
 /// @param[in]  verbose    verbose level of messages to display
-int my_lseek(BinDumpFile * file, size_t offset, unsigned verbose)
+int
+my_lseek(
+         BinDumpFile *                 file,
+         size_t                        offset,
+         unsigned                      verbose )
 {
    if ( (file->fd == -1) || (file->fd == STDIN_FILENO) )
       return(0);
@@ -429,11 +483,10 @@ int my_lseek(BinDumpFile * file, size_t offset, unsigned verbose)
 
 
 /// determines the max number of bytes to dislpay
-/// @param[in]  pos        pos
-/// @param[in]  code       code
-/// @param[in]  len        len
-/// @param[in]  offset     offset
-size_t my_max(ssize_t code, size_t len)
+size_t
+my_max(
+         ssize_t                       code,
+         size_t                        len )
 {
    size_t max;
    if (code < 1)
@@ -447,7 +500,10 @@ size_t my_max(ssize_t code, size_t len)
 /// opens a file
 /// @param[in]  file       file to use for operations
 /// @param[in]  verbose    verbose level of messages to display
-int my_open(BinDumpFile * file, unsigned verbose)
+int
+my_open(
+         BinDumpFile *                 file,
+         unsigned                      verbose )
 {
    file->fd = -1;
 
@@ -481,10 +537,14 @@ int my_open(BinDumpFile * file, unsigned verbose)
 /// @param[in]  file2      second file to use for operations
 /// @param[in]  offset     offset
 /// @param[in]  len        len
-/// @param[in]  verbose    verbose level of messages to display
 /// @param[in]  opts       output options
-size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
-   size_t len, unsigned opts)
+size_t
+my_print_diff(
+         BinDumpFile *                 file1,
+         BinDumpFile *                 file2,
+         size_t                        offset,
+         size_t                        len,
+         unsigned                      opts )
 {
    char    buff[9];
    size_t  s;
@@ -514,20 +574,20 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
       {
          if (file1->data[s] != file2->data[s])
          {
-            diff = 1;
+            diff     = 1;
             diff1[s] = 1;
             diff1[8] = 1;
             diff2[s] = 1;
             diff2[8] = 1;
          };
       } else if (s < max2) {
-         diff = 1;
+         diff     = 1;
          diff2[s] = 1;
          diff2[8] = 1;
          if (max1)
             diff1[8] = 1;
       } else if (s < max1) {
-         diff = 1;
+         diff     = 1;
          diff1[s] = 1;
          diff1[8] = 1;
          if (max2)
@@ -639,10 +699,13 @@ size_t my_print_diff(BinDumpFile * file1, BinDumpFile * file2, size_t offset,
 /// @param[in]  file       file to use for operations
 /// @param[in]  offset     offset
 /// @param[in]  len        len
-/// @param[in]  verbose    verbose level of messages to display
 /// @param[in]  opts       output options
-size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
-   unsigned opts)
+size_t
+my_print_dump(
+         BinDumpFile *                 file,
+         size_t                        offset,
+         size_t                        len,
+         unsigned                      opts )
 {
    char   buff[9];
    size_t s;
@@ -692,7 +755,12 @@ size_t my_print_dump(BinDumpFile * file, size_t offset, size_t len,
 /// @param[in]  file       file to use for operations
 /// @param[in]  offset     offset
 /// @param[in]  len        len
-ssize_t my_read(BinDumpFile * file, size_t offset, size_t len, unsigned verbose)
+ssize_t
+my_read(
+         BinDumpFile *                 file,
+         size_t                        offset,
+         size_t                        len,
+         unsigned                      verbose )
 {
    size_t max;
 
@@ -726,7 +794,9 @@ ssize_t my_read(BinDumpFile * file, size_t offset, size_t len, unsigned verbose)
 
 
 /// displays usage information
-void my_usage(void)
+void
+my_usage(
+         void )
 {
    printf("Usage: %s [options] file\n", PROGRAM_NAME);
    printf("  -d                        print only differing data\n");
@@ -744,7 +814,9 @@ void my_usage(void)
 
 
 /// displays version information
-void my_version(void)
+void
+my_version(
+         void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
@@ -760,7 +832,11 @@ void my_version(void)
 /// @param[in]  data    8 bits to translate into an ASCII string buffer
 /// @param[out] buff    ASCII string buffer to hold the result
 /// @param[in]  opts    output options
-char * my_byte2str(signed data, char * buff, unsigned opts)
+char *
+my_byte2str(
+         signed                        data,
+         char *                        buff,
+         unsigned                      opts )
 {
    unsigned b;
    if (!(opts & MY_OPT_REVERSEBIT))
