@@ -301,13 +301,6 @@ netcalc_results_list(
 
 
 void
-netcalc_results_list_add(
-         netcalc *                     cnf,
-         netcalc_ip *                  network,
-         netcalc_ip *                  incr );
-
-
-void
 netcalc_results_verbose(
          netcalc *                     cnf );
 
@@ -1175,15 +1168,6 @@ void netcalc_results_list( netcalc * cnf )
       rc = netcalc_net_cmp(&network, cnf->superblock, cnf->cidr);
    };
 
-   return;
-}
-
-
-void netcalc_results_list_add( netcalc * cnf, netcalc_ip * network, netcalc_ip * incr )
-{
-   assert(cnf     != NULL);
-   assert(network != NULL);
-   assert(incr    != NULL);
    return;
 }
 
