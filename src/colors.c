@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2010 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/colors.c displays various colors using ANSI escape codes
@@ -56,6 +53,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_COMMON_H
 #include "common.h"
@@ -70,6 +68,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "codetagger"
@@ -97,15 +96,22 @@
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-// displays usage
-void colors_usage PARAMS((void));
+static void
+colors_usage(
+         void );
 
-// displays version information
-void colors_version PARAMS((void));
 
-// main statement
-int main PARAMS((int argc, char * argv[]));
+static void
+colors_version(
+         void );
+
+
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
 
 /////////////////
@@ -113,9 +119,12 @@ int main PARAMS((int argc, char * argv[]));
 //  Functions  //
 //             //
 /////////////////
+// MARK: - Functions
 
 /// displays usage
-void colors_usage(void)
+void
+colors_usage(
+         void )
 {
    printf("Usage: %s [OPTIONS]\n", PROGRAM_NAME);
    printf("  -c, --colors-only         only display escape codes for colors\n");
@@ -128,7 +137,9 @@ void colors_usage(void)
 
 
 /// displays version information
-void colors_version(void)
+void
+colors_version(
+         void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf(      "Written by David M. Syzdek.\n");
@@ -143,7 +154,10 @@ void colors_version(void)
 /// main statement
 /// @param[in]  argc  number of arguments passed to program
 /// @param[in]  argv  array of arguments passed to program
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int           c;
    int           x;
@@ -174,23 +188,28 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
-            break;
+         break;
+
          case 'c':
-            opt = opt | 0x01;
-            break;
+         opt = opt | 0x01;
+         break;
+
          case 'h':
-            colors_usage();
-            return(0);
+         colors_usage();
+         return(0);
+
          case 'V':
-            colors_version();
-            return(0);
+         colors_version();
+         return(0);
+
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
       };
    };
 
