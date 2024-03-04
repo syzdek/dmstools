@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2011, 2021 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/netcalc.c calculates network information for IP addresses
@@ -56,6 +53,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_COMMON_H
 #include "common.h"
@@ -74,6 +72,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "netcalc"
@@ -113,6 +112,7 @@
 //  Datatypes  //
 //             //
 /////////////////
+// MARK: - Datatypes
 
 typedef struct _netcalc_ip netcalc_ip;
 typedef struct _netcalc    netcalc;
@@ -153,129 +153,134 @@ struct _netcalc
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-int
+static void
+netcalc_free(
+         netcalc *                     cnf );
+
+
+static int
 netcalc_init(
          netcalc **                    cnfp );
 
 
-void
-netcalc_free(
-         netcalc *                     cnfi );
-
-
-int
+static int
 netcalc_ip_append(
          netcalc *                     cnf,
          netcalc_ip *                  ip );
 
-int
+
+static int
 netcalc_ip_cmp(
          netcalc_ip *                  ip1,
          netcalc_ip *                  ip2 );
 
 
-void
+static void
 netcalc_ip_free(
          netcalc_ip *                  ip );
 
 
-int
+static int
 netcalc_ip_parse(
          netcalc *                     cnf,
          netcalc_ip **                 ipp,
          const char *                  str );
 
 
-int
+static int
 netcalc_ip_parse_ipv4(
          netcalc *                     cnf,
          netcalc_ip *                  ip,
          char *                        str );
 
 
-int
+static int
 netcalc_ip_parse_ipv4_str(
          netcalc *                     cnf,
          netcalc_ip *                  ip,
          char *                        str );
 
 
-int
+static int
 netcalc_ip_parse_ipv6(
          netcalc *                     cnf,
          netcalc_ip *                  ip,
          char *                        str );
 
 
-int netcalc_ip_string(
+static int
+netcalc_ip_string(
          netcalc *                     cnf,
          netcalc_ip *                  ip,
          char *                        str,
          size_t                        size );
 
 
-int netcalc_ip_string_ipv4(
+static int
+netcalc_ip_string_ipv4(
          netcalc *                     cnf,
          netcalc_ip *                  ip,
          char *                        str,
          size_t                        size );
 
 
-int netcalc_ip_string_ipv6(
+static int
+netcalc_ip_string_ipv6(
          netcalc *                     cnf,
          netcalc_ip *                  ip,
          char *                        str,
          size_t                        size );
 
 
-int
+static int
 netcalc_ip_parse_ipv6_mapped_ipv4(
          netcalc *                     cnf,
          netcalc_ip *                  ip,
          char *                        node );
 
 
-void
+static void
 netcalc_net_broadcast_r(
          netcalc_ip *                  broadcast,
          netcalc_ip *                  ip,
          int32_t                       cidr );
 
 
-int
+static int
 netcalc_net_cmp(
          netcalc_ip *                  ip1,
          netcalc_ip *                  ip2,
          int32_t                       cidr );
 
 
-void
+static void
 netcalc_net_netmask_r(
          netcalc_ip *                  netmask,
          int32_t                       cidr );
 
 
-void
+static void
 netcalc_net_network_r(
          netcalc_ip *                  network,
          netcalc_ip *                  ip,
          int32_t                       cidr );
 
 
-int
+static int
 netcalc_net_sort_cmp(
          const void *                  ap,
          const void *                  bp );
 
 
-void
+static void
 netcalc_net_wildmask_r(
          netcalc_ip *                  wildmask,
          int32_t                       cidr );
 
 
-void
+static void
 netcalc_print_ip(
          netcalc *                     cnf,
          netcalc_ip *                  ip,
@@ -283,44 +288,48 @@ netcalc_print_ip(
          uint64_t                      opts );
 
 
-void
+static void
 netcalc_print_space(
          netcalc *                     cnf,
          netcalc_ip *                  ip,
          int32_t                       cidr );
 
 
-void
+static void
 netcalc_results_default(
          netcalc *                     cnf );
 
 
-void
+static void
 netcalc_results_list(
          netcalc *                     cnf );
 
 
-void
+static void
 netcalc_results_verbose(
          netcalc *                     cnf );
 
 
-// displays usage
-void
+static void
 netcalc_usage( void );
 
 
-// displays version information
-void
+static void
 netcalc_version( void );
 
 
-// main statement
-int
+extern int
 main(
          int                           argc,
          char *                        argv[] );
 
+
+/////////////////
+//             //
+//  Variables  //
+//             //
+/////////////////
+// MARK: - Variables
 
 char buff[1024];
 
@@ -330,9 +339,11 @@ char buff[1024];
 //  Functions  //
 //             //
 /////////////////
+// MARK: - Functions
 
-
-void netcalc_free( netcalc * cnf )
+void
+netcalc_free(
+         netcalc *                     cnf )
 {
    size_t pos;
 
@@ -358,7 +369,9 @@ void netcalc_free( netcalc * cnf )
 }
 
 
-int netcalc_init( netcalc ** cnfp )
+int
+netcalc_init(
+         netcalc **                    cnfp )
 {
    assert(cnfp != NULL);
 
@@ -401,7 +414,10 @@ int netcalc_init( netcalc ** cnfp )
 }
 
 
-int netcalc_ip_append( netcalc * cnf, netcalc_ip * ip )
+int
+netcalc_ip_append(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip )
 {
    size_t   size;
    void *   ptr;
@@ -425,7 +441,10 @@ int netcalc_ip_append( netcalc * cnf, netcalc_ip * ip )
 }
 
 
-int netcalc_ip_cmp( netcalc_ip * ip1, netcalc_ip * ip2 )
+int
+netcalc_ip_cmp(
+         netcalc_ip *                  ip1,
+         netcalc_ip *                  ip2 )
 {
    int pos;
    assert(ip1 != NULL);
@@ -439,7 +458,9 @@ int netcalc_ip_cmp( netcalc_ip * ip1, netcalc_ip * ip2 )
 }
 
 
-void netcalc_ip_free( netcalc_ip * ip )
+void
+netcalc_ip_free(
+         netcalc_ip *                  ip )
 {
    if (!(ip))
       return;
@@ -449,12 +470,16 @@ void netcalc_ip_free( netcalc_ip * ip )
 }
 
 
-int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
+int
+netcalc_ip_parse(
+         netcalc *                     cnf,
+         netcalc_ip **                 ipp,
+         const char *                  str )
 {
    netcalc_ip *    ip;
    char *          ptr;
    char *          endptr;
-   char *          str;
+   char *          tmp;
 
    assert(cnf != NULL);
 
@@ -465,7 +490,7 @@ int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
       return(1);
    };
    ip->cidr = -1;
-   if ((str = strdup(ipstr)) == NULL)
+   if ((tmp = strdup(str)) == NULL)
    {
       netcalc_ip_free(ip);
       fprintf(stderr, "%s: out of virtual memory\n", PROGRAM_NAME);
@@ -473,7 +498,7 @@ int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
    };
 
    // parses CIDR
-   if ((ptr = strrchr(str, '/')) != NULL)
+   if ((ptr = strrchr(tmp, '/')) != NULL)
    {
       ptr[0]   = '\0';
       ip->cidr = (int32_t)strtol(&ptr[1], &endptr, 0);
@@ -481,25 +506,25 @@ int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
       {
          fprintf(stderr, "%s: invalid CIDR\n", PROGRAM_NAME);
          netcalc_ip_free(ip);
-         free(str);
+         free(tmp);
          return(1);
       };
    };
 
    // parses string
-   if (strchr(str, ':') == NULL)
+   if (strchr(tmp, ':') == NULL)
    {
-      if (netcalc_ip_parse_ipv4(cnf, ip, str) != 0)
+      if (netcalc_ip_parse_ipv4(cnf, ip, tmp) != 0)
       {
          netcalc_ip_free(ip);
-         free(str);
+         free(tmp);
          return(1);
       };
    } else {
-      if (netcalc_ip_parse_ipv6(cnf, ip, str) != 0)
+      if (netcalc_ip_parse_ipv6(cnf, ip, tmp) != 0)
       {
          netcalc_ip_free(ip);
-         free(str);
+         free(tmp);
          return(1);
       };
    };
@@ -511,7 +536,7 @@ int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
       cnf->cidr = ip->cidr;
 
    // frees resources
-   free(str);
+   free(tmp);
 
    *ipp = ip;
 
@@ -519,7 +544,11 @@ int netcalc_ip_parse( netcalc * cnf, netcalc_ip ** ipp, const char * ipstr )
 }
 
 
-int netcalc_ip_parse_ipv4( netcalc * cnf, netcalc_ip * ip, char * str )
+int
+netcalc_ip_parse_ipv4(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str )
 {
    assert(cnf != NULL);
    assert(ip  != NULL);
@@ -543,7 +572,11 @@ int netcalc_ip_parse_ipv4( netcalc * cnf, netcalc_ip * ip, char * str )
 }
 
 
-int netcalc_ip_parse_ipv4_str( netcalc * cnf, netcalc_ip * ip, char * str )
+int
+netcalc_ip_parse_ipv4_str(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str )
 {
    uint32_t        addr;
    uint32_t        octet;
@@ -593,7 +626,11 @@ int netcalc_ip_parse_ipv4_str( netcalc * cnf, netcalc_ip * ip, char * str )
 }
 
 
-int netcalc_ip_parse_ipv6( netcalc * cnf, netcalc_ip * ip, char * str)
+int
+netcalc_ip_parse_ipv6(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str )
 {
    int      pos;
    int      rev;
@@ -670,7 +707,11 @@ int netcalc_ip_parse_ipv6( netcalc * cnf, netcalc_ip * ip, char * str)
 }
 
 
-int netcalc_ip_parse_ipv6_mapped_ipv4( netcalc * cnf, netcalc_ip * ip, char * node )
+int
+netcalc_ip_parse_ipv6_mapped_ipv4(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        node )
 {
    int          pos;
 
@@ -697,7 +738,12 @@ int netcalc_ip_parse_ipv6_mapped_ipv4( netcalc * cnf, netcalc_ip * ip, char * no
 }
 
 
-int netcalc_ip_string( netcalc * cnf, netcalc_ip * ip, char * str, size_t size )
+int
+netcalc_ip_string(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str,
+         size_t                        size )
 {
    if (cnf->display == NETCALC_INET)
       return(netcalc_ip_string_ipv4(cnf, ip, str, size));
@@ -705,7 +751,12 @@ int netcalc_ip_string( netcalc * cnf, netcalc_ip * ip, char * str, size_t size )
 }
 
 
-int netcalc_ip_string_ipv4( netcalc * cnf, netcalc_ip * ip, char * str, size_t size )
+int
+netcalc_ip_string_ipv4(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str,
+         size_t                        size )
 {
    assert(cnf != NULL);
    assert(ip  != NULL);
@@ -724,7 +775,12 @@ int netcalc_ip_string_ipv4( netcalc * cnf, netcalc_ip * ip, char * str, size_t s
 }
 
 
-int netcalc_ip_string_ipv6( netcalc * cnf, netcalc_ip * ip, char * str, size_t size )
+int
+netcalc_ip_string_ipv6(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         char *                        str,
+         size_t                        size )
 {
    char    b[32];
    char *  ptr;
@@ -830,7 +886,11 @@ int netcalc_ip_string_ipv6( netcalc * cnf, netcalc_ip * ip, char * str, size_t s
 }
 
 
-void netcalc_net_broadcast_r( netcalc_ip * broadcast, netcalc_ip * ip, int32_t cidr )
+void
+netcalc_net_broadcast_r(
+         netcalc_ip *                  broadcast,
+         netcalc_ip *                  ip,
+         int32_t                       cidr )
 {
    int pos;
    netcalc_ip wildmask;
@@ -841,29 +901,36 @@ void netcalc_net_broadcast_r( netcalc_ip * broadcast, netcalc_ip * ip, int32_t c
 }
 
 
-int netcalc_net_cmp( netcalc_ip * a, netcalc_ip * b, int32_t cidr )
+int
+netcalc_net_cmp(
+         netcalc_ip *                  ip1,
+         netcalc_ip *                  ip2,
+         int32_t                       cidr )
 {
    int           i;
    netcalc_ip    m;
 
-   assert(a != NULL);
-   assert(b != NULL);
+   assert(ip1 != NULL);
+   assert(ip2 != NULL);
 
    netcalc_net_netmask_r(&m, cidr);
 
-   for(i = 0; ( (i < 7) && ((a->addr[i]&m.addr[i]) == (b->addr[i]&m.addr[i])) ); i++);
+   for(i = 0; ( (i < 7) && ((ip1->addr[i]&m.addr[i]) == (ip2->addr[i]&m.addr[i])) ); i++);
 
-   if ( (a->addr[i] & m.addr[i]) < (b->addr[i] & m.addr[i]) )
+   if ( (ip1->addr[i] & m.addr[i]) < (ip2->addr[i] & m.addr[i]) )
       return(-1);
 
-   if ( (a->addr[i] & m.addr[i]) > (b->addr[i] & m.addr[i]) )
+   if ( (ip1->addr[i] & m.addr[i]) > (ip2->addr[i] & m.addr[i]) )
       return(1);
 
    return(0);
 }
 
 
-void netcalc_net_netmask_r( netcalc_ip * netmask, int32_t cidr )
+void
+netcalc_net_netmask_r(
+         netcalc_ip *                  netmask,
+         int32_t                       cidr )
 {
    int32_t pos;
    bzero(netmask, sizeof(netcalc_ip));
@@ -878,7 +945,11 @@ void netcalc_net_netmask_r( netcalc_ip * netmask, int32_t cidr )
 }
 
 
-void netcalc_net_network_r( netcalc_ip * network, netcalc_ip * ip, int32_t cidr )
+void
+netcalc_net_network_r(
+         netcalc_ip *                  network,
+         netcalc_ip *                  ip,
+         int32_t                       cidr )
 {
    int pos;
    netcalc_ip netmask;
@@ -890,7 +961,10 @@ void netcalc_net_network_r( netcalc_ip * network, netcalc_ip * ip, int32_t cidr 
 }
 
 
-int netcalc_net_sort_cmp( const void * ap, const void * bp )
+int
+netcalc_net_sort_cmp(
+         const void *                  ap,
+         const void *                  bp )
 {
    int                 i;
    const netcalc_ip *  a;
@@ -919,7 +993,10 @@ int netcalc_net_sort_cmp( const void * ap, const void * bp )
 }
 
 
-void netcalc_net_wildmask_r( netcalc_ip * wildmask, int32_t cidr )
+void
+netcalc_net_wildmask_r(
+         netcalc_ip *                  wildmask,
+         int32_t                       cidr )
 {
    int32_t pos;
    netcalc_net_netmask_r(wildmask, cidr);
@@ -929,7 +1006,12 @@ void netcalc_net_wildmask_r( netcalc_ip * wildmask, int32_t cidr )
 }
 
 
-void netcalc_print_ip( netcalc * cnf, netcalc_ip * ip, int32_t cidr, uint64_t opts )
+void
+netcalc_print_ip(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         int32_t                       cidr,
+         uint64_t                      opts )
 {
    int          pos;
    netcalc_ip   netmask;
@@ -1045,7 +1127,11 @@ void netcalc_print_ip( netcalc * cnf, netcalc_ip * ip, int32_t cidr, uint64_t op
 }
 
 
-void netcalc_print_space( netcalc * cnf, netcalc_ip * ip, int32_t cidr )
+void
+netcalc_print_space(
+         netcalc *                     cnf,
+         netcalc_ip *                  ip,
+         int32_t                       cidr )
 {
    netcalc_ip   netmask;
    netcalc_ip   broadcast;
@@ -1086,7 +1172,9 @@ void netcalc_print_space( netcalc * cnf, netcalc_ip * ip, int32_t cidr )
 }
 
 
-void netcalc_results_default( netcalc * cnf )
+void
+netcalc_results_default(
+         netcalc *                     cnf )
 {
    int32_t  cidr;
    int32_t  cidr_floor;
@@ -1110,7 +1198,9 @@ void netcalc_results_default( netcalc * cnf )
 }
 
 
-void netcalc_results_list( netcalc * cnf )
+void
+netcalc_results_list(
+         netcalc *                     cnf )
 {
    int             rc;
    int32_t         cidr;
@@ -1172,7 +1262,9 @@ void netcalc_results_list( netcalc * cnf )
 }
 
 
-void netcalc_results_verbose( netcalc * cnf )
+void
+netcalc_results_verbose(
+         netcalc *                     cnf )
 {
    size_t   pos;
 
@@ -1192,7 +1284,8 @@ void netcalc_results_verbose( netcalc * cnf )
 
 
 /// displays usage
-void netcalc_usage(void)
+void
+netcalc_usage( void )
 {
    printf("Usage: %s [OPTIONS] address1 address2 ... addressN\n", PROGRAM_NAME);
    printf("  -6                     map IPv4 addresses to IPv6 addresses\n");
@@ -1213,7 +1306,8 @@ void netcalc_usage(void)
 
 
 /// displays version information
-void netcalc_version(void)
+void
+netcalc_version( void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
@@ -1228,7 +1322,10 @@ void netcalc_version(void)
 /// main statement
 /// @param[in]  argc  number of arguments passed to program
 /// @param[in]  argv  array of arguments passed to program
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int           c;
    int           opt_index;
