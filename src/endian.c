@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2012 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/endian.c determines the byte order of the system
@@ -56,6 +53,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -73,6 +71,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "endian"
@@ -96,18 +95,27 @@
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-// determines byte order
-int is_big_endian(void);
+static int
+is_big_endian(
+         void );
 
-// main statement
-int main(int argc, char * argv[]);
 
-//displays usage information
-void my_usage(void);
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
-// displays version information
-void my_version(void);
+
+static void
+my_usage(
+         void );
+
+
+static void
+my_version(
+         void );
 
 
 /////////////////
@@ -115,9 +123,12 @@ void my_version(void);
 //  Functions  //
 //             //
 /////////////////
+// MARK: - Functions
 
 /// determines byte order
-int is_big_endian(void)
+int
+is_big_endian(
+         void )
 {
    union
    {
@@ -131,7 +142,10 @@ int is_big_endian(void)
 /// main statement
 /// @param[in] argc   number of arguments
 /// @param[in] argv   array of arguments
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int       c;
    int       opt_index;
@@ -151,20 +165,24 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
-            break;
+         break;
+
          case 'h':
-            my_usage();
-            return(0);
+         my_usage();
+         return(0);
+
          case 'V':
-            my_version();
-            return(0);
+         my_version();
+         return(0);
+
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
       };
    };
 
@@ -187,7 +205,9 @@ int main(int argc, char * argv[])
 
 
 /// displays usage information
-void my_usage(void)
+void
+my_usage(
+         void )
 {
    printf("Usage: %s\n", PROGRAM_NAME);
    printf("\n");
@@ -197,7 +217,9 @@ void my_usage(void)
 
 
 /// displays version information
-void my_version(void)
+void
+my_version(
+         void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
