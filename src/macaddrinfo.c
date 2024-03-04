@@ -344,13 +344,6 @@ mau_log_verbose(
 
 
 static void
-mau_log_warn(
-         mau_config *                  cnf,
-         const char *                  fmt,
-         ... );
-
-
-static void
 mau_logv(
          mau_config *                  cnf,
          const char *                  fmt,
@@ -1190,23 +1183,6 @@ mau_log_verbose(
 {
    va_list args;
    if (cnf->verbose < 1)
-      return;
-   va_start(args, fmt);
-   mau_logv(cnf, fmt, args);
-   va_end(args);
-   return;
-}
-
-
-// print warning message
-void
-mau_log_warn(
-         mau_config *                  cnf,
-         const char *                  fmt,
-         ... )
-{
-   va_list args;
-   if ((cnf->verbose))
       return;
    va_start(args, fmt);
    mau_logv(cnf, fmt, args);
