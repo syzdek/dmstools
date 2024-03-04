@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2008 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/bitops.c simple utility for quick bitwise operations
@@ -56,6 +53,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -73,6 +71,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "bitops"
@@ -107,6 +106,7 @@
 //  Variables  //
 //             //
 /////////////////
+// MARK: - Variables
 
 static uint32_t my_opts = MY_OPT_HEX;
 char      buff1[STR_LEN];
@@ -119,36 +119,59 @@ char      buff3[STR_LEN];
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-// main statement
-int main(int argc, char * argv[]);
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
-const char * my_notation (char * dst);
 
-// prints number
-const char * my_uint2str(char * dst, uint32_t num);
+static const char *
+my_notation(
+         char *                        dst );
 
-const char * my_spaces(char * dst);
 
-// converts string to numeric value
-uint32_t my_strtouint(const char * str);
+static const char *
+my_uint2str(
+         char *                        dst,
+         uint32_t                      num );
 
-//displays usage information
-void my_usage(void);
 
-// displays version information
-void my_version(void);
+static const char *
+my_spaces(
+         char *                        dst );
 
-//////////////////
-//              //
-//  Prototypes  //
-//              //
-//////////////////
+
+static uint32_t
+my_strtouint(
+         const char *                  str );
+
+
+static void
+my_usage(
+         void );
+
+
+static void
+my_version(
+         void );
+
+
+/////////////////
+//             //
+//  Functions  //
+//             //
+/////////////////
+// MARK: - Functions
 
 /// main statement
 /// @param[in] argc   number of arguments
 /// @param[in] argv   array of arguments
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int      c;
    int      opt_index;
@@ -248,7 +271,9 @@ int main(int argc, char * argv[])
 
 /// prints notation type
 /// @param[in] dst   output buffer
-const char * my_notation(char * dst)
+const char *
+my_notation(
+         char *                        dst )
 {
    dst[0] = '\0';
    switch(my_opts)
@@ -276,7 +301,10 @@ const char * my_notation(char * dst)
 /// prints number
 /// @param[in] dst   output buffer
 /// @param[in] num   output number
-const char * my_uint2str(char * dst, uint32_t num)
+const char *
+my_uint2str(
+         char *                        dst,
+         uint32_t                      num )
 {
    int  i;
    int  pos;
@@ -319,7 +347,9 @@ const char * my_uint2str(char * dst, uint32_t num)
 
 /// converts string to numeric value
 /// @param[in] str   string to convert
-uint32_t my_strtouint(const char * str)
+uint32_t
+my_strtouint(
+         const char *                  str )
 {
    if (!(strncmp(str, "0x", (size_t)2)))
       return((uint32_t)strtoul(&str[2], NULL, 16));
@@ -334,7 +364,9 @@ uint32_t my_strtouint(const char * str)
 
 
 /// prints number
-const char * my_spaces(char * dst)
+const char *
+my_spaces(
+         char *                        dst )
 {
    dst[0] = '\0';
    switch(my_opts)
@@ -359,7 +391,9 @@ const char * my_spaces(char * dst)
 
 
 /// displays usage information
-void my_usage(void)
+void
+my_usage(
+         void )
 {
    printf("Usage: %s [options] num1 num2\n", PROGRAM_NAME);
    printf("  -B                        display output in binary notation\n");
@@ -379,7 +413,9 @@ void my_usage(void)
 
 
 /// displays version information
-void my_version(void)
+void
+my_version(
+         void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
@@ -391,4 +427,4 @@ void my_version(void)
 }
 
 
-// end of source file
+//  end of source file
