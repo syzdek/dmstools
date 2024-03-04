@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2009 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/macaddrinfo.c converts string into octal, decimal, hex, and bin
@@ -56,9 +53,7 @@
 //  Headers  //
 //           //
 ///////////////
-#ifdef DMSTOOLS_PMARK
-#pragma mark Headers
-#endif
+// MARK: - Headers
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -89,9 +84,7 @@
 //  Definitions  //
 //               //
 ///////////////////
-#ifdef DMSTOOLS_PMARK
-#pragma mark - Definitions
-#endif
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "macaddrinfo"
@@ -162,9 +155,7 @@
 //  Data Types  //
 //              //
 //////////////////
-#ifdef DMSTOOLS_PMARK
-#pragma mark - Data Types
-#endif
+// MARK: - Datatypes
 
 typedef uint8_t mauaddr_t[6];    // Media Access Control address (MAC address)
 typedef uint8_t mauoui_t[3];     // Organizationally Unique Identifier (OUI)
@@ -182,13 +173,13 @@ struct mau_config
    int                  use_oui;
    int                  opt_index;
    int                  cmd_argc;
-   char              ** cmd_argv;
-   const char         * cmd_name;
-   const char         * rnd_file;
+   char **              cmd_argv;
+   const char *         cmd_name;
+   const char *         rnd_file;
    size_t               cmd_len;
-   const mau_command  * cmd;
+   const mau_command *  cmd;
    regex_t              regex;
-   const char         * regex_str;
+   const char *         regex_str;
    regmatch_t           matches[MAU_REGEX_MAX];
    char                 buff[MAU_BUFF_LEN];
    mauaddr_t            oui;
@@ -199,14 +190,14 @@ struct mau_config
 
 struct mau_command
 {
-   const char * cmd_name;
+   const char *         cmd_name;
+   const char *         cmd_shortopts;
+   struct option *      long_opt;
+   int                  min_arg;
+   int                  max_arg;
+   const char *         cmd_help;
+   const char *         cmd_desc;
    int  (*cmd_func)(mau_config * cnf);
-   const char * cmd_shortopts;
-   struct option * long_opt;
-   int          min_arg;
-   int          max_arg;
-   const char * cmd_help;
-   const char * cmd_desc;
 };
 
 
@@ -215,62 +206,165 @@ struct mau_command
 //  Prototypes  //
 //              //
 //////////////////
-#ifdef DMSTOOLS_PMARK
-#pragma mark - Prototypes
-#endif
+// MARK: - Prototypes
 
-// main statement
-int main(int argc, char * argv[]);
-
-
-int mau_cmd_eui64(mau_config * cnf);
-
-// generate command
-int mau_cmd_generate(mau_config * cnf);
-
-int mau_cmd_info(mau_config * cnf);
-
-int mau_cmd_link_local(mau_config * cnf);
-
-int mau_cmd_macaddress(mau_config * cnf);
-
-int mau_cmd_test(mau_config * cnf);
-
-int mau_cmd_update(mau_config * cnf);
-
-void mau_cmd_update_usage(void);
-
-int mau_conv_eui2sin(mau_config * cnf, const maueui64_t eui, struct sockaddr_in6  * sin);
-int mau_conv_eui2str(mau_config * cnf, const maueui64_t eui, maustr_t str);
-int mau_conv_mac2eui(mau_config * cnf, const mauaddr_t addr, maueui64_t eui);
-int mau_conv_mac2str(mau_config * cnf, const mauaddr_t addr, maustr_t str);
-int mau_conv_eui2mac(mau_config * cnf, const maueui64_t eui, mauaddr_t addr);
-int mau_conv_sin2eui(mau_config * cnf, const struct sockaddr_in6 * sin, maueui64_t eui);
-int mau_conv_sin2str(mau_config * cnf, struct sockaddr_in6  * sin, maustr_t str);
-int mau_conv_str2eui(mau_config * cnf, const maustr_t str, maueui64_t eui);
-int mau_conv_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr);
-int mau_conv_str2sin(mau_config * cnf, const maustr_t str, struct sockaddr_in6 * sin);
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
 
-int mau_getopt(mau_config * cnf, int argc, char * const * argv,
-   const char * short_opt, const struct option * long_opt, int * opt_index);
+static int
+mau_cmd_eui64(
+         mau_config *                  cnf );
 
-// print error message
-void mau_log_err(mau_config * cnf, const char * fmt, ...);
 
-// print verbose information
-void mau_log_verbose(mau_config * cnf, const char * fmt, ...);
+static int
+mau_cmd_generate(
+         mau_config *                  cnf );
 
-// print warning message
-void mau_log_warn(mau_config * cnf, const char * fmt, ...);
 
-void mau_logv(mau_config * cnf, const char * fmt, va_list args);
+static int
+mau_cmd_info(
+         mau_config *                  cnf );
 
-//displays usage information
-void mau_usage(mau_config * cnf);
 
-// displays version information
-void mau_version(void);
+static int
+mau_cmd_link_local(
+         mau_config *                  cnf );
+
+
+static int
+mau_cmd_macaddress(
+         mau_config *                  cnf );
+
+
+static int
+mau_cmd_test(
+         mau_config *                  cnf );
+
+
+static int
+mau_cmd_update(
+         mau_config *                  cnf );
+
+
+static int
+mau_conv_eui2mac(
+         mau_config *                  cnf,
+         const maueui64_t              eui,
+         mauaddr_t                     addr );
+
+
+static int
+mau_conv_eui2sin(
+         mau_config *                  cnf,
+         const maueui64_t              eui,
+         struct sockaddr_in6  *        sin );
+
+
+static int
+mau_conv_eui2str(
+         mau_config *                  cnf,
+         const maueui64_t              eui,
+         maustr_t                      str );
+
+
+static int
+mau_conv_mac2eui(
+         mau_config *                  cnf,
+         const mauaddr_t               addr,
+         maueui64_t                    eui );
+
+
+static int
+mau_conv_mac2str(
+         mau_config *                  cnf,
+         const mauaddr_t               addr,
+         maustr_t                      str );
+
+
+static int
+mau_conv_sin2eui(
+         mau_config *                  cnf,
+         const struct sockaddr_in6 *   sin,
+         maueui64_t                    eui );
+
+
+static int
+mau_conv_sin2str(
+         mau_config *                  cnf,
+         struct sockaddr_in6  *        sin,
+         maustr_t                      str );
+
+
+static int
+mau_conv_str2eui(
+         mau_config *                  cnf,
+         const maustr_t                str,
+         maueui64_t                    eui );
+
+
+static int
+mau_conv_str2mac(
+         mau_config *                  cnf,
+         const maustr_t                str,
+         mauaddr_t                     addr );
+
+
+static int
+mau_conv_str2sin(
+         mau_config *                  cnf,
+         const maustr_t                str,
+         struct sockaddr_in6 *         sin );
+
+
+static int
+mau_getopt(
+         mau_config *                  cnf,
+         int                           argc,
+         char * const *                argv,
+         const char *                  short_opt,
+         const struct option *         long_opt,
+         int *                         opt_index );
+
+
+static void
+mau_log_err(
+         mau_config *                  cnf,
+         const char *                  fmt,
+         ... );
+
+
+static void
+mau_log_verbose(
+         mau_config *                  cnf,
+         const char *                  fmt,
+         ... );
+
+
+static void
+mau_log_warn(
+         mau_config *                  cnf,
+         const char *                  fmt,
+         ... );
+
+
+static void
+mau_logv(
+         mau_config *                  cnf,
+         const char *                  fmt,
+         va_list                       args );
+
+
+static void
+mau_usage(
+         mau_config *                  cnf );
+
+
+static void
+mau_version(
+         void );
 
 
 
@@ -279,104 +373,110 @@ void mau_version(void);
 //  Variables  //
 //             //
 /////////////////
-#ifdef DMSTOOLS_PMARK
-#pragma mark - Variables
-#endif
+// MARK: - Variables
 
 const mau_command mau_cmdmap[] =
 {
-   {
-      "debugger",                                     // command name
-      mau_cmd_test,                                   // entry function
-      "abcdefghijklmnopqrstuvwxyz"
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-      "0123456789",                                   // getopt short options
-      (struct option []){ MAU_GETOPT_LONG },          // getopt long options
-      -1, -1,                                         // min/max arguments
-      NULL,                                           // cli usage
-      NULL, // "print entire OUI database"                     // command description
+   {  .cmd_name         = "debugger",
+      .cmd_shortopts    = "abcdefghijklmnopqrstuvwxyz"
+                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                          "0123456789",
+      .long_opt         = (struct option []){ MAU_GETOPT_LONG },
+      .min_arg          = -1,
+      .max_arg          = -1,
+      .cmd_help         = NULL,
+      .cmd_desc         = NULL,
+      .cmd_func         = mau_cmd_test,
    },
-   {
-      "dump",                                         // command name
-      mau_cmd_test,                                   // entry function
-      MAU_GETOPT_SHORT,                               // getopt short options
-      (struct option []){ MAU_GETOPT_LONG },          // getopt long options
-      0, 0,                                           // min/max arguments
-      NULL,                                           // cli usage
-      NULL, // "print entire OUI database"            // command description
+   {  .cmd_name         = "dump",
+      .cmd_shortopts    = MAU_GETOPT_SHORT,
+      .long_opt         = (struct option []){ MAU_GETOPT_LONG },
+      .min_arg          = 0,
+      .max_arg          = 0,
+      .cmd_help         = NULL,
+      .cmd_desc         = NULL,
+      .cmd_func         = mau_cmd_test,
    },
-   {
-      "eui64",                                        // command name
-      mau_cmd_eui64,                                  // entry function
-      "lu" MAU_GETOPT_SHORT,                          // getopt short options
-      (struct option []){ MAU_GETOPT_LONG },          // getopt long options
-      1, 1,                                           // min/max arguments
-      " <address>",                                   // cli usage
-      "display modified EUI-64 Identifier"            // command description
+   {  .cmd_name         = "eui64",
+      .cmd_shortopts    = "lu" MAU_GETOPT_SHORT,
+      .long_opt         = (struct option []){ MAU_GETOPT_LONG },          
+      .min_arg          = 1,
+      .max_arg          = 1,                                           
+      .cmd_help         = " <address>",                                   
+      .cmd_desc         = "display modified EUI-64 Identifier",            
+      .cmd_func         = mau_cmd_eui64,                                  
    },
-   {
-      "generate",                                     // command name
-      mau_cmd_generate,                               // entry function
-      "cDdlRr:uxMNQXW" MAU_GETOPT_SHORT,              // getopt short options
-      (struct option [])
-      {
-         {"microsoft", no_argument, NULL, 'M' },
-         {"nsa",       no_argument, NULL, 'N' },
-         {"qemu",      no_argument, NULL, 'Q' },
-         {"vmware",    no_argument, NULL, 'W' },
-         {"xen",       no_argument, NULL, 'X' },
-         MAU_GETOPT_LONG
-      },                                              // getopt long options
-      0, 0,                                           // min/max arguments
-      NULL,                                           // cli usage
-      "generate random MAC address"
+   {  .cmd_name         = "generate",
+      .cmd_shortopts    = "cDdlRr:uxMNQXW" MAU_GETOPT_SHORT,
+      .long_opt         = (struct option [])
+                          {   {"microsoft", no_argument, NULL, 'M' },
+                              {"nsa",       no_argument, NULL, 'N' },
+                              {"qemu",      no_argument, NULL, 'Q' },
+                              {"vmware",    no_argument, NULL, 'W' },
+                              {"xen",       no_argument, NULL, 'X' },
+                              MAU_GETOPT_LONG
+                          },
+      .min_arg          = 0,
+      .max_arg          = 0,
+      .cmd_help         = NULL,
+      .cmd_desc         = "generate random MAC address",
+      .cmd_func         = mau_cmd_generate,
    },
-   {
-      "information",                                  // command name
-      mau_cmd_info,                                   // entry function
-      "cDdlRu" MAU_GETOPT_SHORT,                      // getopt short options
-      (struct option []){ MAU_GETOPT_LONG },          // getopt long options
-      1, 1,                                           // min/max arguments
-      " <address>",                                   // cli usage
-      "display meta information about MAC address"    // command description
+   {  .cmd_name         = "information",
+      .cmd_shortopts    = "cDdlRu" MAU_GETOPT_SHORT,
+      .long_opt         = (struct option []){ MAU_GETOPT_LONG },
+      .min_arg          = 1,
+      .max_arg          = 1,
+      .cmd_help         = " <address>",
+      .cmd_desc         = "display meta information about MAC address",
+      .cmd_func         = mau_cmd_info,
    },
-   {
-      "link-local",                                   // command name
-      mau_cmd_link_local,                             // entry function
-      MAU_GETOPT_SHORT,                               // getopt short options
-      (struct option []){ MAU_GETOPT_LONG },          // getopt long options
-      1, 1,                                           // min/max arguments
-      " <address>",                                   // cli usage
-      "display derived IPv6 link-local address"       // command description
+   {  .cmd_name         = "link-local",
+      .cmd_shortopts    = MAU_GETOPT_SHORT,
+      .long_opt         = (struct option []){ MAU_GETOPT_LONG },
+      .min_arg          = 1,
+      .max_arg          = 1,
+      .cmd_help         = " <address>",
+      .cmd_desc         = "display derived IPv6 link-local address",
+      .cmd_func         = mau_cmd_link_local,
+
    },
-   {
-      "macaddress",                                   // command name
-      mau_cmd_macaddress,                             // entry function
-      "cDdlRu" MAU_GETOPT_SHORT,                      // getopt short options
-      (struct option []){ MAU_GETOPT_LONG },          // getopt long options
-      1, 1,                                           // min/max arguments
-      " <address>",                                   // cli usage
-      "display MAC address using notation flags"      // command description
+   {  .cmd_name         = "macaddress",
+      .cmd_shortopts    = "cDdlRu" MAU_GETOPT_SHORT,
+      .long_opt         = (struct option []){ MAU_GETOPT_LONG },
+      .min_arg          = 1,
+      .max_arg          = 1,
+      .cmd_help         = " <address>",
+      .cmd_desc         = "display MAC address using notation flags",
+      .cmd_func         = mau_cmd_macaddress,
    },
-   {
-      "update",                                       // command name
-      mau_cmd_update,                                 // entry function
-      "cDdlRUu" MAU_GETOPT_SHORT,                     // getopt short options
-      (struct option []){ MAU_GETOPT_LONG },          // getopt long options
-      0, 0,                                           // min/max arguments
-      NULL,                                             // cli usage
-      "update local OUI database"                     // command description
+   {  .cmd_name         = "update",
+      .cmd_shortopts    = "cDdlRUu" MAU_GETOPT_SHORT,
+      .long_opt         = (struct option []){ MAU_GETOPT_LONG },
+      .min_arg          = 0,
+      .max_arg          = 0,
+      .cmd_help         = NULL,
+      .cmd_desc         = "update local OUI database",
+      .cmd_func         = mau_cmd_update,
    },
-   {
-      "vendor",                                       // command name
-      mau_cmd_test,                                   // entry function
-      "cDdlRu" MAU_GETOPT_SHORT,                      // getopt short options
-      (struct option []){ MAU_GETOPT_LONG },          // getopt long options
-      1, 1,                                           // min/max arguments
-      " <organization>",                              // cli usage
-      NULL, // "search for OUI by vendor name"                 // command description
+   {  .cmd_name         = "vendor",
+      .cmd_shortopts    = "cDdlRu" MAU_GETOPT_SHORT,
+      .long_opt         = (struct option []){ MAU_GETOPT_LONG },
+      .min_arg          = 1,
+      .max_arg          = 1,
+      .cmd_help         = " <organization>",
+      .cmd_desc         = NULL, // "search for OUI by vendor name"
+      .cmd_func         = mau_cmd_test,
    },
-   { NULL, NULL, NULL, NULL, -1, -1, NULL, NULL }
+   {  .cmd_name         = NULL,
+      .cmd_shortopts    = NULL,
+      .long_opt         = NULL,
+      .min_arg          = -1,
+      .max_arg          = -1,
+      .cmd_help         = NULL,
+      .cmd_desc         = NULL,
+      .cmd_func         = NULL,
+   }
 };
 
 
@@ -385,14 +485,15 @@ const mau_command mau_cmdmap[] =
 //  Functions  //
 //             //
 /////////////////
-#ifdef DMSTOOLS_PMARK
-#pragma mark - Functions
-#endif
+// MARK: - Functions
 
 /// main statement
 /// @param[in] argc   number of arguments
 /// @param[in] argv   array of arguments
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int            i;
    int            c;
@@ -513,7 +614,9 @@ int main(int argc, char * argv[])
 }
 
 
-int mau_cmd_eui64(mau_config * cnf)
+int
+mau_cmd_eui64(
+         mau_config *                  cnf )
 {
    mauaddr_t      addr;
    maueui64_t     eui;
@@ -531,7 +634,9 @@ int mau_cmd_eui64(mau_config * cnf)
 
 
 /// generate command
-int mau_cmd_generate(mau_config * cnf)
+int
+mau_cmd_generate(
+         mau_config *                  cnf )
 {
    int            fd;
    mauaddr_t      addr;
@@ -568,7 +673,9 @@ int mau_cmd_generate(mau_config * cnf)
 }
 
 
-int mau_cmd_info(mau_config * cnf)
+int
+mau_cmd_info(
+         mau_config *                  cnf )
 {
    mauaddr_t      addr;
    maustr_t       addr_str;
@@ -596,7 +703,9 @@ int mau_cmd_info(mau_config * cnf)
 }
 
 
-int mau_cmd_link_local(mau_config * cnf)
+int
+mau_cmd_link_local(
+         mau_config *                  cnf )
 {
    mauaddr_t      addr;
    maueui64_t     eui;
@@ -616,7 +725,9 @@ int mau_cmd_link_local(mau_config * cnf)
 }
 
 
-int mau_cmd_macaddress(mau_config * cnf)
+int
+mau_cmd_macaddress(
+         mau_config *                  cnf )
 {
    maustr_t       str;
    mauaddr_t      addr;
@@ -632,37 +743,29 @@ int mau_cmd_macaddress(mau_config * cnf)
 }
 
 
-int mau_cmd_test(mau_config * cnf)
+int
+mau_cmd_test(
+         mau_config *                  cnf )
 {
    printf("%s\n", cnf->cmd_name);
    return(0);
 }
 
 
-int mau_cmd_update(mau_config * cnf)
+int
+mau_cmd_update(
+         mau_config *                  cnf )
 {
    printf("%s\n", cnf->cmd_name);
    return(0);
 }
 
 
-void mau_cmd_update_usage(void)
-{
-   printf(
-      "UPDATE OPTIONS:\n"
-      "  -1 idx                    index of REGEX sub-match for first octet of OUI\n"
-      "  -2 idx                    index of REGEX sub-match for second octet of OUI\n"
-      "  -3 idx                    index of REGEX sub-match for third octet of OUI\n"
-      "  -r regex                  regulare expression matching a single record in the OUI database\n"
-      "  -O idx                    index of REGEX sub-match for OUI organization\n"
-      "  -o file                   output file to save formatted OUI database\n"
-      "  -u url                    download URL for source OUI database\n"
-   );
-   return;
-}
-
-
-int mau_conv_eui2mac(mau_config * cnf, const maueui64_t eui, mauaddr_t addr)
+int
+mau_conv_eui2mac(
+         mau_config *                  cnf,
+         const maueui64_t              eui,
+         mauaddr_t                     addr )
 {
    assert(cnf != NULL);
    addr[0] = (eui[0] ^ 0x02);
@@ -675,7 +778,11 @@ int mau_conv_eui2mac(mau_config * cnf, const maueui64_t eui, mauaddr_t addr)
 }
 
 
-int mau_conv_eui2sin(mau_config * cnf, const maueui64_t eui, struct sockaddr_in6  * sin)
+int
+mau_conv_eui2sin(
+         mau_config *                  cnf,
+         const maueui64_t              eui,
+         struct sockaddr_in6  *        sin )
 {
    assert(cnf != NULL);
    memset(sin, 0, sizeof(struct sockaddr_in6));
@@ -687,7 +794,11 @@ int mau_conv_eui2sin(mau_config * cnf, const maueui64_t eui, struct sockaddr_in6
 }
 
 
-int mau_conv_eui2str(mau_config * cnf, const maueui64_t eui, maustr_t str)
+int
+mau_conv_eui2str(
+         mau_config *                  cnf,
+         const maueui64_t              eui,
+         maustr_t                      str )
 {
    switch (cnf->notation & MAU_MASK_CASE)
    {
@@ -704,7 +815,11 @@ int mau_conv_eui2str(mau_config * cnf, const maueui64_t eui, maustr_t str)
 }
 
 
-int mau_conv_mac2eui(mau_config * cnf, const mauaddr_t addr, maueui64_t eui)
+int
+mau_conv_mac2eui(
+         mau_config *                  cnf,
+         const mauaddr_t               addr,
+         maueui64_t                    eui )
 {
    assert(cnf  != NULL);
    assert(eui  != NULL);
@@ -723,7 +838,11 @@ int mau_conv_mac2eui(mau_config * cnf, const mauaddr_t addr, maueui64_t eui)
 }
 
 
-int mau_conv_mac2str(mau_config * cnf, const mauaddr_t addr, maustr_t str)
+int
+mau_conv_mac2str(
+         mau_config *                  cnf,
+         const mauaddr_t               addr,
+         maustr_t                      str )
 {
    switch (cnf->notation | (MAU_MASK_NOTATION & MAU_MASK_CASE))
    {
@@ -766,7 +885,11 @@ int mau_conv_mac2str(mau_config * cnf, const mauaddr_t addr, maustr_t str)
 }
 
 
-int mau_conv_sin2eui(mau_config * cnf, const struct sockaddr_in6 * sin, maueui64_t eui)
+int
+mau_conv_sin2eui(
+         mau_config *                  cnf,
+         const struct sockaddr_in6 *   sin,
+         maueui64_t                    eui )
 {
    assert(cnf != NULL);
    memcpy(eui, &sin->sin6_addr.s6_addr[8], 8);
@@ -774,7 +897,11 @@ int mau_conv_sin2eui(mau_config * cnf, const struct sockaddr_in6 * sin, maueui64
 }
 
 
-int mau_conv_sin2str(mau_config * cnf, struct sockaddr_in6  * sin, maustr_t str)
+int
+mau_conv_sin2str(
+         mau_config *                  cnf,
+         struct sockaddr_in6  *        sin,
+         maustr_t                      str )
 {
    assert(cnf != NULL);
    getnameinfo((struct sockaddr *)sin, sizeof(struct sockaddr_in6), str, sizeof(maustr_t), NULL, 0, NI_NUMERICHOST|NI_NUMERICSERV);
@@ -782,7 +909,11 @@ int mau_conv_sin2str(mau_config * cnf, struct sockaddr_in6  * sin, maustr_t str)
 }
 
 
-int mau_conv_str2eui(mau_config * cnf, const maustr_t str, maueui64_t eui)
+int
+mau_conv_str2eui(
+         mau_config *                  cnf,
+         const maustr_t                str,
+         maueui64_t                    eui )
 {
    int    buff[8];
    size_t slen;
@@ -821,7 +952,11 @@ int mau_conv_str2eui(mau_config * cnf, const maustr_t str, maueui64_t eui)
 }
 
 
-int mau_conv_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr)
+int
+mau_conv_str2mac(
+         mau_config *                  cnf,
+         const maustr_t                str,
+         mauaddr_t                     addr )
 {
    maueui64_t eui;
    int        buff[6];
@@ -862,7 +997,11 @@ int mau_conv_str2mac(mau_config * cnf, const maustr_t str, mauaddr_t addr)
 }
 
 
-int mau_conv_str2sin(mau_config * cnf, const maustr_t str, struct sockaddr_in6 * sin)
+int
+mau_conv_str2sin(
+         mau_config *                  cnf,
+         const maustr_t                str,
+         struct sockaddr_in6 *         sin )
 {
    struct addrinfo    hints;
    struct addrinfo  * servinfo;
@@ -886,8 +1025,14 @@ int mau_conv_str2sin(mau_config * cnf, const maustr_t str, struct sockaddr_in6 *
 }
 
 
-int mau_getopt(mau_config * cnf, int argc, char * const * argv,
-   const char * short_opt, const struct option * long_opt, int * opt_index)
+int
+mau_getopt(
+         mau_config *                  cnf,
+         int                           argc,
+         char * const *                argv,
+         const char *                  short_opt,
+         const struct option *         long_opt,
+         int *                         opt_index )
 {
    int            c;
 
@@ -1020,7 +1165,11 @@ int mau_getopt(mau_config * cnf, int argc, char * const * argv,
 
 
 // print error message
-void mau_log_err(mau_config * cnf, const char * fmt, ...)
+void
+mau_log_err(
+         mau_config *                  cnf,
+         const char *                  fmt,
+         ... )
 {
    va_list args;
    if (cnf->verbose > 1)
@@ -1033,7 +1182,11 @@ void mau_log_err(mau_config * cnf, const char * fmt, ...)
 
 
 // print verbose information
-void mau_log_verbose(mau_config * cnf, const char * fmt, ...)
+void
+mau_log_verbose(
+         mau_config *                  cnf,
+         const char *                  fmt,
+         ... )
 {
    va_list args;
    if (cnf->verbose < 1)
@@ -1046,7 +1199,11 @@ void mau_log_verbose(mau_config * cnf, const char * fmt, ...)
 
 
 // print warning message
-void mau_log_warn(mau_config * cnf, const char * fmt, ...)
+void
+mau_log_warn(
+         mau_config *                  cnf,
+         const char *                  fmt,
+         ... )
 {
    va_list args;
    if ((cnf->verbose))
@@ -1059,7 +1216,11 @@ void mau_log_warn(mau_config * cnf, const char * fmt, ...)
 
 
 // logs message
-void mau_logv(mau_config * cnf, const char * fmt, va_list args)
+void
+mau_logv(
+         mau_config *                  cnf,
+         const char *                  fmt,
+         va_list                       args )
 {
    if ((cnf->cmd))
       fprintf(stderr, "%s %s: ", PROGRAM_NAME, cnf->cmd->cmd_name);
@@ -1071,7 +1232,9 @@ void mau_logv(mau_config * cnf, const char * fmt, va_list args)
 
 
 /// displays usage information
-void mau_usage(mau_config * cnf)
+void
+mau_usage(
+         mau_config *                  cnf )
 {
    int          i;
    const char * cmd_name = "COMMAND";
@@ -1119,7 +1282,9 @@ void mau_usage(mau_config * cnf)
 
 
 /// displays version information
-void mau_version(void)
+void
+mau_version(
+         void )
 {
    printf(
       (
