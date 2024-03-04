@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (c) 2008, 2009 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/posixregex.c simple POSIX regex testing utility/example
@@ -56,6 +53,7 @@
 //  Notes  //
 //         //
 /////////////
+// MARK: - Notes
 
 //
 //  POSIX        ASCII           Description
@@ -82,6 +80,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -100,6 +99,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "posixregex"
@@ -133,21 +133,30 @@
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-// main statement
-int main PARAMS((int, char **));
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
-// displays POSIX regular expressions
-void my_posixregex PARAMS((void));
 
-// displays usage
-void my_usage PARAMS((void));
+static void
+my_posixregex( void );
 
-// display incompatible usage
-void my_usage_incompatible PARAMS((char x, char y));
 
-// displays usage
-void my_version PARAMS((void));
+static void
+my_usage( void );
+
+
+static void
+my_usage_incompatible(
+         char                          x,
+         char                          y );
+
+
+static void
+my_version( void );
 
 
 /////////////////
@@ -155,11 +164,15 @@ void my_version PARAMS((void));
 //  Functions  //
 //             //
 /////////////////
+// MARK: - Functions
 
 /// main statement
 /// @param[in] argc   number of arguments
 /// @param[in] argv   array of arguments
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    // declare local vars
    int          c;
@@ -212,55 +225,68 @@ int main(int argc, char * argv[])
       {
          case -1:       // no more arguments
          case 0:        // long options toggles
-            break;
+         break;
+
          case 'b':
-            opt.reg_cflags = opt.reg_cflags & (~REG_EXTENDED);
-            break;
+         opt.reg_cflags = opt.reg_cflags & (~REG_EXTENDED);
+         break;
+
          case 'h':
-            my_usage();
-            return(0);
+         my_usage();
+         return(0);
+
          case 'i':
-            opt.reg_cflags = opt.reg_cflags | REG_ICASE;
-            break;
+         opt.reg_cflags = opt.reg_cflags | REG_ICASE;
+         break;
+
          case 'l':
-            opt.reg_cflags = opt.reg_cflags | REG_NEWLINE;
-            break;
+         opt.reg_cflags = opt.reg_cflags | REG_NEWLINE;
+         break;
+
          case 'n':
-            if ((opt.reg_cflags & REG_EXTENDED))
-            {
-               fprintf(stderr, "%s: option `-n' requires option `-b'\n", PROGRAM_NAME);
-               fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-               return(1);
-            };
+         if ((opt.reg_cflags & REG_EXTENDED))
+         {
+            fprintf(stderr, "%s: option `-n' requires option `-b'\n", PROGRAM_NAME);
+            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+            return(1);
+         };
 #ifdef REG_NOSPEC
-            opt.reg_cflags = opt.reg_cflags | REG_NOSPEC;
+         opt.reg_cflags = opt.reg_cflags | REG_NOSPEC;
 #endif
-            break;
+         break;
+
          case 'p':
-            my_posixregex();
-            return(0);
+         my_posixregex();
+         return(0);
+
          case 'q':
-            opt.quiet = 1;
-            break;
+         opt.quiet = 1;
+         break;
+
          case 'r':
-           opt.re_str = optarg;
-           break;
+         opt.re_str = optarg;
+         break;
+
          case 's':
-            opt.substring++;
-            break;
+         opt.substring++;
+         break;
+
          case 'V':
-            my_version();
-            return(0);
+         my_version();
+         return(0);
+
          case 'v':
-            opt.verbosity++;
-            break;
+         opt.verbosity++;
+         break;
+
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
       };
    };
 
@@ -378,7 +404,8 @@ int main(int argc, char * argv[])
 
 
 /// displays POSIX regular expressions
-void my_posixregex(void)
+void
+my_posixregex( void )
 {
    printf("POSIX        ASCII           Description\n");
    printf("[:alnum:]    [A-Za-z0-9]     Alphanumeric characters\n");
@@ -402,7 +429,8 @@ void my_posixregex(void)
 
 
 /// displays usage
-void my_usage(void)
+void
+my_usage( void )
 {
    printf("Usage: %s [OPTIONS] string1 string2 ... stringN\n", PROGRAM_NAME);
    printf("  -b                        use obsolete ``basic'' REs (REG_BASIC)\n");
@@ -426,7 +454,10 @@ void my_usage(void)
 
 
 /// display incompatible usage
-void my_usage_incompatible(char x, char y)
+void
+my_usage_incompatible(
+         char                          x,
+         char                          y )
 {
    fprintf(stderr, "%s: incompatible options `-%c' and `-%c'\n", PROGRAM_NAME, x, y);
    fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
@@ -435,7 +466,8 @@ void my_usage_incompatible(char x, char y)
 
 
 /// displays version
-void my_version(void)
+void
+my_version( void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
