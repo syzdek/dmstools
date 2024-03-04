@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2009 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/typedef-sizes.c displays the size of differnt data types
@@ -56,6 +53,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -107,6 +105,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "typedef-sizes"
@@ -145,9 +144,10 @@
 
 /////////////////
 //             //
-//  Structs    //
+//  Datatypes  //
 //             //
 /////////////////
+// MARK: - Datatypes
 
 struct my_data
 {
@@ -163,48 +163,77 @@ struct my_data
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-// main statement
-int main(int argc, char * argv[]);
-
-// compares by define
-int my_cmp_by_define(void * ptr1, void * ptr2);
-
-// compares by reverse define
-int my_cmp_by_define_r(void * ptr1, void * ptr2);
-
-// compares by name
-int my_cmp_by_name(void * ptr1, void * ptr2);
-
-// compares by reverse name
-int my_cmp_by_name_r(void * ptr1, void * ptr2);
-
-// compares by width
-int my_cmp_by_width(void * ptr1, void * ptr2);
-
-// compares by reverse width
-int my_cmp_by_width_r(void * ptr1, void * ptr2);
-
-// prints data record
-void my_print_data(struct my_data * data);
-
-//displays usage information
-void my_usage(void);
-
-// displays version information
-void my_version(void);
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
 
-//////////////////
-//              //
-//  Prototypes  //
-//              //
-//////////////////
+static int
+my_cmp_by_define(
+         void *                        ptr1,
+         void *                        ptr2 );
+
+
+static int
+my_cmp_by_define_r(
+         void *                        ptr1,
+         void *                        ptr2 );
+
+
+static int
+my_cmp_by_name(
+         void *                        ptr1,
+         void *                        ptr2 );
+
+
+static int
+my_cmp_by_name_r(
+         void *                        ptr1,
+         void *                        ptr2 );
+
+
+static int
+my_cmp_by_width(
+         void *                        ptr1,
+         void *                        ptr2 );
+
+
+static int
+my_cmp_by_width_r(
+         void *                        ptr1,
+         void *                        ptr2 );
+
+
+static void
+my_print_data(
+         struct my_data *              data );
+
+
+static void
+my_usage( void );
+
+
+static void
+my_version( void );
+
+
+/////////////////
+//             //
+//  Functions  //
+//             //
+/////////////////
+// MARK: - Functions
 
 /// main statement
 /// @param[in] argc   number of arguments
 /// @param[in] argv   array of arguments
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int                     c;
    int                     x;
@@ -408,32 +437,40 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
-            break;
+         break;
+
          case 'd':
-            sort_order = MY_SORT_INCLUDE;
-            break;
+         sort_order = MY_SORT_INCLUDE;
+         break;
+
          case 'h':
-            my_usage();
-            return(0);
+         my_usage();
+         return(0);
+
          case 'n':
-            sort_order = MY_SORT_NAME;
-            break;
+         sort_order = MY_SORT_NAME;
+         break;
+
          case 'r':
-            sort_reverse = (sort_reverse ^ MY_SORT_REVERSE);
-            break;
+         sort_reverse = (sort_reverse ^ MY_SORT_REVERSE);
+         break;
+
          case 'V':
-            my_version();
-            return(0);
+         my_version();
+         return(0);
+
          case 'w':
-            sort_order = MY_SORT_WIDTH;
-            break;
+         sort_order = MY_SORT_WIDTH;
+         break;
+
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
       };
    };
 
@@ -480,26 +517,32 @@ int main(int argc, char * argv[])
    switch(sort_order)
    {
       case MY_SORT_NAME:
-         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name);
-         break;
+      qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name);
+      break;
+
       case MY_SORT_NAME_R:
-         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name_r);
-         break;
+      qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name_r);
+      break;
+
       case MY_SORT_WIDTH:
-         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_width);
-         break;
+      qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_width);
+      break;
+
       case MY_SORT_WIDTH_R:
-         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_width_r);
-         break;
+      qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_width_r);
+      break;
+
       case MY_SORT_INCLUDE:
-         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_define);
-         break;
+      qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_define);
+      break;
+
       case MY_SORT_INCLUDE_R:
-         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_define_r);
-         break;
+      qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_define_r);
+      break;
+
       default:
-         qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name);
-         break;
+      qsort(list, (size_t)list_count, sizeof(struct my_data *), (int (*)(const void *, const void *))my_cmp_by_name);
+      break;
    };
 
    printf("%-*s   %*s   %*s   %*s\n",
@@ -521,7 +564,10 @@ int main(int argc, char * argv[])
 /// compares by define
 /// @param[in]  ptr1   pointer to first string
 /// @param[in]  ptr2   pointer to second string
-int my_cmp_by_define(void * ptr1, void * ptr2)
+int
+my_cmp_by_define(
+         void *                        ptr1,
+         void *                        ptr2 )
 {
    int cmp;
    const struct my_data * d1 = *((const struct my_data **)ptr1);
@@ -548,7 +594,10 @@ int my_cmp_by_define(void * ptr1, void * ptr2)
 /// compares by reverse define
 /// @param[in]  ptr1   pointer to first string
 /// @param[in]  ptr2   pointer to second string
-int my_cmp_by_define_r(void * ptr1, void * ptr2)
+int
+my_cmp_by_define_r(
+         void *                        ptr1,
+         void *                        ptr2 )
 {
    int cmp;
    const struct my_data * d1 = *((const struct my_data **)ptr1);
@@ -575,7 +624,10 @@ int my_cmp_by_define_r(void * ptr1, void * ptr2)
 /// compares by name
 /// @param[in]  ptr1   pointer to first string
 /// @param[in]  ptr2   pointer to second string
-int my_cmp_by_name(void * ptr1, void * ptr2)
+int
+my_cmp_by_name(
+         void *                        ptr1,
+         void *                        ptr2 )
 {
    int cmp;
    const struct my_data * d1 = *((const struct my_data **)ptr1);
@@ -602,7 +654,10 @@ int my_cmp_by_name(void * ptr1, void * ptr2)
 /// compares by reverse name
 /// @param[in]  ptr1   pointer to first string
 /// @param[in]  ptr2   pointer to second string
-int my_cmp_by_name_r(void * ptr1, void * ptr2)
+int
+my_cmp_by_name_r(
+         void *                        ptr1,
+         void *                        ptr2 )
 {
    int cmp;
    const struct my_data * d1 = *((const struct my_data **)ptr1);
@@ -629,7 +684,10 @@ int my_cmp_by_name_r(void * ptr1, void * ptr2)
 /// compares by width
 /// @param[in]  ptr1   pointer to first string
 /// @param[in]  ptr2   pointer to second string
-int my_cmp_by_width(void * ptr1, void * ptr2)
+int
+my_cmp_by_width(
+         void *                        ptr1,
+         void *                        ptr2 )
 {
    int cmp;
    const struct my_data * d1 = *((const struct my_data **)ptr1);
@@ -656,7 +714,10 @@ int my_cmp_by_width(void * ptr1, void * ptr2)
 /// compares by reverse width
 /// @param[in]  ptr1   pointer to first string
 /// @param[in]  ptr2   pointer to second string
-int my_cmp_by_width_r(void * ptr1, void * ptr2)
+int
+my_cmp_by_width_r(
+         void *                        ptr1,
+         void *                        ptr2 )
 {
    int cmp;
    const struct my_data * d1 = *((const struct my_data **)ptr1);
@@ -682,7 +743,9 @@ int my_cmp_by_width_r(void * ptr1, void * ptr2)
 
 /// prints data record
 /// @param[in]  data    data to print
-void my_print_data(struct my_data * data)
+void
+my_print_data(
+         struct my_data *              data )
 {
    char buff[16];
    snprintf(buff, (size_t)16, "%i", data->size);
@@ -697,7 +760,8 @@ void my_print_data(struct my_data * data)
 
 
 /// displays usage information
-void my_usage(void)
+void
+my_usage( void )
 {
    printf("Usage: %s [options] [typedef]\n", PROGRAM_NAME);
    printf("  -d                        sort by object definition\n");
@@ -714,7 +778,8 @@ void my_usage(void)
 
 
 /// displays version information
-void my_version(void)
+void
+my_version( void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
