@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2009 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/bitcopy.c simple utility for quick bitwise operations
@@ -56,6 +53,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -74,6 +72,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "bitcopy"
@@ -101,35 +100,58 @@
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
 // inserts a series of bits into a buffer at the specified offset
-void bitops_copy(uint8_t * dst, uint8_t * src, uint32_t len, uint32_t offset,
-   uint32_t n);
-
-// main statement
-int main(int argc, char * argv[]);
-
-// determines endianness of platform
-int32_t my_make_littleendian(uint32_t data);
-
-//displays usage information
-void my_usage(void);
-
-// displays version information
-void my_version(void);
-
-// displays data in binary notation
-char * my_byte2str(uint32_t data, char * buff, uint32_t len);
-
-// displays data in binary notation
-void my_print_data(uint8_t * data, uint32_t len);
+static void
+bitops_copy(
+         uint8_t *                     dst,
+         uint8_t *                     src,
+         uint32_t                      len,
+         uint32_t                      offset,
+         uint32_t                      n );
 
 
-//////////////////
-//              //
-//  Prototypes  //
-//              //
-//////////////////
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
+
+
+static int32_t
+my_make_littleendian(
+         uint32_t                      data );
+
+
+static void
+my_usage(
+         void );
+
+
+static void
+my_version(
+         void );
+
+
+static char *
+my_byte2str(
+         uint32_t                      data,
+         char *                        buff,
+         uint32_t                      len );
+
+
+static void
+my_print_data(
+         uint8_t *                     data,
+         uint32_t                      len );
+
+
+/////////////////
+//             //
+//  Functions  //
+//             //
+/////////////////
+// MARK: - Functions
 
 /// inserts a series of bits into a buffer at the specified bit offset
 /// @param[in]  dst      pointer to buffer
@@ -137,8 +159,13 @@ void my_print_data(uint8_t * data, uint32_t len);
 /// @param[in]  len      length in bytes of the buffer
 /// @param[in]  offset   number of bits to offset the data in the buffer
 /// @param[in]  n        number of bits to insert into the buffer
-void bitops_copy(uint8_t * dst, uint8_t * src, uint32_t len, uint32_t offset,
-   uint32_t n)
+void
+bitops_copy(
+         uint8_t *                     dst,
+         uint8_t *                     src,
+         uint32_t                      len,
+         uint32_t                      offset,
+         uint32_t                      n )
 {
    uint32_t byte_required;
    uint32_t byte_offset;
@@ -223,7 +250,10 @@ void bitops_copy(uint8_t * dst, uint8_t * src, uint32_t len, uint32_t offset,
 /// main statement
 /// @param[in] argc   number of arguments
 /// @param[in] argv   array of arguments
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int         c;
    int         opt_index;
@@ -257,51 +287,63 @@ int main(int argc, char * argv[])
       {
          case -1:	/* no more arguments */
          case 0:	/* long options toggles */
-            break;
+         break;
+
          case 'B':
-            buff_len = (uint32_t)strtoul(optarg, NULL, 0);
-            break;
+         buff_len = (uint32_t)strtoul(optarg, NULL, 0);
+         break;
+
          case 'b':
-            u        = (uint32_t)strtoul(optarg, NULL, 0);
-            buff_len = (u & 0x07) ? ((u/8) + 1) : (u/8);
-            break;
+         u        = (uint32_t)strtoul(optarg, NULL, 0);
+         buff_len = (u & 0x07) ? ((u/8) + 1) : (u/8);
+         break;
+
          case 'd':
-            data = (uint32_t)strtoul(optarg, NULL, 0);
-            break;
+         data = (uint32_t)strtoul(optarg, NULL, 0);
+         break;
+
          case 'h':
-            my_usage();
-            return(0);
+         my_usage();
+         return(0);
+
          case 'L':
-            len  = (uint32_t)strtoul(optarg, NULL, 0);
-            len *= 8;
-            if (len > 32)
-               len = 32;
-            break;
+         len  = (uint32_t)strtoul(optarg, NULL, 0);
+         len *= 8;
+         if (len > 32)
+            len = 32;
+         break;
+
          case 'l':
-            len = (uint32_t)strtoul(optarg, NULL, 0);
-            if (len > 32)
-               len = 32;
-            break;
+         len = (uint32_t)strtoul(optarg, NULL, 0);
+         if (len > 32)
+            len = 32;
+         break;
+
          case 'O':
-            offset  = (uint32_t)strtoul(optarg, NULL, 0);
-            offset *= 8;
-            break;
+         offset  = (uint32_t)strtoul(optarg, NULL, 0);
+         offset *= 8;
+         break;
+
          case 'o':
-            offset = (uint32_t)strtoul(optarg, NULL, 0);
-            break;
+         offset = (uint32_t)strtoul(optarg, NULL, 0);
+         break;
+
          case 'V':
-            my_version();
-            return(0);
+         my_version();
+         return(0);
+
          case 'v':
-            verbose++;
-            break;
+         verbose++;
+         break;
+
          case '?':
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
+
          default:
-            fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
-            fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
-            return(1);
+         fprintf(stderr, "%s: unrecognized option `--%c'\n", PROGRAM_NAME, c);
+         fprintf(stderr, "Try `%s --help' for more information.\n", PROGRAM_NAME);
+         return(1);
       };
    };
 
@@ -344,7 +386,9 @@ int main(int argc, char * argv[])
 
 
 // determines endianness of platform
-int32_t my_make_littleendian(uint32_t data)
+int32_t
+my_make_littleendian(
+         uint32_t                      data )
 {
    int32_t i = 0x00FF;
    if ( (*(uint8_t *)&i) != 0 )
@@ -357,7 +401,9 @@ int32_t my_make_littleendian(uint32_t data)
 
 
 /// displays usage information
-void my_usage(void)
+void
+my_usage(
+         void )
 {
    printf("Usage: %s [options]\n", PROGRAM_NAME);
    printf("  -B bytes                  size of buffer to use\n");
@@ -377,7 +423,9 @@ void my_usage(void)
 
 
 /// displays version information
-void my_version(void)
+void
+my_version(
+         void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
@@ -390,7 +438,11 @@ void my_version(void)
 
 
 // displays a byte in binary notation
-char * my_byte2str(uint32_t data, char * buff, uint32_t len)
+char *
+my_byte2str(
+         uint32_t                      data,
+         char *                        buff,
+         uint32_t                      len )
 {
    uint32_t b;
    if ( (!(buff)) || (!(len)) )
@@ -403,7 +455,10 @@ char * my_byte2str(uint32_t data, char * buff, uint32_t len)
 
 
 // displays data in binary notation
-void my_print_data(uint8_t * data, uint32_t len)
+void
+my_print_data(
+         uint8_t *                     data,
+         uint32_t                      len )
 {
    uint32_t u;
    char     buff[9];
