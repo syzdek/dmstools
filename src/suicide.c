@@ -1,6 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2010 David M. Syzdek <david@syzdek.net>.
+ *  All rights reserved.
  *
  *  Self Signalling Program
  *  Copyright (c) 2008 Alaska Communications Systems
@@ -46,6 +47,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_COMMON_H
 #include "common.h"
@@ -66,6 +68,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "suicide"
@@ -100,15 +103,16 @@
 //  Datatypes  //
 //             //
 /////////////////
+// MARK: - Datatypes
 
 /// table of signal data
 typedef struct suicide_signal_data SuicideData;
 struct suicide_signal_data
 {
-   int action;
-   int number;
-   const char * name;
-   const char * desc;
+   int            action;
+   int            number;
+   const char *   name;
+   const char *   desc;
 };
 
 
@@ -117,31 +121,46 @@ struct suicide_signal_data
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-// processes signals
-int main PARAMS((int argc, char * argv[]));
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
-// compares two signal rows by signal int value
-int suicide_cmp_val PARAMS((const SuicideData * p1,
-   const SuicideData * p2));
 
-// finds a signal from the table and returns action
-int suicide_find_data PARAMS((SuicideData ** data, const char * str, int val));
+static int
+suicide_cmp_val(
+         const SuicideData *           p1,
+         const SuicideData *           p2 );
 
-// empty signal handler
-void suicide_signal_handler PARAMS((int sig));
 
-// displays SUSv3 signals
-void suicide_susv3_sigs PARAMS((void));
+static int
+suicide_find_data(
+         SuicideData **                datap,
+         const char *                  str,
+         int                           val );
 
-// display C code to ignore signals
-void suicide_susv3_sigs_ignore PARAMS((void));
 
-// displays usage
-void suicide_usage PARAMS((void));
+static void
+suicide_signal_handler(
+         int                           sig );
 
-// displays version
-void suicide_version PARAMS((void));
+
+static void
+suicide_susv3_sigs( void );
+
+
+static void
+suicide_susv3_sigs_ignore( void );
+
+
+static void
+suicide_usage( void );
+
+
+static void
+suicide_version( void );
 
 
 /////////////////
@@ -149,6 +168,7 @@ void suicide_version PARAMS((void));
 //  Variables  //
 //             //
 /////////////////
+// MARK: - Variables
 
 SuicideData susv3_signals[] =
 {
@@ -269,11 +289,15 @@ volatile sig_atomic_t my_toggle_verbose = 0;
 //  Functions  //
 //             //
 /////////////////
+// MARK: - Functions
 
 /// compares two signal rows by signal int value
 /// @param[in]  p1    pointer to first signal
 /// @param[in]  p2    pointer to second signal
-int suicide_cmp_val(const SuicideData * p1, const SuicideData * p2)
+int
+suicide_cmp_val(
+         const SuicideData *           p1,
+         const SuicideData *           p2 )
 {
    if (p1->number < p2->number)
       return(-1);
@@ -286,7 +310,10 @@ int suicide_cmp_val(const SuicideData * p1, const SuicideData * p2)
 /// main statement
 /// @param[in]  argc  number of arguments passed to program
 /// @param[in]  argv  array of arguments passed to program
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int              c;
    int              val;
@@ -405,7 +432,9 @@ int main(int argc, char * argv[])
 
 
 /// empty signal handler
-void suicide_signal_handler(int sig)
+void
+suicide_signal_handler(
+         int                           sig )
 {
    int i;
    const char * name;
@@ -424,10 +453,14 @@ void suicide_signal_handler(int sig)
 
 
 /// finds a signal from the table and returns action
+/// @param[in]  datap
 /// @param[in]  str
 /// @param[in]  val
-int suicide_find_data(SuicideData ** datap, const char * str,
-   int val)
+int
+suicide_find_data(
+         SuicideData **                datap,
+         const char *                  str,
+         int                           val )
 {
    int    i;
    size_t offset;
@@ -462,7 +495,8 @@ int suicide_find_data(SuicideData ** datap, const char * str,
 
 
 /// displays SUSv3 signals
-void suicide_susv3_sigs(void)
+void
+suicide_susv3_sigs( void )
 {
    size_t count;
    size_t i;
@@ -493,7 +527,8 @@ void suicide_susv3_sigs(void)
 
 
 /// displays SUSv3 signals
-void suicide_susv3_sigs_ignore(void)
+void
+suicide_susv3_sigs_ignore( void )
 {
    size_t count;
    size_t i;
@@ -509,7 +544,8 @@ void suicide_susv3_sigs_ignore(void)
 
 
 /// displays usage
-void suicide_usage(void)
+void
+suicide_usage( void )
 {
    printf(("Usage: %s [OPTIONS]\n"
          "  -c                        attempt to catch signals\n"
@@ -537,7 +573,8 @@ void suicide_usage(void)
 
 
 /// displays version
-void suicide_version(void)
+void
+suicide_version( void )
 {
    printf(("%s (%s) %s\n"
          "Written by David M. Syzdek.\n"
