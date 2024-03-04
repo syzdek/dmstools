@@ -1,8 +1,7 @@
 /*
  *  DMS Tools and Utilities
  *  Copyright (C) 2009 David M. Syzdek <david@syzdek.net>.
- *
- *  @SYZDEK_LICENSE_HEADER_START@
+ *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
@@ -28,8 +27,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  *  SUCH DAMAGE.
- *
- *  @SYZDEK_LICENSE_HEADER_END@
  */
 /**
  *  @file src/numconvert.c converts string into octal, decimal, hex, and bin
@@ -56,6 +53,7 @@
 //  Headers  //
 //           //
 ///////////////
+// MARK: - Headers
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -73,6 +71,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+// MARK: - Definitions
 
 #ifndef PROGRAM_NAME
 #define PROGRAM_NAME "numconvert"
@@ -111,18 +110,27 @@
 //  Prototypes  //
 //              //
 //////////////////
+// MARK: - Prototypes
 
-// main statement
-int main(int argc, char * argv[]);
+extern int
+main(
+         int                           argc,
+         char *                        argv[] );
 
-// print value
-void my_print(int32_t opt, uintmax_t byte, const char * order);
 
-//displays usage information
-void my_usage(void);
+static void
+my_print(
+         int32_t                       opt,
+         uintmax_t                     num,
+         const char *                  order );
 
-// displays version information
-void my_version(void);
+
+static void
+my_usage( void );
+
+
+static void
+my_version( void );
 
 
 /////////////////
@@ -130,11 +138,15 @@ void my_version(void);
 //  Functions  //
 //             //
 /////////////////
+// MARK: - Functions
 
 /// main statement
 /// @param[in] argc   number of arguments
 /// @param[in] argv   array of arguments
-int main(int argc, char * argv[])
+int
+main(
+         int                           argc,
+         char *                        argv[] )
 {
    int            c;
    int            base;
@@ -410,7 +422,11 @@ int main(int argc, char * argv[])
 
 
 // print value
-void my_print(int32_t opt, uintmax_t num, const char * order)
+void
+my_print(
+         int32_t                       opt,
+         uintmax_t                     num,
+         const char *                  order )
 {
    char      buff[56];
    unsigned  pos;
@@ -567,7 +583,8 @@ void my_print(int32_t opt, uintmax_t num, const char * order)
 
 
 /// displays usage information
-void my_usage(void)
+void
+my_usage( void )
 {
    printf("Usage: %s num1 num2 ... numX\n", PROGRAM_NAME);
    printf("  -A                        enable ASCII output\n");
@@ -604,7 +621,8 @@ void my_usage(void)
 
 
 /// displays version information
-void my_version(void)
+void
+my_version( void )
 {
    printf("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
    printf("Written by David M. Syzdek.\n");
